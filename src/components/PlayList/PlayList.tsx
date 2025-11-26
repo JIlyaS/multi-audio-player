@@ -5,12 +5,34 @@ import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext"
 import type { Track } from "../../shared/types";
 
 export const PlayList = () => {
-  const { currentTrack, tracks, setIsPlaying, setCurrentTrack } =
-    useAudioPlayerContext();
+  const {
+    currentTrack,
+    currentTracks,
+    tracks,
+    setIsPlaying,
+    setCurrentTrack,
+    setCurrentTracks,
+  } = useAudioPlayerContext();
 
   const handleClick = (track: Track) => {
     setCurrentTrack(track);
     setIsPlaying(true);
+  };
+  
+  const handleSelectAudioChange = (id: string) => {
+    const isSelected = currentTracks.some((item) => item.id === id);
+    const currentSelectedTrack = tracks.find((track) => track.id === id);
+
+    if (currentSelectedTrack) {
+      if (isSelected) {
+        setCurrentTracks((prevValue) =>
+          prevValue.filter((item) => item.id !== id)
+        );
+        return;
+      }
+
+      setCurrentTracks((prevValue) => [...prevValue, currentSelectedTrack]);
+    }
   };
 
   return (
@@ -32,8 +54,9 @@ export const PlayList = () => {
           <Form.Check
             type="checkbox"
             id={String(index)}
+            checked={currentTracks.some((item) => item.id === track.id)}
             onClick={(evt) => evt.stopPropagation()}
-            onChange={(evt) => evt.stopPropagation()}
+            onChange={() => handleSelectAudioChange(track.id)}
           />
           <div className="w-16 h-16 flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden">
             {track.thumbnail ? (

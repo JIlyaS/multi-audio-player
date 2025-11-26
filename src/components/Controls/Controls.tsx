@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   BsFillFastForwardFill,
   BsFillPauseFill,
@@ -8,56 +8,36 @@ import {
   BsSkipStartFill,
   BsShuffle,
   BsRepeat,
+  BsStopFill,
 } from "react-icons/bs";
 
 import "./Controls.module.css";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
+import { useAnimation } from "../../shared/hooks/useAnimation";
 
 // INFO: Обеспечивает управление воспроизведением
 export const Controls = () => {
   // currentTrack.src
+  const { playAnimationRef, startAnimation, updateProgress } = useAnimation();
   const {
     tracks,
-    currentTrack,
-    duration,
+    // currentTrack,
+    currentTracks,
+    // setCurrentTracks,
     isPlaying,
     setDuration,
-    setTimeProgress,
     setTrackIndex,
     setCurrentTrack,
     setIsPlaying,
 
     audioRef,
     progressBarRef,
+    audioListRef,
   } = useAudioPlayerContext();
-
-  const playAnimationRef = useRef<number | null>(null);
 
   const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [isRepeat, setIsRepeat] = useState<boolean>(false);
-
-  const updateProgress = useCallback(() => {
-    if (audioRef.current && progressBarRef.current && duration) {
-      const currentTime = audioRef.current.currentTime;
-      setTimeProgress(currentTime);
-      progressBarRef.current.value = currentTime.toString();
-      progressBarRef.current.style.setProperty(
-        "--range-progress",
-        `${(currentTime / duration) * 100}%`
-      );
-    }
-  }, [duration, setTimeProgress, audioRef, progressBarRef]);
-
-  const startAnimation = useCallback(() => {
-    if (audioRef.current && progressBarRef.current && duration) {
-      const animate = () => {
-        updateProgress();
-        playAnimationRef.current = requestAnimationFrame(animate);
-      };
-      playAnimationRef.current = requestAnimationFrame(animate);
-    }
-  }, [updateProgress, duration, audioRef, progressBarRef]);
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;
@@ -81,6 +61,13 @@ export const Controls = () => {
       audioRef.current.currentTime -= 15;
       updateProgress();
     }
+  };
+
+  const handleStopClick = () => {
+    currentTracks.forEach((_, idx) => {
+      audioListRef.current[idx]?.pause();
+      setIsPlaying(false);
+    });
   };
 
   const handlePrevious = useCallback(() => {
@@ -109,10 +96,17 @@ export const Controls = () => {
 
   useEffect(() => {
     if (isPlaying) {
-      audioRef.current?.play();
+      // audioRef.current?.play();
+      // const currentTrackIds = currentTracks.map((item) => item.id);
+      // currentTrackIds.forEach((idx) => {
+      //   console.log("currentTrackIds", currentTrackIds, idx);
+      //   audioListRef.current[idx]?.play();
+      // });
+      currentTracks.forEach((_, idx) => audioListRef.current[idx]?.play());
       startAnimation();
     } else {
-      audioRef.current?.pause();
+      // audioRef.current?.pause();
+      currentTracks.forEach((_, idx) => audioListRef.current[idx]?.pause());
       if (playAnimationRef.current !== null) {
         cancelAnimationFrame(playAnimationRef.current);
         playAnimationRef.current = null;
@@ -125,7 +119,15 @@ export const Controls = () => {
         cancelAnimationFrame(playAnimationRef.current);
       }
     };
-  }, [isPlaying, startAnimation, updateProgress, audioRef]);
+  }, [
+    isPlaying,
+    startAnimation,
+    updateProgress,
+    audioRef,
+    audioListRef,
+    currentTracks,
+    playAnimationRef,
+  ]);
 
   useEffect(() => {
     const currentAudioRef = audioRef.current;
@@ -134,7 +136,7 @@ export const Controls = () => {
         if (isRepeat) {
           currentAudioRef.play();
         } else {
-          handleNext(); // This function should handle both shuffle and non-shuffle scenarios
+          handleNext();
         }
       };
     }
@@ -145,36 +147,74 @@ export const Controls = () => {
     };
   }, [isRepeat, handleNext, audioRef]);
 
+  useEffect(() => {
+    audioListRef.current = audioListRef.current.slice(0, currentTracks.length);
+  }, [audioListRef, currentTracks]);
+
+  console.log("currentTracks", currentTracks);
+
   return (
     <div className="flex gap-4 items-center">
-      <audio
-        src={currentTrack.src}
-        ref={audioRef}
-        onLoadedMetadata={onLoadedMetadata}
-      />
-      <button onClick={handlePrevious}>
+      {currentTracks.map((currentTrack, idx) => (
+        <div key={currentTrack.id}>
+          <audio
+            src={currentTrack.src}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            ref={(el) => (audioListRef.current[idx] = el)}
+            onLoadedMetadata={onLoadedMetadata}
+          >
+            <p>Ваш браузер не поддерживает встроенное аудио.</p>
+          </audio>
+        </div>
+      ))}
+      <button
+        onClick={handlePrevious}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsSkipStartFill size={20} />
       </button>
-      <button onClick={skipBackward}>
+      <button
+        onClick={skipBackward}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsFillRewindFill size={20} />
       </button>
-      <button onClick={() => setIsPlaying((prev) => !prev)}>
+      <button
+        onClick={() => setIsPlaying((prev) => !prev)}
+        disabled={!currentTracks.length}
+      >
         {isPlaying ? (
           <BsFillPauseFill size={30} />
         ) : (
           <BsFillPlayFill size={30} />
         )}
       </button>
-      <button onClick={skipForward}>
+      <button onClick={handleStopClick} disabled={!currentTracks.length}>
+        <BsStopFill size={30} />
+      </button>
+      <button
+        onClick={skipForward}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsFillFastForwardFill size={20} />
       </button>
-      <button onClick={handleNext}>
+      <button
+        onClick={handleNext}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsSkipEndFill size={20} />
       </button>
-      <button onClick={() => setIsShuffle((prev) => !prev)}>
+      <button
+        onClick={() => setIsShuffle((prev) => !prev)}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsShuffle size={20} className={isShuffle ? "text-[#f50]" : ""} />
       </button>
-      <button onClick={() => setIsRepeat((prev) => !prev)}>
+      <button
+        onClick={() => setIsRepeat((prev) => !prev)}
+        disabled={currentTracks.length > 1 || !currentTracks.length}
+      >
         <BsRepeat size={20} className={isRepeat ? "text-[#f50]" : ""} />
       </button>
     </div>
