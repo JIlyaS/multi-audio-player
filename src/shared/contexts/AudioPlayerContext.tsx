@@ -17,6 +17,8 @@ interface AudioPlayerContextType {
   tracks: Track[];
   currentTrack: Track;
   setCurrentTrack: Dispatch<SetStateAction<Track>>;
+  currentTracks: Track[];
+  setCurrentTracks: Dispatch<SetStateAction<Track[]>>;
   timeProgress: number;
   setTimeProgress: Dispatch<SetStateAction<number>>;
   duration: number;
@@ -27,6 +29,8 @@ interface AudioPlayerContextType {
 
   audioRef: RefObject<HTMLAudioElement | null>;
   progressBarRef: RefObject<HTMLInputElement | null>;
+
+  audioListRef: RefObject<Array<HTMLAudioElement | null>>;
 }
 
 const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
@@ -36,6 +40,12 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
 export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
   const [trackIndex, setTrackIndex] = useState<number>(0);
   const [currentTrack, setCurrentTrack] = useState<Track>(tracks[trackIndex]);
+
+  // INFO: Множественное включение аудио
+  const [currentTracks, setCurrentTracks] = useState<Track[]>([
+    tracks[trackIndex],
+  ]);
+
   const [timeProgress, setTimeProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -43,10 +53,16 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLInputElement>(null);
 
+  const audioListRef = useRef<Array<HTMLAudioElement | null>>([]);
+
   const contextValue = {
     tracks,
     currentTrack,
     setCurrentTrack,
+
+    currentTracks,
+    setCurrentTracks,
+
     timeProgress,
     setTimeProgress,
     duration,
@@ -57,6 +73,7 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
 
     audioRef,
     progressBarRef,
+    audioListRef,
   };
   return (
     <AudioPlayerContext.Provider value={contextValue}>
