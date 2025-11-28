@@ -4,6 +4,8 @@ import { useState } from "react";
 import { RiMenuAddLine } from "react-icons/ri";
 // import { TrackInfo } from "./TrackInfo";
 import { Controls, PlayList, ProgressBar, TrackInfo, VolumeControl } from "../";
+import { SearchInput } from "../SearchInput";
+import { AddPlaylistModal } from "@/features";
 // import { ProgressBar } from "./ProgressBar";
 // import { VolumeControl } from "./VolumeControl";
 // import { PlayList } from "./PlayList";
@@ -23,14 +25,18 @@ export const AudioPlayer = () => {
           <button onClick={() => setOpenDrawer((prev) => !prev)}>
             <RiMenuAddLine />
           </button>
+          <AddPlaylistModal />
         </div>
       </div>
       <div
         className={`transition-max-height duration-300 ease-in-out overflow-hidden ${
-          openDrawer ? "max-h-72" : "max-h-0"
+          openDrawer ? "max-h-none" : "max-h-0"
         }`}
       >
-        <div className="bg-[#4c4848] text-white max-h-72 overflow-y-auto">
+        <div className="bg-[#4c4848] px-[10px] py-[5px]">
+          <SearchInput />
+        </div>
+        <div className="bg-[#4c4848] text-white max-h-none overflow-y-auto">
           <PlayList />
         </div>
       </div>

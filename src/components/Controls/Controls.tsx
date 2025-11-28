@@ -6,15 +6,15 @@ import {
   BsFillRewindFill,
   BsSkipEndFill,
   BsSkipStartFill,
-  BsShuffle,
-  BsRepeat,
+  // BsShuffle,
+  // BsRepeat,
   BsStopFill,
 } from "react-icons/bs";
 
 import "./Controls.module.css";
 
-import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { useAnimation } from "../../shared/hooks/useAnimation";
+import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 
 // INFO: Обеспечивает управление воспроизведением
 export const Controls = () => {
@@ -36,8 +36,8 @@ export const Controls = () => {
     audioListRef,
   } = useAudioPlayerContext();
 
-  const [isShuffle, setIsShuffle] = useState<boolean>(false);
-  const [isRepeat, setIsRepeat] = useState<boolean>(false);
+  const [isShuffle] = useState<boolean>(false);
+  const [isRepeat] = useState<boolean>(false);
 
   const onLoadedMetadata = () => {
     const seconds = audioRef.current?.duration;
@@ -102,11 +102,27 @@ export const Controls = () => {
       //   console.log("currentTrackIds", currentTrackIds, idx);
       //   audioListRef.current[idx]?.play();
       // });
-      currentTracks.forEach((_, idx) => audioListRef.current[idx]?.play());
+      currentTracks.forEach((currentTrack, idx) => {
+        if (currentTrack.type === "playlist") {
+          currentTrack.tracks.forEach((_, idx) => {
+            audioListRef.current[idx]?.play();
+          });
+          return;
+        }
+        audioListRef.current[idx]?.play();
+      });
       startAnimation();
     } else {
       // audioRef.current?.pause();
-      currentTracks.forEach((_, idx) => audioListRef.current[idx]?.pause());
+      currentTracks.forEach((currentTrack, idx) => {
+        if (currentTrack.type === "playlist") {
+          currentTrack.tracks.forEach((_, idx) => {
+            audioListRef.current[idx]?.pause();
+          });
+          return;
+        }
+        audioListRef.current[idx]?.pause();
+      });
       if (playAnimationRef.current !== null) {
         cancelAnimationFrame(playAnimationRef.current);
         playAnimationRef.current = null;
@@ -155,19 +171,39 @@ export const Controls = () => {
 
   return (
     <div className="flex gap-4 items-center">
-      {currentTracks.map((currentTrack, idx) => (
-        <div key={currentTrack.id}>
-          <audio
-            src={currentTrack.src}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            ref={(el) => (audioListRef.current[idx] = el)}
-            onLoadedMetadata={onLoadedMetadata}
-          >
-            <p>Ваш браузер не поддерживает встроенное аудио.</p>
-          </audio>
-        </div>
-      ))}
+      {currentTracks
+        .filter((currentTrack) => currentTrack.type === "playlist")
+        .map((currentTrack) => (
+          <div key={currentTrack.id} className="absolute">
+            {currentTrack.tracks.map((track, idx) => (
+              <audio
+                key={track}
+                src={track}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                ref={(el) => (audioListRef.current[idx] = el)}
+                onLoadedMetadata={onLoadedMetadata}
+              >
+                <p>Ваш браузер не поддерживает встроенное аудио.</p>
+              </audio>
+            ))}
+          </div>
+        ))}
+      {currentTracks
+        .filter((currentTrack) => currentTrack.type === "track")
+        .map((currentTrack, idx) => (
+          <div key={currentTrack.id} className="absolute">
+            <audio
+              src={currentTrack?.src}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              ref={(el) => (audioListRef.current[idx] = el)}
+              onLoadedMetadata={onLoadedMetadata}
+            >
+              <p>Ваш браузер не поддерживает встроенное аудио.</p>
+            </audio>
+          </div>
+        ))}
       <button
         onClick={handlePrevious}
         disabled={currentTracks.length > 1 || !currentTracks.length}
@@ -205,18 +241,18 @@ export const Controls = () => {
       >
         <BsSkipEndFill size={20} />
       </button>
-      <button
+      {/* <button
         onClick={() => setIsShuffle((prev) => !prev)}
         disabled={currentTracks.length > 1 || !currentTracks.length}
       >
         <BsShuffle size={20} className={isShuffle ? "text-[#f50]" : ""} />
-      </button>
-      <button
+      </button> */}
+      {/* <button
         onClick={() => setIsRepeat((prev) => !prev)}
         disabled={currentTracks.length > 1 || !currentTracks.length}
       >
         <BsRepeat size={20} className={isRepeat ? "text-[#f50]" : ""} />
-      </button>
+      </button> */}
     </div>
   );
 };
