@@ -1,0 +1,5 @@
+.modalHeader {
+  & button {
+    display: none;
+  }
+}

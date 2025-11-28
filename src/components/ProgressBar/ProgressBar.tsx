@@ -4,13 +4,27 @@ import "./ProgressBar.module.css";
 
 // INFO: Показывает ход текущего трека
 export const ProgressBar = () => {
-  const { audioRef, progressBarRef, timeProgress, duration, setTimeProgress } =
-    useAudioPlayerContext();
+  const {
+    // audioRef,
+    audioListRef,
+    progressBarRef,
+    timeProgress,
+    duration,
+    setTimeProgress,
+  } = useAudioPlayerContext();
 
   const handleProgressChange = () => {
-    if (audioRef.current && progressBarRef.current) {
+    if (audioListRef.current.length && progressBarRef.current) {
       const newTime = Number(progressBarRef.current.value);
-      audioRef.current.currentTime = newTime;
+
+      audioListRef.current.forEach((audio) => {
+        if (!audio) {
+          return;
+        }
+
+        audio.currentTime = newTime;
+      });
+
       setTimeProgress(newTime);
 
       progressBarRef.current.style.setProperty(

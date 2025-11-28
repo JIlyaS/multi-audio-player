@@ -9,16 +9,25 @@ import {
   type FC,
   type PropsWithChildren,
 } from "react";
+// import { debounce } from "lodash";
 
-import { tracks } from "../../mock/mock";
-import type { Track } from "../types";
+import { mockTracks } from "../../mock/mock";
+import type { Playlist, Track } from "../types";
+// import { debounce } from "@/shared/helpers/debounce";
 
 interface AudioPlayerContextType {
-  tracks: Track[];
-  currentTrack: Track;
-  setCurrentTrack: Dispatch<SetStateAction<Track>>;
-  currentTracks: Track[];
-  setCurrentTracks: Dispatch<SetStateAction<Track[]>>;
+  // TODO: Старая конфигурация
+  currentTrack: Track | Playlist;
+  setCurrentTrack: Dispatch<SetStateAction<Track | Playlist>>;
+
+  tracks: (Track | Playlist)[];
+  setTracks: Dispatch<SetStateAction<(Track | Playlist)[]>>;
+  searchTracks: (Track | Playlist)[];
+  setSearchTracks: Dispatch<SetStateAction<(Track | Playlist)[]>>;
+  currentTracks: (Track | Playlist)[];
+  searchValue: string;
+  setSearchValue: Dispatch<SetStateAction<string>>;
+  setCurrentTracks: Dispatch<SetStateAction<(Track | Playlist)[]>>;
   timeProgress: number;
   setTimeProgress: Dispatch<SetStateAction<number>>;
   duration: number;
@@ -26,6 +35,8 @@ interface AudioPlayerContextType {
   setTrackIndex: Dispatch<SetStateAction<number>>;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
+
+  // onSearchResult: (value: string) => void;
 
   audioRef: RefObject<HTMLAudioElement | null>;
   progressBarRef: RefObject<HTMLInputElement | null>;
@@ -38,13 +49,23 @@ const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(
 );
 
 export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [tracks, setTracks] = useState(mockTracks as (Track | Playlist)[]);
   const [trackIndex, setTrackIndex] = useState<number>(0);
-  const [currentTrack, setCurrentTrack] = useState<Track>(tracks[trackIndex]);
+
+  const [searchTracks, setSearchTracks] = useState<(Track | Playlist)[]>([]);
+
+  // INFO: Выбор по умолчанию первого выбранного трека
+  const [currentTrack, setCurrentTrack] = useState<Track | Playlist>(
+    tracks[trackIndex]
+  );
 
   // INFO: Множественное включение аудио
-  const [currentTracks, setCurrentTracks] = useState<Track[]>([
+  const [currentTracks, setCurrentTracks] = useState<(Track | Playlist)[]>([
     tracks[trackIndex],
   ]);
+
+  // INFO: Поиск по наименованию трека
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const [timeProgress, setTimeProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
@@ -57,11 +78,15 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const contextValue = {
     tracks,
+    setTracks,
+
     currentTrack,
     setCurrentTrack,
 
     currentTracks,
     setCurrentTracks,
+    searchValue,
+    setSearchValue,
 
     timeProgress,
     setTimeProgress,
@@ -71,10 +96,14 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
     isPlaying,
     setIsPlaying,
 
+    searchTracks,
+    setSearchTracks,
+
     audioRef,
     progressBarRef,
     audioListRef,
   };
+
   return (
     <AudioPlayerContext.Provider value={contextValue}>
       {children}

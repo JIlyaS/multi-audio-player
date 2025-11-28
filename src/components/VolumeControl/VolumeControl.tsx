@@ -7,14 +7,19 @@ export const VolumeControl = () => {
   const [volume, setVolume] = useState<number>(60);
   const [muteVolume, setMuteVolume] = useState(false);
 
-  const { audioRef } = useAudioPlayerContext();
+  const { audioListRef } = useAudioPlayerContext();
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-      audioRef.current.muted = muteVolume;
+    if (audioListRef.current.length) {
+      audioListRef.current.forEach((audio) => {
+        if (!audio) {
+          return;
+        }
+        audio.volume = volume / 100;
+        audio.muted = muteVolume;
+      });
     }
-  }, [volume, audioRef, muteVolume]);
+  }, [volume, audioListRef, muteVolume]);
 
   const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value));
