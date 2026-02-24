@@ -26,14 +26,16 @@ export const CustomModal: FC<PropsWithChildren<CustomModalProps>> = ({
   onSubmit,
 }) => {
   return (
-    <Modal show={isOpen} onHide={onClose} size="lg">
+    <Modal show={isOpen} centered onHide={onClose} size="lg">
       <Modal.Header
         closeButton
         className={clsx("bg-[#2e2d2d]", styles.modalHeader)}
       >
         <Modal.Title className="text-white">{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body className="bg-[#2e2d2d] text-white p-0!">
+      <Modal.Body
+        className={clsx("bg-[#2e2d2d] text-white p-0!", styles.modalContent)}
+      >
         {children}
       </Modal.Body>
       {!isForm && (

@@ -2,13 +2,9 @@
 
 import { useState } from "react";
 import { RiMenuAddLine } from "react-icons/ri";
-// import { TrackInfo } from "./TrackInfo";
 import { Controls, PlayList, ProgressBar, TrackInfo, VolumeControl } from "../";
 import { SearchInput } from "../SearchInput";
 import { AddPlaylistModal } from "@/features";
-// import { ProgressBar } from "./ProgressBar";
-// import { VolumeControl } from "./VolumeControl";
-// import { PlayList } from "./PlayList";
 
 export const AudioPlayer = () => {
   const [openDrawer, setOpenDrawer] = useState(true);

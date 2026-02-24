@@ -15,94 +15,116 @@ import "./Controls.module.css";
 
 import { useAnimation } from "../../shared/hooks/useAnimation";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
+import { useUnit } from "effector-react";
+import { updateCurrentTrack } from "@/models/track";
+import {
+  $currentTrackPlaylistList,
+  $trackPlaylistList,
+  updateTrackIndex,
+} from "@/models/shared";
 
 // INFO: Обеспечивает управление воспроизведением
 export const Controls = () => {
-  // currentTrack.src
   const { playAnimationRef, startAnimation, updateProgress } = useAnimation();
   const {
-    tracks,
-    // currentTrack,
-    currentTracks,
-    // setCurrentTracks,
     isPlaying,
     setDuration,
-    setTrackIndex,
-    setCurrentTrack,
     setIsPlaying,
 
-    audioRef,
     progressBarRef,
     audioListRef,
   } = useAudioPlayerContext();
+
+  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
+  const trackPlaylistList = useUnit($trackPlaylistList);
 
   const [isShuffle] = useState<boolean>(false);
   const [isRepeat] = useState<boolean>(false);
 
   const onLoadedMetadata = () => {
-    const seconds = audioRef.current?.duration;
-    if (seconds !== undefined) {
-      setDuration(seconds);
+    const durationList = audioListRef.current
+      .map((item) => item?.duration)
+      .flat()
+      .filter((item) => !!item);
+    
+    const isValidNumber = durationList.every((duration) => duration !== undefined);
+
+    if (durationList !== undefined && isValidNumber) {
+      const maxValueSeconds = Math.max(...durationList);
+      
+
+      setDuration(maxValueSeconds);
       if (progressBarRef.current) {
-        progressBarRef.current.max = seconds.toString();
+        progressBarRef.current.max = maxValueSeconds.toString();
       }
     }
   };
 
   const skipForward = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime += 15;
-      updateProgress();
+    if (audioListRef.current) {
+      audioListRef.current.forEach((audio) => {
+        if (audio) {
+          audio.currentTime += 15;
+        }
+      });
+      updateProgress(); 
     }
   };
 
   const skipBackward = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime -= 15;
+    if (audioListRef.current) {
+      audioListRef.current.forEach((audio) => {
+        if (audio) {
+          audio.currentTime -= 15;
+        }
+      });
       updateProgress();
     }
   };
 
   const handleStopClick = () => {
-    currentTracks.forEach((_, idx) => {
+    currentTrackPlaylistList.forEach((_, idx) => {
       audioListRef.current[idx]?.pause();
       setIsPlaying(false);
     });
   };
 
   const handlePrevious = useCallback(() => {
-    setTrackIndex((prev) => {
-      const newIndex = isShuffle
-        ? Math.floor(Math.random() * tracks.length)
-        : prev === 0
-        ? tracks.length - 1
-        : prev - 1;
-      setCurrentTrack(tracks[newIndex]);
-      return newIndex;
-    });
-  }, [isShuffle, setCurrentTrack, setTrackIndex, tracks]);
+    // setTrackIndex((prev) => {
+    //   const newIndex = isShuffle
+    //     ? Math.floor(Math.random() * tracks.length)
+    //     : prev === 0
+    //     ? tracks.length - 1
+    //     : prev - 1;
+    //   setCurrentTrack(tracks[newIndex]);
+    //   return newIndex;
+    // });
+  }, [isShuffle, updateCurrentTrack, updateTrackIndex, trackPlaylistList]);
 
   const handleNext = useCallback(() => {
-    setTrackIndex((prev) => {
-      const newIndex = isShuffle
-        ? Math.floor(Math.random() * tracks.length)
-        : prev >= tracks.length - 1
-        ? 0
-        : prev + 1;
-      setCurrentTrack(tracks[newIndex]);
-      return newIndex;
-    });
-  }, [isShuffle, setCurrentTrack, setTrackIndex, tracks]);
+    // updateTrackIndex((prev) => {
+    //   const newIndex = isShuffle
+    //     ? Math.floor(Math.random() * tracks.length)
+    //     : prev >= tracks.length - 1
+    //     ? 0
+    //     : prev + 1;
+    //   setCurrentTrack(tracks[newIndex]);
+    //   return newIndex;
+    // });
+  }, [isShuffle, updateCurrentTrack, updateTrackIndex, trackPlaylistList]);
 
   useEffect(() => {
     if (isPlaying) {
+      // ----------------------
       // audioRef.current?.play();
       // const currentTrackIds = currentTracks.map((item) => item.id);
       // currentTrackIds.forEach((idx) => {
       //   console.log("currentTrackIds", currentTrackIds, idx);
       //   audioListRef.current[idx]?.play();
       // });
-      currentTracks.forEach((currentTrack, idx) => {
+      // ----------------------
+
+      currentTrackPlaylistList.forEach((currentTrack, idx) => {
         if (currentTrack.type === "playlist") {
           currentTrack.tracks.forEach((_, idx) => {
             audioListRef.current[idx]?.play();
@@ -113,8 +135,7 @@ export const Controls = () => {
       });
       startAnimation();
     } else {
-      // audioRef.current?.pause();
-      currentTracks.forEach((currentTrack, idx) => {
+      currentTrackPlaylistList.forEach((currentTrack, idx) => {
         if (currentTrack.type === "playlist") {
           currentTrack.tracks.forEach((_, idx) => {
             audioListRef.current[idx]?.pause();
@@ -139,46 +160,58 @@ export const Controls = () => {
     isPlaying,
     startAnimation,
     updateProgress,
-    audioRef,
     audioListRef,
-    currentTracks,
+    currentTrackPlaylistList,
     playAnimationRef,
   ]);
 
   useEffect(() => {
-    const currentAudioRef = audioRef.current;
-    if (currentAudioRef) {
-      currentAudioRef.onended = () => {
-        if (isRepeat) {
-          currentAudioRef.play();
-        } else {
-          handleNext();
+    const currentAudioListRef = audioListRef.current;
+
+    if (currentAudioListRef) {
+      currentAudioListRef.forEach((currentAudioItemRef) => {
+        if (currentAudioItemRef) {
+          currentAudioItemRef.onended = () => {
+            if (isRepeat) {
+              currentAudioItemRef.play();
+            } else {
+              handleNext();
+            }
+          };
         }
-      };
+      });
     }
+
     return () => {
-      if (currentAudioRef) {
-        currentAudioRef.onended = null;
+      if (currentAudioListRef) {
+        currentAudioListRef.forEach((currentAudioItemRef) => {
+          if (currentAudioItemRef) {
+            currentAudioItemRef.onended = null;
+          }
+        });
       }
     };
-  }, [isRepeat, handleNext, audioRef]);
+  }, [isRepeat, handleNext, audioListRef]);
 
   useEffect(() => {
-    audioListRef.current = audioListRef.current.slice(0, currentTracks.length);
-  }, [audioListRef, currentTracks]);
-
-  console.log("currentTracks", currentTracks);
+    if (currentTrackPlaylistList.length) {
+      audioListRef.current = audioListRef.current.slice(
+        0,
+        currentTrackPlaylistList.length,
+      );
+    }
+  }, [audioListRef, currentTrackPlaylistList.length]);
 
   return (
     <div className="flex gap-4 items-center">
-      {currentTracks
+      {currentTrackPlaylistList
         .filter((currentTrack) => currentTrack.type === "playlist")
         .map((currentTrack) => (
           <div key={currentTrack.id} className="absolute">
             {currentTrack.tracks.map((track, idx) => (
               <audio
-                key={track}
-                src={track}
+                key={track.link}
+                src={track.link}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 ref={(el) => (audioListRef.current[idx] = el)}
@@ -189,12 +222,12 @@ export const Controls = () => {
             ))}
           </div>
         ))}
-      {currentTracks
-        .filter((currentTrack) => currentTrack.type === "track")
+      {currentTrackPlaylistList
+        .filter((currentTrack) => currentTrack?.type === "track")
         .map((currentTrack, idx) => (
-          <div key={currentTrack.id} className="absolute">
+          <div key={currentTrack?.id} className="absolute">
             <audio
-              src={currentTrack?.src}
+              src={currentTrack?.link}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               ref={(el) => (audioListRef.current[idx] = el)}
@@ -206,19 +239,25 @@ export const Controls = () => {
         ))}
       <button
         onClick={handlePrevious}
-        disabled={currentTracks.length > 1 || !currentTracks.length}
+        disabled={
+          currentTrackPlaylistList.length > 1 ||
+          !currentTrackPlaylistList.length
+        }
       >
         <BsSkipStartFill size={20} />
       </button>
       <button
         onClick={skipBackward}
-        disabled={currentTracks.length > 1 || !currentTracks.length}
+        disabled={
+          currentTrackPlaylistList.length > 1 ||
+          !currentTrackPlaylistList.length
+        }
       >
         <BsFillRewindFill size={20} />
       </button>
       <button
         onClick={() => setIsPlaying((prev) => !prev)}
-        disabled={!currentTracks.length}
+        disabled={!currentTrackPlaylistList.length}
       >
         {isPlaying ? (
           <BsFillPauseFill size={30} />
@@ -226,18 +265,27 @@ export const Controls = () => {
           <BsFillPlayFill size={30} />
         )}
       </button>
-      <button onClick={handleStopClick} disabled={!currentTracks.length}>
+      <button
+        onClick={handleStopClick}
+        disabled={!currentTrackPlaylistList.length}
+      >
         <BsStopFill size={30} />
       </button>
       <button
         onClick={skipForward}
-        disabled={currentTracks.length > 1 || !currentTracks.length}
+        disabled={
+          currentTrackPlaylistList.length > 1 ||
+          !currentTrackPlaylistList.length
+        }
       >
         <BsFillFastForwardFill size={20} />
       </button>
       <button
         onClick={handleNext}
-        disabled={currentTracks.length > 1 || !currentTracks.length}
+        disabled={
+          currentTrackPlaylistList.length > 1 ||
+          !currentTrackPlaylistList.length
+        }
       >
         <BsSkipEndFill size={20} />
       </button>
