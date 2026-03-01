@@ -1,4 +1,26 @@
 import type { Playlist } from "@/shared/types";
-import { createStore } from "effector";
+import { createEffect, createEvent, createStore, sample } from "effector";
 
-export const $playlists = createStore<Playlist[]>([]);
+const loadPlaylists = createEvent();
+
+const $playlists = createStore<Playlist[]>([]);
+
+const fetchPlaylistsFx = createEffect(async () => {
+  const response = await fetch(`http://localhost:8000/api/v1/playlists`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch tracks");
+  }
+  return await response.json();
+});
+
+sample({
+  clock: fetchPlaylistsFx.doneData,
+  target: $playlists,
+});
+
+sample({
+  clock: loadPlaylists,
+  target: [fetchPlaylistsFx],
+});
+
+export { $playlists, loadPlaylists };

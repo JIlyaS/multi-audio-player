@@ -2,7 +2,7 @@ export interface Track {
   id: string;
   type: "track";
   title: string;
-  src: string;
+  link: string;
   author: string;
   thumbnail?: string;
 }
@@ -11,7 +11,7 @@ export interface Playlist {
   id: string;
   type: "playlist";
   title: string;
-  tracks: string[];
+  tracks: Track[];
   author: string;
   thumbnail?: string;
 }

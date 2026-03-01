@@ -13,33 +13,39 @@ export const useAnimation = (): ReturnAnimationParams => {
   const {
     duration,
     setTimeProgress,
-    audioRef,
     progressBarRef,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     audioListRef,
   } = useAudioPlayerContext();
 
   const updateProgress = useCallback(() => {
-    if (audioRef.current && progressBarRef.current && duration) {
-      const currentTime = audioRef.current.currentTime;
+    if (audioListRef.current && progressBarRef.current && duration) {
+      const maxCurrentTime = Math.max(
+        ...audioListRef.current
+          .map(
+            (audioItemRef: HTMLAudioElement | null) =>
+              audioItemRef?.currentTime || 0,
+          ),
+      );
+
+      const currentTime = maxCurrentTime;
       setTimeProgress(currentTime);
       progressBarRef.current.value = currentTime.toString();
       progressBarRef.current.style.setProperty(
         "--range-progress",
-        `${(currentTime / duration) * 100}%`
+        `${(currentTime / duration) * 100}%`,
       );
     }
-  }, [duration, setTimeProgress, audioRef, progressBarRef]);
+  }, [duration, setTimeProgress, audioListRef, progressBarRef]);
 
   const startAnimation = useCallback(() => {
-    if (audioRef.current && progressBarRef.current && duration) {
+    if (audioListRef.current && progressBarRef.current && duration) {
       const animate = () => {
         updateProgress();
         playAnimationRef.current = requestAnimationFrame(animate);
       };
       playAnimationRef.current = requestAnimationFrame(animate);
     }
-  }, [updateProgress, duration, audioRef, progressBarRef]);
+  }, [updateProgress, duration, audioListRef, progressBarRef]);
 
   return {
     playAnimationRef,

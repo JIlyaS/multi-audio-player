@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.trackInfoContent {
+    @apply w-[200px];
+}

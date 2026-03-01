@@ -1,53 +1,68 @@
 // INFO: Отобразить список доступных треков
 import Form from "react-bootstrap/Form";
+import { useUnit } from "effector-react";
+
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { PlayItem } from "@/components";
 import { UpdatePlaylistModal } from "@/features";
+import {
+  loadTracks,
+} from "@/models/track";
+import { loadPlaylists } from "@/models/playlist";
+import {
+  $currentTrackPlaylistList,
+  $trackPlaylistList,
+  updateCurrentTrackPlaylistList,
+} from "@/models/shared";
 
 export const PlayList = () => {
-  const { currentTrack, currentTracks, tracks, searchValue, setCurrentTracks } =
-    useAudioPlayerContext();
+  const { searchValue, setDuration } = useAudioPlayerContext();
+
+  const trackPlaylistList = useUnit($trackPlaylistList);
+  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
+  // TODO: Скорее всего не здесь должно быть
+  const onLoadTracks = useUnit(loadTracks);
+  const onLoadPlaylists = useUnit(loadPlaylists);
 
   const filteredTracks = useMemo(
     () =>
-      tracks.filter((track) =>
-        track.title.toLowerCase().includes(searchValue.toLowerCase())
+      trackPlaylistList.filter((track) =>
+        track.title.toLowerCase().includes(searchValue.toLowerCase()),
       ),
-    [searchValue, tracks]
+    [searchValue, trackPlaylistList],
   );
 
-  // useEffect(() => {
-  //   if (searchValue) {
-  //     onTracks((tracks) =>
-  //       tracks.filter((track) => track.title.includes(searchValue))
-  //     );
-  //   } else {
-  //     onTracks((tracks) =>
-  //       tracks.filter((track) => track.title.includes(searchValue))
-  //     );
-  //   }
-  // }, [searchValue]);
-
-  // const handleClick = (track: Track | Playlist) => {
-  //   setCurrentTrack(track);
-  //   setIsPlaying(true);
-  // };
+  useEffect(() => {
+    onLoadTracks();
+    onLoadPlaylists();
+  }, [onLoadPlaylists, onLoadTracks]);
 
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {
-    const isSelected = currentTracks.some((item) => item.id === id);
-    const currentSelectedTrack = tracks.find((track) => track.id === id);
+    const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
+    const currentSelectedTrack = trackPlaylistList.find(
+      (track) => track.id === id,
+    );
 
     if (currentSelectedTrack) {
       if (isSelected) {
-        setCurrentTracks((prevValue) =>
-          prevValue.filter((item) => item.id !== id)
+
+        updateCurrentTrackPlaylistList(
+          currentTrackPlaylistList.filter((item) => item.id !== id),
         );
+
+            // TODO: Переделать логику в будущем
+            if (currentTrackPlaylistList.filter((item) => item.id !== id).length === 0) {
+              setDuration(0);
+            }
         return;
       }
 
-      setCurrentTracks((prevValue) => [...prevValue, currentSelectedTrack]);
+      updateCurrentTrackPlaylistList([
+        ...currentTrackPlaylistList,
+        currentSelectedTrack,
+      ]);
     }
   };
 
@@ -60,9 +75,8 @@ export const PlayList = () => {
       {filteredTracks.map((track, index) => (
         <li
           key={index}
-          className={`flex items-center gap-3 p-[0.5rem_10px] cursor-pointer  justify-between ${
-            currentTrack.title === track.title ? "bg-[#a66646]" : ""
-          }`}
+          className={`flex items-center gap-3 p-[0.5rem_10px] cursor-pointer  justify-between 
+          `}
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
@@ -75,7 +89,9 @@ export const PlayList = () => {
             <Form.Check
               type="checkbox"
               id={String(index)}
-              checked={currentTracks.some((item) => item.id === track.id)}
+              checked={currentTrackPlaylistList.some(
+                (item) => item.id === track.id,
+              )}
               onClick={(evt) => evt.stopPropagation()}
               onChange={() => handleSelectAudioChange(track.id)}
             />
@@ -83,7 +99,7 @@ export const PlayList = () => {
           </div>
           {track.type === "playlist" && (
             <div>
-              <UpdatePlaylistModal />
+              <UpdatePlaylistModal trackId={track.id} />
             </div>
           )}
         </li>
