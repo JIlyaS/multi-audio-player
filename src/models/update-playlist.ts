@@ -1,6 +1,7 @@
 import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
 import { loadTracks } from "@/models/track";
+import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 interface IFieldCheckboxUpdate {
@@ -14,7 +15,7 @@ const fieldUpdate = createEvent();
 const sendSubmitFormFx = createEffect(
   async ({ id, title, author, trackIds }: { id?: string, title: string; author?: string | undefined, trackIds: string[] }) => {
     try {
-      await fetch(`http://localhost:8000/api/v1/playlists`, {
+      await fetch(getApiUrl("/playlists"), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

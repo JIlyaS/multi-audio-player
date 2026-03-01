@@ -1,21 +1,31 @@
 import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
 import { loadTracks } from "@/models/track";
+import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import type { Track } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 interface IFieldCheckboxUpdate {
   name: string;
   value: Track[];
-};
+}
 
 const createSubmitForm = createEvent<React.FormEvent<HTMLFormElement>>();
 const fieldUpdate = createEvent();
 
 const sendSubmitFormFx = createEffect(
-  async ({ title, author, trackIds }: { title: string; author?: string | undefined, trackIds: string[] }) => {
+  async ({
+    title,
+    author,
+    trackIds,
+  }: {
+    title: string;
+    author?: string | undefined;
+    trackIds: string[];
+  }) => {
     try {
-      await fetch("http://localhost:8000/api/v1/playlists", {
+      // TODO: Переделать под библиотеку
+      await fetch(getApiUrl("/playlists"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,11 +66,13 @@ createSubmitForm.watch((evt: React.FormEvent<HTMLFormElement>) => {
   evt.preventDefault();
 });
 
-
 sample({
   clock: createSubmitForm,
   source: $form,
-  fn: (data) => ({...data, trackIds: data.tracks.filter(item => !!item).map((item) => item.id)}),
+  fn: (data) => ({
+    ...data,
+    trackIds: data.tracks.filter((item) => !!item).map((item) => item.id),
+  }),
   target: sendSubmitFormFx,
 });
 
@@ -75,7 +87,6 @@ sample({
   fn: () => true,
   target: $isCreatePlaylistSuccess,
 });
-
 
 sample({
   clock: sendSubmitFormFx.doneData,
@@ -92,4 +103,3 @@ export {
   handleChange,
   handleCheckboxListChange,
 };
-
