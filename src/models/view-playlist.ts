@@ -9,7 +9,7 @@ const $currentPlaylist = createStore<Playlist | null>(null).reset(resetForm);
 
 const viewCardPlaylistFx = createEffect(async (id: string) => {
   try {
-    const response = await fetch(`http://localhost:8000/playlists/${id}`, {
+    const response = await fetch(`http://localhost:8000/api/v1/playlists/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -15,7 +15,7 @@ const fieldUpdate = createEvent();
 const sendSubmitFormFx = createEffect(
   async ({ title, author, trackIds }: { title: string; author?: string | undefined, trackIds: string[] }) => {
     try {
-      await fetch("http://localhost:8000/playlists", {
+      await fetch("http://localhost:8000/api/v1/playlists", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

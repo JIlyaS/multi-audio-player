@@ -6,7 +6,7 @@ const loadPlaylists = createEvent();
 const $playlists = createStore<Playlist[]>([]);
 
 const fetchPlaylistsFx = createEffect(async () => {
-  const response = await fetch(`http://localhost:8000/playlists`);
+  const response = await fetch(`http://localhost:8000/api/v1/playlists`);
   if (!response.ok) {
     throw new Error("Failed to fetch tracks");
   }
