@@ -1,5 +1,5 @@
-
 import { $form, resetForm } from "@/models/playlist-form";
+import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import type { Playlist } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
@@ -9,7 +9,7 @@ const $currentPlaylist = createStore<Playlist | null>(null).reset(resetForm);
 
 const viewCardPlaylistFx = createEffect(async (id: string) => {
   try {
-    const response = await fetch(`http://localhost:8000/api/v1/playlists/${id}`, {
+    const response = await fetch(getApiUrl(`/playlists/${id}`), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,12 @@ const $isViewPlaylistLoading = viewCardPlaylistFx.pending;
 
 sample({
   clock: viewCardPlaylistFx.doneData,
-  fn: (data: Playlist) => ({ id: data.id, title: data.title, author: data.author, tracks: data.tracks }),
+  fn: (data: Playlist) => ({
+    id: data.id,
+    title: data.title,
+    author: data.author,
+    tracks: data.tracks,
+  }),
   target: $form,
 });
 
@@ -46,4 +51,9 @@ sample({
   target: viewCardPlaylistFx,
 });
 
-export { $currentPlaylist, $viewPlaylistError, $isViewPlaylistLoading, viewCardPlaylist };
+export {
+  $currentPlaylist,
+  $viewPlaylistError,
+  $isViewPlaylistLoading,
+  viewCardPlaylist,
+};
