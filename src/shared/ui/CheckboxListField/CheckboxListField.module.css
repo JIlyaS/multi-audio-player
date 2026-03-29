@@ -1,4 +1,16 @@
+@import "tailwindcss";
+
 .trackPlaylistList {
-    height: 450px;
+    /* @apply  */
+    height: 100%;
+    max-height: calc(100% - 360px);
     overflow-y: auto;
 }
+
+.trackListEmpty {
+    /* @apply h-[400px] text-center; */
+    height: 100%;
+    max-height: calc(100% - 360px);
+    overflow-y: auto;
+    text-align: center;
+  }

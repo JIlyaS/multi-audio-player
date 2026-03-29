@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+.playListEmpty {
+  @apply h-[400px] text-center;
+}
+
+.playListLoad {
+  @apply flex items-center justify-center bg-[#4c4848] text-white h-[400px] overflow-y-auto;
+}
+
+.playListBtnGroup {
+  @apply flex gap-3 p-[0.5rem_10px] cursor-pointer;
+}
+
+.playListList {
+  @apply bg-[#4c4848] text-white h-[400px] overflow-y-auto;
+}
+
+.playListItem {
+  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer  justify-between;
+}
+
+.playListCheckbox {
+  @apply flex items-center gap-3;
+}

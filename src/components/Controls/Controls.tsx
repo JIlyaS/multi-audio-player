@@ -41,6 +41,9 @@ export const Controls = () => {
   const [isShuffle] = useState<boolean>(false);
   const [isRepeat] = useState<boolean>(false);
 
+  const isDisabledButtons =
+    currentTrackPlaylistList.length > 1 || !currentTrackPlaylistList.length;
+
   const onLoadedMetadata = () => {
     const durationList = audioListRef.current
       .map((item) => item?.duration)
@@ -239,55 +242,58 @@ export const Controls = () => {
         ))}
       <button
         onClick={handlePrevious}
-        disabled={
-          currentTrackPlaylistList.length > 1 ||
-          !currentTrackPlaylistList.length
-        }
+        disabled={isDisabledButtons}
       >
-        <BsSkipStartFill size={20} />
+        <BsSkipStartFill
+          size={20}
+          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+        />
       </button>
       <button
         onClick={skipBackward}
-        disabled={
-          currentTrackPlaylistList.length > 1 ||
-          !currentTrackPlaylistList.length
-        }
+        disabled={isDisabledButtons}
       >
-        <BsFillRewindFill size={20} />
+        <BsFillRewindFill
+          size={20}
+          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+        />
       </button>
       <button
         onClick={() => setIsPlaying((prev) => !prev)}
         disabled={!currentTrackPlaylistList.length}
       >
         {isPlaying ? (
-          <BsFillPauseFill size={30} />
+          <BsFillPauseFill
+            size={30}
+            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+          />
         ) : (
-          <BsFillPlayFill size={30} />
+          <BsFillPlayFill
+            size={30}
+            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+          />
         )}
       </button>
       <button
         onClick={handleStopClick}
         disabled={!currentTrackPlaylistList.length}
       >
-        <BsStopFill size={30} />
+        <BsStopFill
+          size={30}
+          color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+        />
       </button>
-      <button
-        onClick={skipForward}
-        disabled={
-          currentTrackPlaylistList.length > 1 ||
-          !currentTrackPlaylistList.length
-        }
-      >
-        <BsFillFastForwardFill size={20} />
+      <button onClick={skipForward} disabled={isDisabledButtons}>
+        <BsFillFastForwardFill
+          size={20}
+          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+        />
       </button>
-      <button
-        onClick={handleNext}
-        disabled={
-          currentTrackPlaylistList.length > 1 ||
-          !currentTrackPlaylistList.length
-        }
-      >
-        <BsSkipEndFill size={20} />
+      <button onClick={handleNext} disabled={isDisabledButtons}>
+        <BsSkipEndFill
+          size={20}
+          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+        />
       </button>
       {/* <button
         onClick={() => setIsShuffle((prev) => !prev)}

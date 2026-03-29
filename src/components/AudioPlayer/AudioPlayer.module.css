@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+.audioPlayerTopBlock {
+  @apply min-h-8 bg-[#2e2d2d] flex flex-col gap-9 lg:flex-row justify-between items-center text-white p-[0.5rem_10px];
+}
+
+.audioPlayerTopControlBlock {
+  @apply w-full flex flex-col items-center gap-1 m-auto flex-1;
+}
+
+.audioPlayerTopMenuBlock {
+  @apply flex items-center flex-col gap-2 text-gray-400;
+}
+
+.audioPlayerTopBtnBlock {
+    @apply flex gap-5;
+  }
+  
+
+/* .audioPlayerContentBlock {
+  @apply transition-max-height duration-300 ease-in-out overflow-hidden;
+} */
+
+.audioPlayerSearchWrapper {
+  @apply bg-[#4c4848] px-[10px] py-[5px];
+}
+
+.audioPlayerPlaylistBlock {
+    @apply bg-[#4c4848] text-white max-h-none overflow-y-auto;
+}

@@ -4,7 +4,7 @@ export interface Track {
   title: string;
   link: string;
   author: string;
-  thumbnail?: string;
+  // thumbnail?: string;
 }
 
 export interface Playlist {
@@ -12,6 +12,8 @@ export interface Playlist {
   type: "playlist";
   title: string;
   tracks: Track[];
+  // userId?: string;
+  isPublic: boolean;
   author: string;
-  thumbnail?: string;
+  // thumbnail?: string;
 }

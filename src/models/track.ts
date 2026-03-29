@@ -16,6 +16,8 @@ const fetchTracksFx = createEffect(async () => {
   return await response.json();
 });
 
+const $isTracksLoading = fetchTracksFx.pending;
+
 sample({
   clock: fetchTracksFx.doneData,
   target: $tracks,
@@ -26,4 +28,4 @@ sample({
   target: [fetchTracksFx],
 });
 
-export { $tracks, loadTracks, updateCurrentTrack };
+export { $tracks, $isTracksLoading, loadTracks, updateCurrentTrack };

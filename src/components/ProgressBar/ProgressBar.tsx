@@ -35,16 +35,16 @@ export const ProgressBar = () => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-5 w-full">
-      <span>{formatTime(timeProgress)}</span>
+    <div className="flex items-center justify-center gap-4 w-full">
+      <span className="inline-block w-[50px]">{formatTime(timeProgress)}</span>
       <input
-        className="max-w-[80%] bg-gray-300"
+        className="max-w-[142px] bg-gray-300"
         type="range"
         ref={progressBarRef}
         defaultValue="0"
         onChange={handleProgressChange}
       />
-      <span>{formatTime(duration)}</span>
+      <span className="inline-block w-[50px]">{formatTime(duration)}</span>
     </div>
   );
 };

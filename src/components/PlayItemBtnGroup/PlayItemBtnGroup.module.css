@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.deleteButton {
+    @apply p-[5px];
+}
+
+.playListUpdateBtnWrap {
+    @apply flex justify-between gap-3 mr-[8px];
+}

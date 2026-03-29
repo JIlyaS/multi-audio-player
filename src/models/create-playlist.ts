@@ -1,28 +1,40 @@
 import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
+import { $currentTracksForForm } from "@/models/shared";
 import { loadTracks } from "@/models/track";
 import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import type { Track } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
+// import { persist } from "effector-storage/local"; 
 
 interface IFieldCheckboxUpdate {
   name: string;
   value: Track[];
 }
+interface ISubmitForm {
+  title: string;
+  author?: string | undefined;
+  // INFO: Это поле на данный момент имеет отношение только к фронту и создаётся и сохраняется только на фронте, в базе это не относится ни к какому пользователю
+  // userId: string;
+  isPublic: boolean;
+  trackIds: string[];
+}
+
+interface ISimpleCreateForm {
+  title: string;
+  author?: string | undefined;
+  // userId: string;
+  isPublic: boolean;
+  tracks: Track[];
+}
 
 const createSubmitForm = createEvent<React.FormEvent<HTMLFormElement>>();
+const createSimplePlaylist = createEvent<ISimpleCreateForm>();
 const fieldUpdate = createEvent();
+const openCreateModalClick = createEvent();
 
 const sendSubmitFormFx = createEffect(
-  async ({
-    title,
-    author,
-    trackIds,
-  }: {
-    title: string;
-    author?: string | undefined;
-    trackIds: string[];
-  }) => {
+  async ({ title, author, isPublic, trackIds }: ISubmitForm) => {
     try {
       // TODO: Переделать под библиотеку
       await fetch(getApiUrl("/playlists"), {
@@ -30,7 +42,13 @@ const sendSubmitFormFx = createEffect(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, author, trackIds }),
+        body: JSON.stringify({ 
+          title, 
+          author, 
+          isPublic, 
+          // userId,
+          trackIds
+        }),
       });
     } catch {
       throw new Error("Failed to send form");
@@ -67,10 +85,33 @@ createSubmitForm.watch((evt: React.FormEvent<HTMLFormElement>) => {
 });
 
 sample({
+  clock: openCreateModalClick,
+  source: $currentTracksForForm,
+  fn: (tracks: Track[]) => ({
+    id: "",
+    title: "",
+    author: "",
+    isPublic: false,
+    tracks: tracks,
+  }),
+  target: $form,
+});
+
+sample({
   clock: createSubmitForm,
   source: $form,
   fn: (data) => ({
     ...data,
+    trackIds: data.tracks.filter((item) => !!item).map((item) => item.id),
+  }),
+  target: sendSubmitFormFx,
+});
+
+sample({
+  clock: createSimplePlaylist,
+  fn: (data) => ({
+    ...data,
+    isPublic: false,
     trackIds: data.tracks.filter((item) => !!item).map((item) => item.id),
   }),
   target: sendSubmitFormFx,
@@ -99,6 +140,8 @@ export {
   $isCreatePlaylistSuccess,
   $isCreatePlaylistLoading,
   createSubmitForm,
+  createSimplePlaylist,
+  openCreateModalClick,
   fieldUpdate,
   handleChange,
   handleCheckboxListChange,

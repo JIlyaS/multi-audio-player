@@ -26,7 +26,15 @@ export const CustomModal: FC<PropsWithChildren<CustomModalProps>> = ({
   onSubmit,
 }) => {
   return (
-    <Modal show={isOpen} centered onHide={onClose} size="lg">
+    <Modal
+      show={isOpen}
+      centered
+      onBackdropClick={(evt) => evt.stopPropagation()}
+      contentClassName="h-full max-h-[80vh] overflow-hidden!"
+      scrollable
+      onHide={onClose}
+      size="lg"
+    >
       <Modal.Header
         closeButton
         className={clsx("bg-[#2e2d2d]", styles.modalHeader)}
@@ -34,7 +42,11 @@ export const CustomModal: FC<PropsWithChildren<CustomModalProps>> = ({
         <Modal.Title className="text-white">{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body
-        className={clsx("bg-[#2e2d2d] text-white p-0!", styles.modalContent)}
+        className={clsx(
+          "bg-[#2e2d2d] text-white p-0! overflow-hidden",
+          styles.modalContent,
+        )}
+        onClick={(evt) => evt.stopPropagation()}
       >
         {children}
       </Modal.Body>
