@@ -6,8 +6,6 @@ const $tracks = createStore<Track[]>([]);
 
 const loadTracks = createEvent();
 
-const updateCurrentTrack = createEvent();
-
 const fetchTracksFx = createEffect(async () => {
   const response = await fetch(getApiUrl("/tracks"));
   if (!response.ok) {
@@ -15,6 +13,8 @@ const fetchTracksFx = createEffect(async () => {
   }
   return await response.json();
 });
+
+const $isTracksLoading = fetchTracksFx.pending;
 
 sample({
   clock: fetchTracksFx.doneData,
@@ -26,4 +26,4 @@ sample({
   target: [fetchTracksFx],
 });
 
-export { $tracks, loadTracks, updateCurrentTrack };
+export { $tracks, $isTracksLoading, loadTracks };

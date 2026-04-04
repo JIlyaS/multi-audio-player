@@ -4,15 +4,21 @@ import { useStoreMap } from "effector-react";
 import type { FC } from "react";
 import { Form } from "react-bootstrap";
 
+import styles from "./InputField.module.css";
+
 interface Props {
   id: string;
   name: "title" | "author";
   placeholder: string;
   type?: string;
-  label: string;   
+  label: string; 
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
-export const InputField: FC<Props> = ({ id, name, label, placeholder }) => {
+export const InputField: FC<Props> = ({ id, name, label, placeholder, required = false, disabled = false, readOnly = false }) => {
+
     const value = useStoreMap({
       store: $form,
       keys: [name],
@@ -21,14 +27,17 @@ export const InputField: FC<Props> = ({ id, name, label, placeholder }) => {
 
   
     return (
-      <Form.Group className="mb-3 mt-3 px-[16px]" controlId={id}>
+      <Form.Group className={styles.inputFieldGroup} controlId={id}>
         <Form.Label>{label}</Form.Label>
         <Form.Control
           type={name}
           name={name}
           value={value}
+          autoComplete="off"
           placeholder={placeholder}
-          required
+          required={required}
+          disabled={disabled}
+          readOnly={readOnly}
           onChange={handleChange}
         />
         {/* <Form.Text className="text-muted">

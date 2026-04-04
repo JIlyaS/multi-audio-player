@@ -34,6 +34,7 @@ sample({
   fn: (data: Playlist) => ({
     id: data.id,
     title: data.title,
+    isPublic: data.isPublic,
     author: data.author,
     tracks: data.tracks,
   }),

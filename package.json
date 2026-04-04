@@ -1,11 +1,12 @@
 {
-  "name": "vite",
+  "name": "multiaudioplayer",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:watch": "vite build --watch",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -16,6 +17,7 @@
     "clsx": "^2.1.1",
     "effector": "^23.4.4",
     "effector-react": "^23.3.0",
+    "effector-storage": "^8.0.0",
     "lodash": "^4.17.21",
     "npm": "^11.10.1",
     "react": "^19.2.0",

@@ -15,6 +15,8 @@ const fetchPlaylistsFx = createEffect(async () => {
   return await response.json();
 });
 
+const $isPlaylistsLoading = fetchPlaylistsFx.pending;
+
 sample({
   clock: fetchPlaylistsFx.doneData,
   target: $playlists,
@@ -25,4 +27,4 @@ sample({
   target: [fetchPlaylistsFx],
 });
 
-export { $playlists, loadPlaylists };
+export { $playlists, $isPlaylistsLoading, loadPlaylists };

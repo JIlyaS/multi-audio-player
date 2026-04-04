@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.checkboxFieldGroup {
+    @apply px-[16px]
+}
