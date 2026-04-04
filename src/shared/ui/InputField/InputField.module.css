@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.inputFieldGroup {
+    @apply mb-3 mt-3 px-[16px];
+}

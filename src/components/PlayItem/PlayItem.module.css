@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+.playItem {
+  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden;
+}
+
+.playItemIconWrap {
+  @apply flex items-center justify-center w-full h-full bg-gray-300 rounded-md;
+}
+
+.playItemIcon {
+  @apply text-xl text-gray-600;
+}
+
+.playItemContent {
+  @apply flex flex-col content-start max-w-[calc(100% - 80px)];
+}
+
+.playItemTitle {
+    @apply font-bold text-sm whitespace-nowrap text-ellipsis overflow-hidden;
+}
+
+.playItemAuthor {
+    @apply text-sm text-gray-400 whitespace-nowrap text-ellipsis overflow-hidden;
+}

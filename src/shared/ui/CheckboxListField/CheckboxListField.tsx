@@ -3,19 +3,31 @@ import { Form } from "react-bootstrap";
 
 import styles from "./CheckboxListField.module.css";
 import type { Track } from "@/shared/types";
-import { type FC } from "react";
+import { useMemo, type FC } from "react";
 import { $form, handleCheckboxListChange } from "@/models/create-playlist";
-import { useStoreMap } from "effector-react";
-import type { IForm } from "@/models/playlist-form";
+import { useStoreMap, useUnit } from "effector-react";
+import {
+  $searchValue,
+  changeSearchValue,
+  type IForm,
+} from "@/models/playlist-form";
+import { SearchInput } from "@/components/SearchInput";
 
 interface Props {
   id: string;
   trackList: Track[];
   label: string;
-  name: 'tracks';
+  name: "tracks";
 }
 
-export const CheckboxListField: FC<Props> = ({ id, trackList, label, name }) => {
+export const CheckboxListField: FC<Props> = ({
+  id,
+  trackList,
+  label,
+  name,
+}) => {
+  const searchValue = useUnit($searchValue);
+  const onChangeSearchValue = useUnit(changeSearchValue);
 
   const trackFormList = useStoreMap({
     store: $form,
@@ -23,6 +35,17 @@ export const CheckboxListField: FC<Props> = ({ id, trackList, label, name }) => 
     fn: (values: IForm) =>
       values[name] && name === "tracks" ? values[name] : [],
   });
+
+  // TODO: Подумать как переделать в будущем
+  const filteredTrackList = useMemo(
+    () =>
+      trackList
+        .filter((item) => item.type === "track")
+        .filter((track) =>
+          track.title.toLowerCase().includes(searchValue.toLowerCase()),
+        ),
+    [searchValue, trackList],
+  );
 
   const handleSelectAudioChange = (id: string) => {
     const isSelected = trackFormList.some((item: Track) => item.id === id);
@@ -36,40 +59,52 @@ export const CheckboxListField: FC<Props> = ({ id, trackList, label, name }) => 
         });
         return;
       }
-    handleCheckboxListChange({
-      name,
-      value: [...trackFormList, currentSelectedTrack],
-    });
+      handleCheckboxListChange({
+        name,
+        value: [...trackFormList, currentSelectedTrack],
+      });
     }
   };
 
   return (
-    <Form.Group className="mb-3 px-[16px]" controlId={id}>
-      <Form.Label>{label}</Form.Label>
-      <ul className={styles.trackPlaylistList}>
-        {trackList.map((track) => (
-          <li
-            key={track.id}
-            className={`flex items-center gap-3 p-[0.5rem_10px] cursor-pointer`}
-            tabIndex={0}
-            onKeyDown={(evt) => {
-              if (evt.key === "Enter" || evt.key === " ") {
-                handleSelectAudioChange(track.id);
-              }
-            }}
-            onClick={() => handleSelectAudioChange(track.id)}
-          >
-            <Form.Check
-              type="checkbox"
-              id={String(track.id)}
-              checked={trackFormList.some((item: Track) => item.id === track.id)}
-              onClick={(evt) => evt.stopPropagation()}
-              onChange={() => handleSelectAudioChange(track.id)}
-            />
-            <PlayItem {...track} />
-          </li>
-        ))}
-      </ul>
+    <Form.Group className="mb-3 px-[16px] h-full" controlId={id}>
+      <Form.Label for="checkbox-list">{label}</Form.Label>
+      <SearchInput
+        searchValue={searchValue}
+        onSearchValue={(value) => onChangeSearchValue(value)}
+        className="mb-2"
+      />
+      {!filteredTrackList.length && (
+        <p className={styles.trackListEmpty}>Ничего не найдено</p>
+      )}
+      {Boolean(filteredTrackList.length) && (
+        <ul className={styles.trackPlaylistList} id="checkbox-list">
+          {filteredTrackList.map((track) => (
+            <li
+              key={track.id}
+              className={`flex items-center gap-3 p-[0.5rem_10px] cursor-pointer`}
+              tabIndex={0}
+              onKeyDown={(evt) => {
+                if (evt.key === "Enter" || evt.key === " ") {
+                  handleSelectAudioChange(track.id);
+                }
+              }}
+              onClick={() => handleSelectAudioChange(track.id)}
+            >
+              <Form.Check
+                type="checkbox"
+                id={String(track.id)}
+                checked={trackFormList.some(
+                  (item: Track) => item.id === track.id,
+                )}
+                onClick={(evt) => evt.stopPropagation()}
+                onChange={() => handleSelectAudioChange(track.id)}
+              />
+              <PlayItem {...track} />
+            </li>
+          ))}
+        </ul>
+      )}
     </Form.Group>
   );
 };

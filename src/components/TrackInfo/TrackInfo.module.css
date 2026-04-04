@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+.trackInfo {
+    @apply flex items-center gap-4 lg:max-w-[315px] w-full;
+}
+
+.trackInfoIconBlock {
+    @apply w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;
+}
+
 .trackInfoContent {
-    @apply w-[200px];
+    @apply max-w-[200px] md:max-w-[350px] lg:max-w-[200px] w-full;
 }

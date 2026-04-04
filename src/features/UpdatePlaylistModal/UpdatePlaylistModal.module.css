@@ -1,4 +1,19 @@
-.trackPlaylistList {
-    height: 450px;
-    overflow-y: auto;
+@import "tailwindcss";
+
+.updatePlaylistModalForm {
+  @apply h-full;
+}
+
+.checkboxWrapper {
+  @apply px-[16px]
+}
+
+.updateButton {
+    @apply p-[5px];
+}
+
+.updatePlaylistModalBtnGroup {
+    @apply absolute bottom-0 left-0 right-0 bg-[#2e2d2d] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
+
+    margin: 0 -10px;
 }
