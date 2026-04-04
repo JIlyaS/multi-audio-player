@@ -13,7 +13,9 @@
 }
 
 .playItemContent {
-  @apply flex flex-col content-start max-w-[calc(100% - 80px)];
+  @apply flex flex-col content-start;
+
+  max-width: calc(100% - 80px);
 }
 
 .playItemTitle {
