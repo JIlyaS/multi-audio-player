@@ -1,7 +1,7 @@
 // INFO: Родительский/Корневой компонент
 
 import { useEffect, useState } from "react";
-import { RiMenuAddLine } from "react-icons/ri";
+import { RiMenuFold3Line, RiMenuFold4Line } from "react-icons/ri";
 import { BsDatabaseAdd } from "react-icons/bs";
 
 import { Controls, PlayList, ProgressBar, TrackInfo, VolumeControl } from "../";
@@ -15,8 +15,8 @@ import { $currentTrackPlaylistList, setUserId } from "@/models/shared";
 import { createSimplePlaylist } from "@/models/create-playlist";
 import { OverlayTooltip } from "@/shared/ui";
 import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
-// import { getLocaleStringDate } from "@/shared/helpers/getLocaleStringDate";
 import { getFormatDate } from "@/shared/helpers/getFormatDate";
+import clsx from "clsx";
 
 export const AudioPlayer = () => {
   const { searchValue, setSearchValue } = useAudioPlayerContext();
@@ -43,16 +43,15 @@ export const AudioPlayer = () => {
     const currentTracks = currentTrackPlaylistList.filter((item) => item.type === "track");
     onCreateSimplePlaylist({
       // TODO: Надо придумать как генерировать title
-      // TODO: Нужен ли здесь автор?
-      title: `Плейлист от ${getFormatDate()}`, // ${getLocaleStringDate()}
-      // author: "Неизвестно",
+      title: `Плейлист от ${getFormatDate()}`,
+      author: "Неизвестно",
       isPublic: false,
       tracks: currentTracks,
     });
   }
 
   return (
-    <div>
+    <div className={styles.audioPlayer}>
       <div className={styles.audioPlayerTopBlock}>
         <TrackInfo />
         <div className={styles.audioPlayerTopControlBlock}>
@@ -62,13 +61,23 @@ export const AudioPlayer = () => {
         <div className={styles.audioPlayerTopMenuBlock}>
           <VolumeControl />
           <div className={styles.audioPlayerTopBtnBlock}>
-            <OverlayTooltip id="view-player" title="Скрыть список">
+            <OverlayTooltip
+              id="view-player"
+              title={openDrawer ? "Скрыть список" : "Открыть список"}
+            >
               <button onClick={() => setOpenDrawer((prev) => !prev)}>
-                <RiMenuAddLine size="20px" color="#FFFFFF" />
+                {openDrawer ? (
+                  <RiMenuFold4Line size="20px" color="#FFFFFF" />
+                ) : (
+                  <RiMenuFold3Line size="20px" color="#FFFFFF" />
+                )}
               </button>
             </OverlayTooltip>
             <AddPlaylistModal />
-            <OverlayTooltip id="simple-create-playlist" title="Быстрое создание плейлиста">
+            <OverlayTooltip
+              id="simple-create-playlist"
+              title="Быстрое создание плейлиста"
+            >
               <button
                 onClick={handleSimplePlaylistCreateClick}
                 disabled={isDisabledCreateSimplePlaylist}
@@ -82,11 +91,11 @@ export const AudioPlayer = () => {
           </div>
         </div>
       </div>
-      {/* TODO: Переделать под обычные стили */}
       <div
-        className={`transition-max-height duration-300 ease-in-out overflow-hidden ${
-          openDrawer ? "max-h-none" : "max-h-0"
-        }`}
+        className={clsx(
+          styles.audioPlayerContentBlock,
+          openDrawer ? "opacity-100" : "opacity-0",
+        )}
       >
         <div className={styles.audioPlayerSearchWrapper}>
           <SearchInput

@@ -23,7 +23,7 @@ export const PlayItem: FC<PlayItemProps> = ({ title, author, type }) => {
       <div className={styles.playItemContent}>
         <p className={styles.playItemTitle}>{title}</p>
         <p className={styles.playItemAuthor}>{author}</p>
-      </div>
+      </div> 
     </>
   );
 };

@@ -19,26 +19,23 @@ export const TrackInfo = () => {
 
   return (
     <div className={styles.trackInfo}>
-      <div className={styles.trackInfoIconBlock}>
-        {/* {firstTrack?.thumbnail ? (
-          <img
-            className="w-full h-full object-cover"
-            src={firstTrack.thumbnail}
-            alt="audio avatar"
-          />
-        ) : ( */}
-          <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded-md">
-            <span className="text-xl text-gray-600">
-              {isPlaylist ? <BsMusicNoteList size="32px" /> : <BsMusicNoteBeamed size="32px" />}
-            </span>
-          </div>
+      <div className="w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;">
+        <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded-md min-w-24">
+          <span className="text-xl text-gray-600">
+            {isPlaylist ? (
+              <BsMusicNoteList size="32px" />
+            ) : (
+              <BsMusicNoteBeamed size="32px" />
+            )}
+          </span>
+        </div>
         {/* )} */}
       </div>
       <div className={styles.trackInfoContent}>
-        <p className="font-bold lg:truncate lg:max-w-64">
+        <p className="font-bold truncate max-w-64">
           {firstTrack?.title || "Композиция не выбрана"}
         </p>
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-400 truncate max-w-64">
           {firstTrack?.author || "Неизвестно"}
         </p>
       </div>

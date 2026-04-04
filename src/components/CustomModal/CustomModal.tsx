@@ -29,7 +29,6 @@ export const CustomModal: FC<PropsWithChildren<CustomModalProps>> = ({
     <Modal
       show={isOpen}
       centered
-      onBackdropClick={(evt) => evt.stopPropagation()}
       contentClassName="h-full max-h-[80vh] overflow-hidden!"
       scrollable
       onHide={onClose}

@@ -1,9 +1,8 @@
-export const generateSafeUUID = () => {
+export const generateSafeUUID = (): string => {
   try {
     // Предпочтительный способ
     if (typeof crypto !== "undefined" && crypto.randomUUID) {
-        console.log('123');
-      return crypto.randomUUID();
+      return String(crypto.randomUUID());
     }
 
     // Fallback для старых сред

@@ -8,12 +8,12 @@ import { persist } from "effector-storage/local";
 const $userId = createStore<string>("");
 const setUserId = createEvent<string>();
 
+// TODO: Подумать, стоит ли использовать этот метод для записи в localStorage
 persist({
   store: $userId,
   key: "userId",
-  serialize: (userId) => String(userId), 
-  def: generateSafeUUID(),
-  sync: "force"
+  def: generateSafeUUID(), 
+  sync: false
 });
 
 sample({
@@ -21,8 +21,6 @@ sample({
   target: $userId
 });
 
-const $trackIndex = createStore<number>(0);
-const updateTrackIndex = createEvent();
 const selectCurrentTrackPlaylistList = createEvent<boolean>();
 
 const $currentTrackPlaylistList = createStore<(Track | Playlist)[]>([]);
@@ -30,8 +28,9 @@ const $isSelectAll = createStore<boolean>(false);
 
 const $currentTracksForForm = createStore<Track[]>([]);
 
-const $trackPlaylistList = combine($tracks, $playlists, (tracks, playlists) => [
-  ...playlists,
+// TODO: не нравиться примесь!
+const $trackPlaylistList = combine($tracks, $playlists, $userId, (tracks, playlists, userId) => [
+  ...playlists.filter((item) => !item?.userId || item?.userId === userId),
   ...tracks,
 ]);
 
@@ -62,13 +61,12 @@ sample({
 });
 
 export {
-  $trackIndex,
+  $userId,
   $currentTrackPlaylistList,
   $trackPlaylistList,
   $isSelectAll,
   $currentTracksForForm,
   setUserId,
-  updateTrackIndex,
   updateCurrentTrackPlaylistList,
   selectCurrentTrackPlaylistList,
 };

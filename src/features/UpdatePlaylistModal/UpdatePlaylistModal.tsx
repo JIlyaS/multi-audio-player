@@ -3,12 +3,12 @@ import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import { CustomModal } from "@/components";
 import { useEffect, useState, type FC } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useUnit } from "effector-react";
+import { useStoreMap, useUnit } from "effector-react";
 import { $trackPlaylistList } from "@/models/shared";
 
 import { viewCardPlaylist } from "@/models/view-playlist";
-import { CheckboxListField, ConfirmModal, InputField, OverlayTooltip } from "@/shared/ui";
-import { resetForm } from "@/models/playlist-form";
+import { CheckboxField, CheckboxListField, ConfirmModal, InputField, OverlayTooltip } from "@/shared/ui";
+import { $form, resetForm, type IForm } from "@/models/playlist-form";
 import {
   $isUpdatePlaylistSuccess,
   updateSubmitForm,
@@ -26,7 +26,6 @@ interface Props {
 
 export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPublic, setIsPublic] = useState(false);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
 
   const trackPlaylistList = useUnit($trackPlaylistList);
@@ -38,6 +37,12 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const onResetForm = useUnit(resetForm);
 
   const trackList = trackPlaylistList.filter((track) => track.type === "track");
+
+  const isPublic = useStoreMap({
+    store: $form,
+    keys: ["isPublic"],
+    fn: (values: IForm) => values["isPublic"] ?? "",
+  });
 
   const onUpdateSubmitForm = useUnit(updateSubmitForm);
 
@@ -62,8 +67,7 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
     onResetForm();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCloseClick = (evt: any) => {
+  const handleCloseClick = (evt: React.MouseEvent<HTMLButtonElement>) => {
     evt.stopPropagation();
     setIsOpen(false);
     onResetForm();
@@ -104,15 +108,12 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
             name="title"
             required
           />
-          <div className={styles.checkboxWrapper}>
-            <Form.Check
-              type="checkbox"
-              id="formPublic"
-              checked={isPublic}
-              onChange={() => setIsPublic((prev) => !prev)}
-              label="Сделать общедоступным"
-            />
-          </div>
+          <CheckboxField 
+            id = "formIsPublic"
+            label = "Сделать общедоступным"
+            name = "isPublic"
+            disabled
+          />
           <InputField
             id="formAuthor"
             label="Автор плейлиста"

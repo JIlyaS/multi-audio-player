@@ -5,6 +5,7 @@ interface IForm {
   id?: string;
   title: string;
   isPublic: boolean;
+  userId?: string | null;
   author?: string | undefined;
   tracks: Track[];
 }
@@ -18,6 +19,7 @@ const $form = createStore<IForm>({
   id: "",
   title: "",
   author: "",
+  userId: null,
   isPublic: false,
   tracks: [],
 }).reset(resetForm);

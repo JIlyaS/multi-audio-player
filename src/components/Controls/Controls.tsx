@@ -16,11 +16,10 @@ import "./Controls.module.css";
 import { useAnimation } from "../../shared/hooks/useAnimation";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 import { useUnit } from "effector-react";
-import { updateCurrentTrack } from "@/models/track";
 import {
   $currentTrackPlaylistList,
   $trackPlaylistList,
-  updateTrackIndex,
+  updateCurrentTrackPlaylistList,
 } from "@/models/shared";
 
 // INFO: Обеспечивает управление воспроизведением
@@ -38,7 +37,7 @@ export const Controls = () => {
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const trackPlaylistList = useUnit($trackPlaylistList);
 
-  const [isShuffle] = useState<boolean>(false);
+  // const [isShuffle] = useState<boolean>(false);
   const [isRepeat] = useState<boolean>(false);
 
   const isDisabledButtons =
@@ -49,12 +48,13 @@ export const Controls = () => {
       .map((item) => item?.duration)
       .flat()
       .filter((item) => !!item);
-    
-    const isValidNumber = durationList.every((duration) => duration !== undefined);
+
+    const isValidNumber = durationList.every(
+      (duration) => duration !== undefined,
+    );
 
     if (durationList !== undefined && isValidNumber) {
       const maxValueSeconds = Math.max(...durationList);
-      
 
       setDuration(maxValueSeconds);
       if (progressBarRef.current) {
@@ -70,7 +70,7 @@ export const Controls = () => {
           audio.currentTime += 15;
         }
       });
-      updateProgress(); 
+      updateProgress();
     }
   };
 
@@ -93,39 +93,31 @@ export const Controls = () => {
   };
 
   const handlePrevious = useCallback(() => {
-    // setTrackIndex((prev) => {
-    //   const newIndex = isShuffle
-    //     ? Math.floor(Math.random() * tracks.length)
-    //     : prev === 0
-    //     ? tracks.length - 1
-    //     : prev - 1;
-    //   setCurrentTrack(tracks[newIndex]);
-    //   return newIndex;
-    // });
-  }, [isShuffle, updateCurrentTrack, updateTrackIndex, trackPlaylistList]);
+    const currentTrackId = trackPlaylistList.findIndex(
+      (item) => item.id === currentTrackPlaylistList[0]?.id,
+    );
+
+    if (trackPlaylistList[currentTrackId - 1]) {
+      updateCurrentTrackPlaylistList([trackPlaylistList[currentTrackId - 1]]);
+
+      audioListRef.current[currentTrackId - 1]?.play();
+    }
+  }, [currentTrackPlaylistList, trackPlaylistList, audioListRef]);
 
   const handleNext = useCallback(() => {
-    // updateTrackIndex((prev) => {
-    //   const newIndex = isShuffle
-    //     ? Math.floor(Math.random() * tracks.length)
-    //     : prev >= tracks.length - 1
-    //     ? 0
-    //     : prev + 1;
-    //   setCurrentTrack(tracks[newIndex]);
-    //   return newIndex;
-    // });
-  }, [isShuffle, updateCurrentTrack, updateTrackIndex, trackPlaylistList]);
+    const currentTrackId = trackPlaylistList.findIndex(
+      (item) => item.id === currentTrackPlaylistList[0]?.id,
+    );
+
+    if (trackPlaylistList[currentTrackId + 1]) {
+      updateCurrentTrackPlaylistList([trackPlaylistList[currentTrackId + 1]]);
+
+      audioListRef.current[currentTrackId + 1]?.play();
+    }
+  }, [currentTrackPlaylistList, trackPlaylistList, audioListRef]);
 
   useEffect(() => {
     if (isPlaying) {
-      // ----------------------
-      // audioRef.current?.play();
-      // const currentTrackIds = currentTracks.map((item) => item.id);
-      // currentTrackIds.forEach((idx) => {
-      //   console.log("currentTrackIds", currentTrackIds, idx);
-      //   audioListRef.current[idx]?.play();
-      // });
-      // ----------------------
 
       currentTrackPlaylistList.forEach((currentTrack, idx) => {
         if (currentTrack.type === "playlist") {
@@ -240,19 +232,13 @@ export const Controls = () => {
             </audio>
           </div>
         ))}
-      <button
-        onClick={handlePrevious}
-        disabled={isDisabledButtons}
-      >
+      <button onClick={handlePrevious} disabled={isDisabledButtons}>
         <BsSkipStartFill
           size={20}
           color={isDisabledButtons ? "#808080" : "#FFFFFF"}
         />
       </button>
-      <button
-        onClick={skipBackward}
-        disabled={isDisabledButtons}
-      >
+      <button onClick={skipBackward} disabled={isDisabledButtons}>
         <BsFillRewindFill
           size={20}
           color={isDisabledButtons ? "#808080" : "#FFFFFF"}
@@ -289,7 +275,10 @@ export const Controls = () => {
           color={isDisabledButtons ? "#808080" : "#FFFFFF"}
         />
       </button>
-      <button onClick={handleNext} disabled={isDisabledButtons}>
+      <button
+        onClick={handleNext}
+        disabled={isDisabledButtons}
+      >
         <BsSkipEndFill
           size={20}
           color={isDisabledButtons ? "#808080" : "#FFFFFF"}

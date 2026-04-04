@@ -66,8 +66,6 @@ export const CheckboxListField: FC<Props> = ({
     }
   };
 
-  console.log("trackList", trackList);
-
   return (
     <Form.Group className="mb-3 px-[16px] h-full" controlId={id}>
       <Form.Label for="checkbox-list">{label}</Form.Label>

@@ -3,22 +3,21 @@ import { BsFolderPlus } from "react-icons/bs";
 import { CustomModal } from "@/components";
 import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useUnit } from "effector-react";
+import { useStoreMap, useUnit } from "effector-react";
 import {
   $isCreatePlaylistSuccess,
   createSubmitForm,
   openCreateModalClick,
 } from "@/models/create-playlist";
 
-import { CheckboxListField, InputField, OverlayTooltip } from "@/shared/ui";
-import { resetForm } from "@/models/playlist-form";
+import { CheckboxField, CheckboxListField, InputField, OverlayTooltip } from "@/shared/ui";
+import { $form, resetForm, type IForm } from "@/models/playlist-form";
 import { $tracks } from "@/models/track";
 
 import styles from "./AddPlaylistModal.module.css";
 
 export const AddPlaylistModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPublic, setIsPublic] = useState(false);
 
   const trackList = useUnit($tracks);
   const isSuccess = useUnit($isCreatePlaylistSuccess);
@@ -26,6 +25,12 @@ export const AddPlaylistModal = () => {
 
   const onOpenCreateModalClick = useUnit(openCreateModalClick);
   const onCreateSubmitForm = useUnit(createSubmitForm);
+
+  const isPublic = useStoreMap({
+    store: $form,
+    keys: ["isPublic"],
+    fn: (values: IForm) => values["isPublic"] ?? "",
+  });
 
   // TODO: Переделать
   useEffect(() => {
@@ -69,15 +74,11 @@ export const AddPlaylistModal = () => {
             type="text"
             required
           />
-          <div className={styles.checkboxWrapper}>
-            <Form.Check
-              type="checkbox"
-              id="formPublic"
-              checked={isPublic}
-              onChange={() => setIsPublic((prev) => !prev)}
-              label="Сделать общедоступным"
-            />
-          </div>
+          <CheckboxField 
+            id = "formIsPublic"
+            label = "Сделать общедоступным"
+            name = "isPublic"
+          />
           <InputField
             id="formAuthor"
             label="Автор плейлиста"

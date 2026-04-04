@@ -17,7 +17,6 @@ export const PlayItemBtnGroup: FC<Props> = ({ trackId }) => {
     const onDeletePlaylist = useUnit(deletePlaylist);
 
   const handleDeleteClick = (trackId: string) => {
-    console.log("trackId", trackId);
     onDeletePlaylist(trackId);
     // TODO: Закрывать модальное окно только после успешного удаления
     setIsConfirmModal(false);

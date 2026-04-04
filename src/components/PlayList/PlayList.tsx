@@ -100,8 +100,6 @@ export const PlayList = () => {
     return <p className={styles.playListEmpty}>Ничего не найдено</p>;
   }
 
-  console.log("filteredTracks", filteredTracks);
-
   return (
     <>
       <div className={styles.playListBtnGroup}>
