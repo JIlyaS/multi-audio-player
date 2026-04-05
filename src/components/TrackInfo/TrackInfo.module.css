@@ -1,13 +1,29 @@
 @import "tailwindcss";
 
 .trackInfo {
-    @apply flex items-center gap-4 lg:max-w-[315px] w-full;
+    @apply flex items-center gap-4 md:flex-col lg:max-w-[315px] lg:flex-row w-full;
+}
+
+.trackInfoWrap {
+    @apply w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;
 }
 
 .trackInfoIconBlock {
-    @apply w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;
+    @apply flex items-center justify-center w-full h-full bg-gray-300 rounded-md min-w-24;
+}
+
+.trackInfoIcon {
+    @apply text-xl text-gray-600;
 }
 
 .trackInfoContent {
     @apply max-w-[200px] md:max-w-[350px] lg:max-w-[200px] w-full;
+}
+
+.trackInfoTitle {
+    @apply font-bold truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start;
+}
+
+.trackInfoAuthor {
+    @apply text-sm text-gray-400 truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start;
 }

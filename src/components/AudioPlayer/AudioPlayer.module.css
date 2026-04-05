@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .audioPlayer {
-    @apply max-w-[380px] md:max-w-[560px] lg:max-w-[1200px];
+    @apply max-w-[380px] md:max-w-[560px] lg:max-w-[1000px];
 
     width: calc(100vw - 4rem);
 }
@@ -15,7 +15,7 @@
 }
 
 .audioPlayerTopMenuBlock {
-  @apply flex items-center flex-col gap-2 text-gray-400;
+  @apply flex items-center flex-col gap-2 text-gray-400 mb-2.5  lg:mb-0;
 }
 
 .audioPlayerTopBtnBlock {

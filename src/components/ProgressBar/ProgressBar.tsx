@@ -1,11 +1,11 @@
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { formatTime } from "../../shared/helpers/formatTime";
-import "./ProgressBar.module.css";
+
+import styles from "./ProgressBar.module.css";
 
 // INFO: Показывает ход текущего трека
 export const ProgressBar = () => {
   const {
-    // audioRef,
     audioListRef,
     progressBarRef,
     timeProgress,
@@ -35,16 +35,20 @@ export const ProgressBar = () => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 w-full">
-      <span className="inline-block w-[50px]">{formatTime(timeProgress)}</span>
+    <div className={styles.progressBar}>
+      <span className={styles.progressBarTimeContent}>
+        {formatTime(timeProgress)}
+      </span>
       <input
-        className="max-w-[142px] bg-gray-300"
+        className={styles.progressTimeInput}
         type="range"
         ref={progressBarRef}
         defaultValue="0"
         onChange={handleProgressChange}
       />
-      <span className="inline-block w-[50px]">{formatTime(duration)}</span>
+      <span className={styles.progressBarTimeContent}>
+        {formatTime(duration)}
+      </span>
     </div>
   );
 };

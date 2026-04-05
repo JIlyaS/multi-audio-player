@@ -10,18 +10,13 @@ export const TrackInfo = () => {
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const firstTrack = currentTrackPlaylistList[0];
 
-  // // TODO: Подумать какую информацию показывать для пользователя
-  // if (!currentTrackPlaylistList[0]) {
-  //   return null;
-  // }
-
   const isPlaylist = currentTrackPlaylistList.some((item) => item.type === "playlist");
 
   return (
     <div className={styles.trackInfo}>
-      <div className="w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;">
-        <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded-md min-w-24">
-          <span className="text-xl text-gray-600">
+      <div className={styles.trackInfoWrap}>
+        <div className={styles.trackInfoIconBlock}>
+          <span className={styles.trackInfoIcon}>
             {isPlaylist ? (
               <BsMusicNoteList size="32px" />
             ) : (
@@ -29,13 +24,12 @@ export const TrackInfo = () => {
             )}
           </span>
         </div>
-        {/* )} */}
       </div>
       <div className={styles.trackInfoContent}>
-        <p className="font-bold truncate max-w-64">
+        <p className={styles.trackInfoTitle}>
           {firstTrack?.title || "Композиция не выбрана"}
         </p>
-        <p className="text-sm text-gray-400 truncate max-w-64">
+        <p className={styles.trackInfoAuthor}>
           {firstTrack?.author || "Неизвестно"}
         </p>
       </div>
