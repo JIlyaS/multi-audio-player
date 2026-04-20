@@ -1,6 +1,7 @@
 import { type FC, type ReactNode } from "react";
 import { Button, Modal } from "react-bootstrap";
 
+import styles from "./ConfirmModal.module.css";
 interface Props {
   title: string;
   description: string;
@@ -22,13 +23,14 @@ export const ConfirmModal: FC<Props> = ({
   return (
     <>
       {children}
-
       <Modal show={show} centered onHide={onClose}>
-        <Modal.Header closeButton>
+        <Modal.Header className={styles.confirmModalHeader} closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{description}</Modal.Body>
-        <Modal.Footer>
+        <Modal.Body className={styles.confirmModalContent}>
+          {description}
+        </Modal.Body>
+        <Modal.Footer className={styles.confirmModalFooter}>
           <Button variant="secondary" onClick={onClose}>
             Закрыть
           </Button>

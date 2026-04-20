@@ -39,8 +39,12 @@ export const PlayList = () => {
 
   const filteredTracks = useMemo(
     () =>
-      trackPlaylistList.filter((track) =>
-        track.title.toLowerCase().includes(searchValue.toLowerCase()),
+      trackPlaylistList.filter(
+        (track) =>
+          track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+          track.tags.some((tag) =>
+            tag.toLowerCase().includes(searchValue.toLowerCase()),
+          ),
       ),
     [searchValue, trackPlaylistList],
   );
@@ -97,7 +101,11 @@ export const PlayList = () => {
   }
 
   if (!filteredTracks.length) {
-    return <p className={styles.playListEmpty}>Ничего не найдено</p>;
+    return (
+      <div className={styles.playListEmpty}>
+        <p className={styles.playListEmptyContent}>Ничего не найдено</p>
+      </div>
+    );
   }
 
   return (

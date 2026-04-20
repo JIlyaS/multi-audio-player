@@ -36,6 +36,7 @@ sample({
     title: data.title,
     isPublic: data.isPublic,
     author: data.author,
+    tags: data.tags,
     tracks: data.tracks,
   }),
   target: $form,
