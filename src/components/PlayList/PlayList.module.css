@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
 .playListEmpty {
-  @apply h-[447px] text-center;
+  @apply flex justify-center h-[447px];
+}
+
+.playListEmptyContent {
+  @apply mt-[10px];
 }
 
 .playListLoad {
@@ -13,7 +17,7 @@
 }
 
 .playListList {
-  @apply bg-[#4c4848] text-white h-[400px] overflow-y-auto;
+  @apply bg-[#4c4848] text-white h-[400px] overflow-y-auto m-0! p-0!;
 }
 
 .playListItem {

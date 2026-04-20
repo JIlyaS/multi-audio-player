@@ -4,9 +4,12 @@ import Form from "react-bootstrap/Form";
 import { type ChangeEvent, type FC } from "react";
 import { BsSearch, BsXLg } from "react-icons/bs";
 import { Button } from "react-bootstrap";
+import clsx from "clsx";
 // import debounce from "lodash/debounce";
 // import { debounce } from "@/shared/helpers/debounce";
 // import type { Track } from "../../shared/types";
+
+import styles from "./SearchInput.module.css";
 
 interface Props {
   searchValue: string;
@@ -37,19 +40,19 @@ export const SearchInput: FC<Props> = ({searchValue, className, onSearchValue}) 
   };
 
   return (
-    <div className={`relative ${className}`}>
-      <BsSearch className="absolute text-white top-[11px] left-[10px]" />
+    <div className={clsx(styles.searchInputWrapper, className)}>
+      <BsSearch className={styles.searchIcon} />
       <Form.Control
         name="search"
         id="search"
         // placeholder="Поиск..."
-        className="bg-[#4c4848]! text-white indent-[25px]"
+        className={styles.searchInputControl}
         value={searchValue}
         onChange={handleSearchChange}
       />
       {searchValue && (
         <Button
-          className="absolute text-white top-[4px] right-[1px]"
+          className={styles.searchButton}
           variant="link"
           onClick={handleSearchDeleteClick}
         >

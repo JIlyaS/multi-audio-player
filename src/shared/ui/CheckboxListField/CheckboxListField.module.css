@@ -1,16 +1,21 @@
 @import "tailwindcss";
 
+.checkboxListField {
+    @apply mb-3 px-[16px]! h-full;
+}
+
 .trackPlaylistList {
-    /* @apply  */
-    height: 100%;
+    @apply h-full overflow-y-auto;
+
     max-height: calc(100% - 360px);
-    overflow-y: auto;
 }
 
 .trackListEmpty {
-    /* @apply h-[400px] text-center; */
-    height: 100%;
+    @apply flex items-center justify-center h-full overflow-y-auto text-center;
+
     max-height: calc(100% - 360px);
-    overflow-y: auto;
-    text-align: center;
+  }
+
+  .trackPlaylistListItem {
+    @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer;
   }

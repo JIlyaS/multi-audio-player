@@ -13,7 +13,7 @@
 }
 
 .playItemContent {
-  @apply flex flex-col content-start;
+  @apply flex flex-col content-start text-left;
 
   max-width: calc(100% - 80px);
 }
@@ -23,5 +23,9 @@
 }
 
 .playItemAuthor {
-    @apply text-sm text-gray-400 whitespace-nowrap text-ellipsis overflow-hidden;
+    @apply mb-[3px] text-sm text-gray-400 whitespace-nowrap text-ellipsis overflow-hidden;
+}
+
+.playItemTagList {
+  @apply flex gap-[6px] items-center;
 }

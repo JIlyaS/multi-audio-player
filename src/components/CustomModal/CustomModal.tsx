@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { type FC, type PropsWithChildren } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -29,28 +28,22 @@ export const CustomModal: FC<PropsWithChildren<CustomModalProps>> = ({
     <Modal
       show={isOpen}
       centered
-      contentClassName="h-full max-h-[80vh] overflow-hidden!"
+      contentClassName={styles.customModal}
       scrollable
       onHide={onClose}
       size="lg"
     >
-      <Modal.Header
-        closeButton
-        className={clsx("bg-[#2e2d2d]", styles.modalHeader)}
-      >
-        <Modal.Title className="text-white">{title}</Modal.Title>
+      <Modal.Header closeButton className={styles.modalHeader}>
+        <Modal.Title className={styles.modalHeaderTitle}>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body
-        className={clsx(
-          "bg-[#2e2d2d] text-white p-0! overflow-hidden",
-          styles.modalContent,
-        )}
+        className={styles.modalContent}
         onClick={(evt) => evt.stopPropagation()}
       >
         {children}
       </Modal.Body>
       {!isForm && (
-        <Modal.Footer className="bg-[#2e2d2d]!">
+        <Modal.Footer className={styles.modalFooter}>
           <Button variant="secondary" onClick={onClose}>
             {closeBtnText}
           </Button>

@@ -1,5 +1,5 @@
 export const formatTime = (time: number | undefined): string => {
-  if (typeof time === "number" && !isNaN(time)) {
+  if (typeof time === "number" && !isNaN(time) && isFinite(time)) {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
 

@@ -21,6 +21,7 @@ interface Props {
 }
 
 export const CheckboxListField: FC<Props> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   id,
   trackList,
   label,
@@ -42,7 +43,10 @@ export const CheckboxListField: FC<Props> = ({
       trackList
         .filter((item) => item.type === "track")
         .filter((track) =>
-          track.title.toLowerCase().includes(searchValue.toLowerCase()),
+          track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+        track.tags.some((tag) =>
+          tag.toLowerCase().includes(searchValue.toLowerCase()),
+        ),
         ),
     [searchValue, trackList],
   );
@@ -67,22 +71,24 @@ export const CheckboxListField: FC<Props> = ({
   };
 
   return (
-    <Form.Group className="mb-3 px-[16px] h-full" controlId={id}>
-      <Form.Label for="checkbox-list">{label}</Form.Label>
+    <Form.Group className={styles.checkboxListField}>
+      <Form.Label htmlFor="checkbox-list">{label}</Form.Label>
       <SearchInput
         searchValue={searchValue}
         onSearchValue={(value) => onChangeSearchValue(value)}
         className="mb-2"
       />
       {!filteredTrackList.length && (
-        <p className={styles.trackListEmpty}>Ничего не найдено</p>
+        <div className={styles.trackListEmpty}>
+          <p>Ничего не найдено</p>
+        </div>
       )}
       {Boolean(filteredTrackList.length) && (
         <ul className={styles.trackPlaylistList} id="checkbox-list">
           {filteredTrackList.map((track) => (
             <li
               key={track.id}
-              className={`flex items-center gap-3 p-[0.5rem_10px] cursor-pointer`}
+              className={styles.trackPlaylistListItem}
               tabIndex={0}
               onKeyDown={(evt) => {
                 if (evt.key === "Enter" || evt.key === " ") {

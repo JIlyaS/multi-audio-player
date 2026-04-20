@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.confirmModalHeader {
+    @apply bg-[#2e2d2d] text-white;
+}
+
+.confirmModalContent {
+    @apply bg-[#2e2d2d] text-white;
+}
+
+.confirmModalFooter {
+    @apply bg-[#2e2d2d]! text-white;
+}
