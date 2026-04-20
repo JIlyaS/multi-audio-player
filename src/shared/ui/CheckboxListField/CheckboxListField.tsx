@@ -14,15 +14,13 @@ import {
 import { SearchInput } from "@/components/SearchInput";
 
 interface Props {
-  id: string;
+  id?: string;
   trackList: Track[];
   label: string;
   name: "tracks";
 }
 
 export const CheckboxListField: FC<Props> = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  id,
   trackList,
   label,
   name,

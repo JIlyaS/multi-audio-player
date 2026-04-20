@@ -14,6 +14,7 @@ export const mockTracks: (Track | Playlist)[] = [
     title: "01. Sound_09534_StormC",
     link: audio1,
     author: "Владимир",
+    tags: [],
     // thumbnail: audioSingle,
   },
   {
@@ -22,6 +23,7 @@ export const mockTracks: (Track | Playlist)[] = [
     title: "02. Sound_09442_Bass_Mute",
     link: audio2,
     author: "Владислав",
+    tags: [],
     // thumbnail: audioSingle,
   },
   {
@@ -31,6 +33,7 @@ export const mockTracks: (Track | Playlist)[] = [
     isPublic: true,
     tracks: [],
     author: "Илья",
+    tags: [],
     // thumbnail: audioMultiple,
   },
 ];
