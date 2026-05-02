@@ -5,13 +5,13 @@
 }
 
 .searchIcon {
-    @apply absolute text-white top-[11px] left-[10px];
+    @apply absolute text-[#262626] dark:text-white top-[11px] left-[10px];
 }
 
 .searchInputControl {
-    @apply bg-[#4c4848]! text-white! indent-[25px];
+    @apply bg-[#F6F6F6] dark:bg-[#4c4848]! text-[#262626] dark:text-white! indent-[25px] border-gray-500;
 }
 
 .searchButton {
-    @apply absolute text-white top-[4px] right-[1px];
+    @apply absolute text-[#262626] dark:text-white top-[4px] right-[1px];
 }

@@ -50,7 +50,8 @@ export const AddPlaylistModal = () => {
             onOpenCreateModalClick();
           }}
         >
-          <BsFolderPlus size="20px" color="#ffffff" />
+          {/* color="#ffffff" */}
+          <BsFolderPlus size="20px" color="#262626" />
         </button>
       </OverlayTooltip>
       <CustomModal
@@ -74,10 +75,10 @@ export const AddPlaylistModal = () => {
             type="text"
             required
           />
-          <CheckboxField 
-            id = "formIsPublic"
-            label = "Сделать общедоступным"
-            name = "isPublic"
+          <CheckboxField
+            id="formIsPublic"
+            label="Сделать общедоступным"
+            name="isPublic"
           />
           <InputField
             id="formAuthor"

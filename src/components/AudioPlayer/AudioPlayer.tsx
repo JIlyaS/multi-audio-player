@@ -51,8 +51,16 @@ export const AudioPlayer = () => {
   }
 
   return (
-    <div className={styles.audioPlayer}>
-      <div className={styles.audioPlayerTopBlock}>
+    <div
+      className={clsx(styles.audioPlayer, {
+        [styles.audioPlayerVisible]: openDrawer,
+      })}
+    >
+      <div
+        className={clsx(styles.audioPlayerTopBlock, {
+          [styles.audioPlayerTopBlockVisible]: openDrawer,
+        })}
+      >
         <TrackInfo />
         <div className={styles.audioPlayerTopControlBlock}>
           <Controls />
@@ -67,9 +75,11 @@ export const AudioPlayer = () => {
             >
               <button onClick={() => setOpenDrawer((prev) => !prev)}>
                 {openDrawer ? (
-                  <RiMenuFold4Line size="20px" color="#FFFFFF" />
+                  <RiMenuFold4Line size="20px" color="#262626" />
                 ) : (
-                  <RiMenuFold3Line size="20px" color="#FFFFFF" />
+                  // color="#FFFFFF"
+                  <RiMenuFold3Line size="20px" color="#262626" />
+                  // color="#FFFFFF"
                 )}
               </button>
             </OverlayTooltip>
@@ -84,7 +94,8 @@ export const AudioPlayer = () => {
               >
                 <BsDatabaseAdd
                   size="20px"
-                  color={isDisabledCreateSimplePlaylist ? "#808080" : "#FFFFFF"}
+                  // color={isDisabledCreateSimplePlaylist ? "#808080" : "#FFFFFF"}
+                  color={isDisabledCreateSimplePlaylist ? "#bdbdbd" : "#262626"}
                 />
               </button>
             </OverlayTooltip>
@@ -94,7 +105,7 @@ export const AudioPlayer = () => {
       <div
         className={clsx(
           styles.audioPlayerContentBlock,
-          openDrawer ? "opacity-100" : "opacity-0",
+          openDrawer ? "opacity-100" : "opacity-0 invisible",
         )}
       >
         <div className={styles.audioPlayerSearchWrapper}>

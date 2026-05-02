@@ -235,13 +235,16 @@ export const Controls = () => {
       <button onClick={handlePrevious} disabled={isDisabledButtons}>
         <BsSkipStartFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          // color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          color={isDisabledButtons ? "#BDBDBD" : "#000000"}
         />
       </button>
       <button onClick={skipBackward} disabled={isDisabledButtons}>
         <BsFillRewindFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          // dark mode
+          // color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          color={isDisabledButtons ? "#BDBDBD" : "#000000"}
         />
       </button>
       <button
@@ -251,12 +254,15 @@ export const Controls = () => {
         {isPlaying ? (
           <BsFillPauseFill
             size={30}
-            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            // dark mode
+            // color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            color={!currentTrackPlaylistList.length ? "#BDBDBD" : "#000000"}
           />
         ) : (
           <BsFillPlayFill
             size={30}
-            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            // color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            color={!currentTrackPlaylistList.length ? "#BDBDBD" : "#000000"}
           />
         )}
       </button>
@@ -266,22 +272,22 @@ export const Controls = () => {
       >
         <BsStopFill
           size={30}
-          color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+          // color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+          color={!currentTrackPlaylistList.length ? "#BDBDBD" : "#000000"}
         />
       </button>
       <button onClick={skipForward} disabled={isDisabledButtons}>
         <BsFillFastForwardFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          // color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          color={isDisabledButtons ? "#BDBDBD" : "#000000"}
         />
       </button>
-      <button
-        onClick={handleNext}
-        disabled={isDisabledButtons}
-      >
+      <button onClick={handleNext} disabled={isDisabledButtons}>
         <BsSkipEndFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          // color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          color={isDisabledButtons ? "#BDBDBD" : "#000000"}
         />
       </button>
       {/* <button

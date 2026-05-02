@@ -1,24 +1,24 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .customModal {
   @apply h-full max-h-[80vh] overflow-hidden!;
 }
 
 .modalHeader {
-  @apply bg-[#2e2d2d];
+  @apply bg-main-background;
   & button {
     display: none;
   }
 }
 
 .modalHeaderTitle {
-  @apply text-white;
+  @apply text-[#262626] dark:text-white;
 }
 
 .modalContent {
-  @apply bg-[#2e2d2d] text-white p-0! overflow-y-hidden!;
+  @apply dark:bg-[#2e2d2d] text-[#262626] dark:text-white p-0! overflow-y-hidden!;
 }
 
 .modalFooter {
-  @apply bg-[#2e2d2d]!;
+  @apply dark:bg-[#2e2d2d]!;
 }

@@ -11,11 +11,15 @@
 }
 
 .trackListEmpty {
-    @apply flex items-center justify-center h-full overflow-y-auto text-center;
+    @apply flex items-center justify-center h-full overflow-y-auto text-center text-[#262626] dark:text-white;
 
     max-height: calc(100% - 360px);
   }
 
-  .trackPlaylistListItem {
-    @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer;
-  }
+.trackPlaylistListItem {
+  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer hover:bg-[#f6f6f6] duration-150 rounded-xl;
+}
+
+.trackPlaylistListCheck input {
+  @apply w-[18px] h-[18px] border-gray-500 cursor-pointer; 
+}

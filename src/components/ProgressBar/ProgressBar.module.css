@@ -30,7 +30,9 @@
   input[type="range"]::before {
     content: "";
     height: 2px;
-    background: #f50;
+    /* background: #f50; */
+    /* background: #4C5C8C; */
+    background: #FFC283;
     width: var(--range-progress);
     border-bottom-left-radius: 2px;
     border-top-left-radius: 2px;
@@ -41,7 +43,9 @@
   
   /* played progress length - firefox */
   input[type="range"]::-moz-range-progress {
-    background: #f50;
+    /* background: #f50; */
+    /* background: #4C5C8C; */
+    background: #FFC283;
     border-bottom-left-radius: 2px;
     border-top-left-radius: 2px;
     height: 2px;
@@ -59,13 +63,17 @@
   }
   
   .volumn::-webkit-slider-thumb {
-    background-color: #f50;
+    /* background-color: #f50; */
+    /* background-color: #4C5C8C; */
+    background-color: #FFC283;
   }
   
   /* dragging thumb - chrome and safari */
   input[type="range"]:active::-webkit-slider-thumb {
     transform: scale(1.2);
-    background-color: #f50;
+    /* background-color: #f50; */
+    /* background-color: #4C5C8C; */
+    background-color: #FFC283;
   }
   
   /* slider thumb - firefox */
@@ -73,7 +81,9 @@
     height: 8px;
     width: 8px;
     border-radius: 50%;
-    background: #f50;
+    /* background: #f50; */
+    /* background: #4C5C8C; */
+    background: #FFC283;
     cursor: pointer;
     border: transparent;
     position: relative;
@@ -81,12 +91,14 @@
   /* dragging thumb - firefox */
   input[type="range"]:active::-moz-range-thumb {
     transform: scale(1.2);
-    background-color: #f50;
+    /* background-color: #f50; */
+    /* background-color: #4C5C8C; */
+    background-color: #FFC283;
   }
 }
 
 .progressBarTimeContent {
-  @apply inline-block w-[50px];
+  @apply inline-block w-[50px] text-[#262626] dark:text-white;
 }
 
 .progressTimeInput {

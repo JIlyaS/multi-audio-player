@@ -38,6 +38,7 @@ export const CheckboxField: FC<Props> = ({
         name={name}
         checked={value}
         label={label}
+        className={styles.checkboxField}
         disabled={disabled}
         required={required}
         readOnly={readOnly}

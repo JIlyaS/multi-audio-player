@@ -98,6 +98,7 @@ export const CheckboxListField: FC<Props> = ({
               <Form.Check
                 type="checkbox"
                 id={String(track.id)}
+                className={styles.trackPlaylistListCheck}
                 checked={trackFormList.some(
                   (item: Track) => item.id === track.id,
                 )}

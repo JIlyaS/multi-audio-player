@@ -4,10 +4,23 @@
     @apply max-w-[380px] md:max-w-[560px] lg:max-w-[1000px];
 
     width: calc(100vw - 4rem);
+    border-radius: 12px;
+}
+
+.audioPlayerVisible {
+  /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
 .audioPlayerTopBlock {
-  @apply min-h-8 bg-[#2e2d2d] flex flex-col gap-9 lg:flex-row justify-between items-center text-white p-[0.5rem_10px];
+  @apply min-h-8 bg-[#FDFDFD] dark:bg-[#2e2d2d] flex flex-col gap-9 lg:flex-row justify-between items-center text-white p-[0.5rem_10px] rounded-t-xl;
+
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  border-radius: 12px;
+}
+
+.audioPlayerTopBlockVisible {
+  box-shadow: none;
 }
 
 .audioPlayerTopControlBlock {
@@ -24,13 +37,13 @@
   
 
 .audioPlayerContentBlock {
-  @apply transition-opacity delay-150 duration-150 ease-in-out overflow-hidden;
+  @apply transition-opacity delay-150 duration-150 ease-in-out overflow-hidden rounded-b-xl;
 }
 
 .audioPlayerSearchWrapper {
-  @apply bg-[#4c4848] px-[10px] py-[5px];
+  @apply bg-[#F6F6F6] dark:bg-[#4c4848] px-[10px] py-[5px];
 }
 
 .audioPlayerPlaylistBlock {
-    @apply bg-[#4c4848] text-white max-h-none overflow-y-auto;
+    @apply bg-[#F6F6F6] dark:bg-[#4c4848] text-white max-h-none overflow-y-auto;
 }

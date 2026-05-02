@@ -3,3 +3,7 @@
 .inputFieldGroup {
     @apply mb-3 mt-3 px-[16px];
 }
+
+.inputField {
+    @apply border-gray-500;
+}
