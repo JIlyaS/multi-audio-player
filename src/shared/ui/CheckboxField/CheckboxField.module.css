@@ -3,3 +3,7 @@
 .checkboxFieldGroup {
     @apply px-[16px]
 }
+
+.checkboxField input {
+    @apply w-[18px] h-[18px] border-gray-500 cursor-pointer;
+}

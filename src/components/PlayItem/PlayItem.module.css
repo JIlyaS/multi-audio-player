@@ -1,15 +1,15 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .playItem {
   @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden;
 }
 
 .playItemIconWrap {
-  @apply flex items-center justify-center w-full h-full bg-gray-300 rounded-md;
+  @apply flex items-center justify-center w-full h-full bg-main-element dark:bg-gray-300 rounded-md;
 }
 
 .playItemIcon {
-  @apply text-xl text-gray-600;
+  @apply text-xl text-white dark:text-gray-600;
 }
 
 .playItemContent {
@@ -19,7 +19,7 @@
 }
 
 .playItemTitle {
-    @apply font-bold text-sm whitespace-nowrap text-ellipsis overflow-hidden;
+    @apply font-bold text-sm whitespace-nowrap text-ellipsis overflow-hidden text-main-text dark:text-white;
 }
 
 .playItemAuthor {

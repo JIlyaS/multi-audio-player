@@ -1,13 +1,13 @@
-@import "tailwindcss";
+@reference "../../../global.css";
 
 .confirmModalHeader {
-    @apply bg-[#2e2d2d] text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background;
 }
 
 .confirmModalContent {
-    @apply bg-[#2e2d2d] text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background;
 }
 
 .confirmModalFooter {
-    @apply bg-[#2e2d2d]! text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background! ;
 }

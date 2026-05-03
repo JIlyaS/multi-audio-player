@@ -1,6 +1,7 @@
 // INFO: Отобразить список доступных треков
 import Form from "react-bootstrap/Form";
 import { useUnit } from "effector-react";
+import clsx from "clsx";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { useEffect, useMemo } from "react";
@@ -115,7 +116,7 @@ export const PlayList = () => {
           id="toggle-check"
           type="checkbox"
           variant="secondary"
-          className="w-[140px]"
+          className={clsx(styles.playListSelectAllBtn, {[styles.playListSelectAllBtnActive]: isSelectAll})}
           size="sm"
           checked={isSelectAll}
           value="1"
@@ -137,10 +138,11 @@ export const PlayList = () => {
             }}
             onClick={() => handleSelectAudioChange(track.id)}
           >
-            <div className={styles.playListCheckbox}>
+            <div className={styles.playListCheckboxWrap}>
               <Form.Check
                 type="checkbox"
                 id={track.id}
+                className={styles.playListCheckbox}
                 checked={currentTrackPlaylistList.some(
                   (item) => item.id === track.id,
                 )}

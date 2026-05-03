@@ -51,8 +51,16 @@ export const AudioPlayer = () => {
   }
 
   return (
-    <div className={styles.audioPlayer}>
-      <div className={styles.audioPlayerTopBlock}>
+    <div
+      className={clsx(styles.audioPlayer, {
+        [styles.audioPlayerVisible]: openDrawer,
+      })}
+    >
+      <div
+        className={clsx(styles.audioPlayerTopBlock, {
+          [styles.audioPlayerTopBlockVisible]: openDrawer,
+        })}
+      >
         <TrackInfo />
         <div className={styles.audioPlayerTopControlBlock}>
           <Controls />
@@ -67,9 +75,15 @@ export const AudioPlayer = () => {
             >
               <button onClick={() => setOpenDrawer((prev) => !prev)}>
                 {openDrawer ? (
-                  <RiMenuFold4Line size="20px" color="#FFFFFF" />
+                  <RiMenuFold4Line
+                    size="20px"
+                    className={styles.audioPlayerTopBtnIcon}
+                  />
                 ) : (
-                  <RiMenuFold3Line size="20px" color="#FFFFFF" />
+                  <RiMenuFold3Line
+                    size="20px"
+                    className={styles.audioPlayerTopBtnIcon}
+                  />
                 )}
               </button>
             </OverlayTooltip>
@@ -84,7 +98,10 @@ export const AudioPlayer = () => {
               >
                 <BsDatabaseAdd
                   size="20px"
-                  color={isDisabledCreateSimplePlaylist ? "#808080" : "#FFFFFF"}
+                  className={clsx(styles.audioPlayerTopBtnIconActive, {
+                    [styles.audioPlayerTopBtnIconDisabled]:
+                      isDisabledCreateSimplePlaylist,
+                  })}
                 />
               </button>
             </OverlayTooltip>
@@ -94,12 +111,13 @@ export const AudioPlayer = () => {
       <div
         className={clsx(
           styles.audioPlayerContentBlock,
-          openDrawer ? "opacity-100" : "opacity-0",
+          openDrawer ? "opacity-100" : "opacity-0 invisible",
         )}
       >
         <div className={styles.audioPlayerSearchWrapper}>
           <SearchInput
             searchValue={searchValue}
+            classNameElement={styles.audioPlayerSearchElement}
             onSearchValue={(value) => setSearchValue(value)}
           />
         </div>

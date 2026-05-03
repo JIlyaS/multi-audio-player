@@ -75,6 +75,7 @@ export const CheckboxListField: FC<Props> = ({
         searchValue={searchValue}
         onSearchValue={(value) => onChangeSearchValue(value)}
         className="mb-2"
+        classNameElement={styles.checkboxListSearch}
       />
       {!filteredTrackList.length && (
         <div className={styles.trackListEmpty}>
@@ -98,6 +99,7 @@ export const CheckboxListField: FC<Props> = ({
               <Form.Check
                 type="checkbox"
                 id={String(track.id)}
+                className={styles.trackPlaylistListCheck}
                 checked={trackFormList.some(
                   (item: Track) => item.id === track.id,
                 )}

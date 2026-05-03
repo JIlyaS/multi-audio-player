@@ -1,7 +1,7 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .playListEmpty {
-  @apply flex justify-center h-[447px];
+  @apply flex justify-center h-[447px] text-main-text dark:text-white;
 }
 
 .playListEmptyContent {
@@ -9,23 +9,35 @@
 }
 
 .playListLoad {
-  @apply flex items-center justify-center bg-[#4c4848] text-white h-[400px] overflow-y-auto;
+  @apply flex items-center justify-center bg-main-background dark:bg-dark-main-background text-white h-[447px] overflow-y-auto;
 }
 
 .playListBtnGroup {
   @apply flex gap-3 p-[0.5rem_10px] cursor-pointer;
 }
 
+.playListSelectAllBtn {
+  @apply w-[140px] bg-main-element! border-main-element! dark:bg-secondary-element! dark:border-secondary-element! text-white!;
+}
+
+.playListSelectAllBtnActive {
+  @apply bg-btn-element-active! dark:bg-dark-btn-element-active! border-btn-element-border-active! dark:border-[#51585e]! text-white;
+}
+
 .playListList {
-  @apply bg-[#4c4848] text-white h-[400px] overflow-y-auto m-0! p-0!;
+  @apply bg-main-background dark:bg-dark-main-background text-white h-[400px] overflow-y-auto m-0! p-0! rounded-b-xl;
 }
 
 .playListItem {
   @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer  justify-between;
 }
 
-.playListCheckbox {
+.playListCheckboxWrap {
   @apply flex items-center gap-3;
 
   max-width: calc(100% - 4rem - 56px);
+}
+
+.playListCheckbox input {
+  @apply w-[18px] h-[18px] border-gray-500 cursor-pointer;
 }

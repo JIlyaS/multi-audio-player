@@ -10,7 +10,9 @@ import {
   // BsRepeat,
   BsStopFill,
 } from "react-icons/bs";
+import clsx from "clsx";
 
+import styles from "./Controls.module.css";
 import "./Controls.module.css";
 
 import { useAnimation } from "../../shared/hooks/useAnimation";
@@ -235,13 +237,17 @@ export const Controls = () => {
       <button onClick={handlePrevious} disabled={isDisabledButtons}>
         <BsSkipStartFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          className={clsx(styles.controlsIcon, {
+            [styles.controlsIconDisabled]: isDisabledButtons,
+          })}
         />
       </button>
       <button onClick={skipBackward} disabled={isDisabledButtons}>
         <BsFillRewindFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          className={clsx(styles.controlsIcon, {
+            [styles.controlsIconDisabled]: isDisabledButtons,
+          })}
         />
       </button>
       <button
@@ -251,12 +257,16 @@ export const Controls = () => {
         {isPlaying ? (
           <BsFillPauseFill
             size={30}
-            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            className={clsx(styles.controlsIcon, {
+              [styles.controlsIconDisabled]: !currentTrackPlaylistList.length,
+            })}
           />
         ) : (
           <BsFillPlayFill
             size={30}
-            color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+            className={clsx(styles.controlsIcon, {
+              [styles.controlsIconDisabled]: !currentTrackPlaylistList.length,
+            })}
           />
         )}
       </button>
@@ -266,22 +276,25 @@ export const Controls = () => {
       >
         <BsStopFill
           size={30}
-          color={!currentTrackPlaylistList.length ? "#808080" : "#FFFFFF"}
+          className={clsx(styles.controlsIcon, {
+            [styles.controlsIconDisabled]: !currentTrackPlaylistList.length,
+          })}
         />
       </button>
       <button onClick={skipForward} disabled={isDisabledButtons}>
         <BsFillFastForwardFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          className={clsx(styles.controlsIcon, {
+            [styles.controlsIconDisabled]: isDisabledButtons,
+          })}
         />
       </button>
-      <button
-        onClick={handleNext}
-        disabled={isDisabledButtons}
-      >
+      <button onClick={handleNext} disabled={isDisabledButtons}>
         <BsSkipEndFill
           size={20}
-          color={isDisabledButtons ? "#808080" : "#FFFFFF"}
+          className={clsx(styles.controlsIcon, {
+            [styles.controlsIconDisabled]: isDisabledButtons,
+          })}
         />
       </button>
       {/* <button

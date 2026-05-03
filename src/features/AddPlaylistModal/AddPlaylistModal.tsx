@@ -45,12 +45,13 @@ export const AddPlaylistModal = () => {
     <>
       <OverlayTooltip id="create-tooltip" title="Создать плейлист">
         <button
+          className={styles.addButton}
           onClick={() => {
             setIsOpen(true);
             onOpenCreateModalClick();
           }}
         >
-          <BsFolderPlus size="20px" color="#ffffff" />
+          <BsFolderPlus size="20px" />
         </button>
       </OverlayTooltip>
       <CustomModal
@@ -74,10 +75,10 @@ export const AddPlaylistModal = () => {
             type="text"
             required
           />
-          <CheckboxField 
-            id = "formIsPublic"
-            label = "Сделать общедоступным"
-            name = "isPublic"
+          <CheckboxField
+            id="formIsPublic"
+            label="Сделать общедоступным"
+            name="isPublic"
           />
           <InputField
             id="formAuthor"

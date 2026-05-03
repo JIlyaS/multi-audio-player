@@ -34,6 +34,7 @@ export const InputField: FC<Props> = ({ id, name, label, placeholder, required =
           name={name}
           value={value}
           autoComplete="off"
+          className={styles.inputField}
           placeholder={placeholder}
           required={required}
           disabled={disabled}

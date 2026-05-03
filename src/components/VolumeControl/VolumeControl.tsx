@@ -31,11 +31,11 @@ export const VolumeControl = () => {
     <div className={styles.volumeControl}>
       <button onClick={() => setMuteVolume((prev) => !prev)}>
         {muteVolume || volume < 5 ? (
-          <IoMdVolumeOff size={25} color="#FFFFFF" />
+          <IoMdVolumeOff size={25} className={styles.volumeControlIcon} />
         ) : volume < 40 ? (
-          <IoMdVolumeLow size={25} color="#FFFFFF" />
+          <IoMdVolumeLow size={25} className={styles.volumeControlIcon} />
         ) : (
-          <IoMdVolumeHigh size={25} color="#FFFFFF" />
+          <IoMdVolumeHigh size={25} className={styles.volumeControlIcon} />
         )}
       </button>
       <input
@@ -44,7 +44,8 @@ export const VolumeControl = () => {
         max={100}
         value={volume}
         style={{
-          background: `linear-gradient(to right, #f50 ${volume}%, #ccc ${volume}%)`,
+          background: `linear-gradient(to right, #FF5500 ${volume}%, #ccc ${volume}%)`,
+          //#FFC283
         }}
         className="volumn"
         onChange={handleVolumeChange}

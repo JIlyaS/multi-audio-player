@@ -14,10 +14,11 @@ import styles from "./SearchInput.module.css";
 interface Props {
   searchValue: string;
   className?: string,
+  classNameElement?: string;
   onSearchValue: (value: string) => void;
 }
 
-export const SearchInput: FC<Props> = ({searchValue, className, onSearchValue}) => {
+export const SearchInput: FC<Props> = ({searchValue, className, classNameElement, onSearchValue}) => {
   // const [searchValue, setSearchValue] = useState<string>("");
 
   // TODO: Смысла нет делать debounce для поиска на фронте
@@ -46,7 +47,7 @@ export const SearchInput: FC<Props> = ({searchValue, className, onSearchValue}) 
         name="search"
         id="search"
         // placeholder="Поиск..."
-        className={styles.searchInputControl}
+        className={clsx(styles.searchInputControl, classNameElement)}
         value={searchValue}
         onChange={handleSearchChange}
       />
