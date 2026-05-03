@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .progressBar {
   @apply flex items-center justify-center gap-4 w-full;
@@ -98,7 +98,7 @@
 }
 
 .progressBarTimeContent {
-  @apply inline-block w-[50px] text-[#262626] dark:text-white;
+  @apply inline-block w-[50px] text-main-text dark:text-white;
 }
 
 .progressTimeInput {

@@ -5,20 +5,20 @@
 }
 
 .modalHeader {
-  @apply bg-main-background;
+  @apply dark:bg-dark-secondary-background;
   & button {
     display: none;
   }
 }
 
 .modalHeaderTitle {
-  @apply text-[#262626] dark:text-white;
+  @apply text-main-text dark:text-white;
 }
 
 .modalContent {
-  @apply dark:bg-[#2e2d2d] text-[#262626] dark:text-white p-0! overflow-y-hidden!;
+  @apply dark:bg-dark-secondary-background text-main-text dark:text-white p-0! overflow-y-hidden!;
 }
 
 .modalFooter {
-  @apply dark:bg-[#2e2d2d]!;
+  @apply dark:bg-dark-secondary-background!;
 }

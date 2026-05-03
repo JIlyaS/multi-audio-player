@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .trackInfo {
   @apply flex items-center gap-4 md:flex-col lg:max-w-[315px] lg:flex-row w-full;
@@ -9,11 +9,11 @@
 }
 
 .trackInfoIconBlock {
-  @apply flex items-center justify-center w-full h-full bg-[#156ED2] dark:bg-gray-300 rounded-md min-w-24;
+  @apply flex items-center justify-center w-full h-full bg-main-element dark:bg-gray-300 rounded-md min-w-24;
 }
 
 .trackInfoIcon {
-  @apply text-xl text-[#FFFFFF] dark:text-gray-600;
+  @apply text-xl text-white dark:text-gray-600;
   /* text-[#DADADC] */
 }
 
@@ -22,7 +22,7 @@
 }
 
 .trackInfoTitle {
-  @apply font-bold truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start text-[#242424] dark:text-white;
+  @apply font-bold truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start text-main-text dark:text-white;
 }
 
 .trackInfoAuthor {

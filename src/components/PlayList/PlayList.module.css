@@ -1,7 +1,7 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .playListEmpty {
-  @apply flex justify-center h-[447px] text-[#262626] dark:text-white;
+  @apply flex justify-center h-[447px] text-main-text dark:text-white;
 }
 
 .playListEmptyContent {
@@ -9,7 +9,7 @@
 }
 
 .playListLoad {
-  @apply flex items-center justify-center bg-[#F6F6F6] dark:bg-[#4c4848] text-white h-[447px] overflow-y-auto;
+  @apply flex items-center justify-center bg-main-background dark:bg-dark-main-background text-white h-[447px] overflow-y-auto;
 }
 
 .playListBtnGroup {
@@ -17,15 +17,15 @@
 }
 
 .playListSelectAllBtn {
-  @apply w-[140px] bg-[#156ED2]! border-[#156ED2]! dark:bg-[#6c757d]! dark:border-[#6c757d]! text-white!;
+  @apply w-[140px] bg-main-element! border-main-element! dark:bg-secondary-element! dark:border-secondary-element! text-white!;
 }
 
 .playListSelectAllBtnActive {
-  @apply bg-[#284EA1]! border-[#284EA1]! dark:bg-[#565e64]! dark:border-[#51585e]! text-white;
+  @apply bg-btn-element-active! dark:bg-dark-btn-element-active! border-btn-element-border-active! dark:border-[#51585e]! text-white;
 }
 
 .playListList {
-  @apply bg-[#F6F6F6] dark:bg-[#4c4848] text-white h-[400px] overflow-y-auto m-0! p-0!;
+  @apply bg-main-background dark:bg-dark-main-background text-white h-[400px] overflow-y-auto m-0! p-0! rounded-b-xl;
 }
 
 .playListItem {

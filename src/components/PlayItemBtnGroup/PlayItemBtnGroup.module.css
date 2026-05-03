@@ -1,7 +1,7 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .deleteButton {
-    @apply p-[5px] text-[#262626] dark:text-white;
+    @apply p-[5px] text-main-text dark:text-white;
 }
 
 .playListUpdateBtnWrap {

@@ -1,19 +1,19 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .updatePlaylistModalForm {
   @apply h-full;
+}
+
+.updateButton {
+  @apply p-[5px] text-main-text dark:text-white;
 }
 
 .checkboxWrapper {
   @apply px-[16px];
 }
 
-.updateButton {
-    @apply p-[5px] text-[#262626] dark:text-white;
-}
-
 .updatePlaylistModalBtnGroup {
-    @apply absolute bottom-0 left-[10px] right-0 text-[#262626] dark:bg-[#2e2d2d] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
+    @apply absolute bottom-0 left-[10px] right-0 text-main-text dark:bg-dark-secondary-background border-[#dee2e6] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
 
   margin: 0 -10px;
 }

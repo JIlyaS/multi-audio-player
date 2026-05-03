@@ -75,11 +75,15 @@ export const AudioPlayer = () => {
             >
               <button onClick={() => setOpenDrawer((prev) => !prev)}>
                 {openDrawer ? (
-                  <RiMenuFold4Line size="20px" color="#262626" />
+                  <RiMenuFold4Line
+                    size="20px"
+                    className={styles.audioPlayerTopBtnIcon}
+                  />
                 ) : (
-                  // color="#FFFFFF"
-                  <RiMenuFold3Line size="20px" color="#262626" />
-                  // color="#FFFFFF"
+                  <RiMenuFold3Line
+                    size="20px"
+                    className={styles.audioPlayerTopBtnIcon}
+                  />
                 )}
               </button>
             </OverlayTooltip>
@@ -94,8 +98,10 @@ export const AudioPlayer = () => {
               >
                 <BsDatabaseAdd
                   size="20px"
-                  // color={isDisabledCreateSimplePlaylist ? "#808080" : "#FFFFFF"}
-                  color={isDisabledCreateSimplePlaylist ? "#bdbdbd" : "#262626"}
+                  className={clsx(styles.audioPlayerTopBtnIconActive, {
+                    [styles.audioPlayerTopBtnIconDisabled]:
+                      isDisabledCreateSimplePlaylist,
+                  })}
                 />
               </button>
             </OverlayTooltip>
@@ -111,6 +117,7 @@ export const AudioPlayer = () => {
         <div className={styles.audioPlayerSearchWrapper}>
           <SearchInput
             searchValue={searchValue}
+            classNameElement={styles.audioPlayerSearchElement}
             onSearchValue={(value) => setSearchValue(value)}
           />
         </div>

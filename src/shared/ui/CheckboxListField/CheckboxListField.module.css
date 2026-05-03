@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@reference "../../../global.css";
 
 .checkboxListField {
     @apply mb-3 px-[16px]! h-full;
@@ -11,13 +11,17 @@
 }
 
 .trackListEmpty {
-    @apply flex items-center justify-center h-full overflow-y-auto text-center text-[#262626] dark:text-white;
+    @apply flex items-center justify-center h-full overflow-y-auto text-center text-main-text dark:text-white;
 
     max-height: calc(100% - 360px);
   }
 
+.checkboxListSearch {
+  @apply bg-white! dark:bg-dark-main-background!;
+}  
+
 .trackPlaylistListItem {
-  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer hover:bg-[#f6f6f6] duration-150 rounded-xl;
+  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer hover:bg-main-background hover:dark:bg-dark-main-background duration-150 rounded-xl;
 }
 
 .trackPlaylistListCheck input {

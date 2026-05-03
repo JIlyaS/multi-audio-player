@@ -1,4 +1,14 @@
+@reference "../../global.css";
+
 button {
   border: none;
   background: none;
+}
+
+.controlsIcon {
+  @apply text-btn-icon-active dark:text-dark-btn-icon-active
+}
+
+.controlsIconDisabled {
+  @apply text-btn-icon-disabled dark:text-dark-btn-icon-disabled
 }

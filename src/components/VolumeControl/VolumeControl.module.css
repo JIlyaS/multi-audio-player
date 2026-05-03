@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@reference "../../global.css";
 
 .volumeControl {
   @apply flex items-center gap-3;
@@ -95,4 +95,8 @@
     /* background-color: #f50 ; */
     background-color: #FFC283;
   }
+}
+
+.volumeControlIcon {
+  @apply text-main-text dark:text-white;
 }

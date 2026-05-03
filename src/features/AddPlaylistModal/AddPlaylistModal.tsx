@@ -45,13 +45,13 @@ export const AddPlaylistModal = () => {
     <>
       <OverlayTooltip id="create-tooltip" title="Создать плейлист">
         <button
+          className={styles.addButton}
           onClick={() => {
             setIsOpen(true);
             onOpenCreateModalClick();
           }}
         >
-          {/* color="#ffffff" */}
-          <BsFolderPlus size="20px" color="#262626" />
+          <BsFolderPlus size="20px" />
         </button>
       </OverlayTooltip>
       <CustomModal

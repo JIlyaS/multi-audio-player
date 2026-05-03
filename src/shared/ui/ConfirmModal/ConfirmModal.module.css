@@ -1,13 +1,13 @@
 @reference "../../../global.css";
 
 .confirmModalHeader {
-    @apply text-light-text dark:bg-[#2e2d2d] dark:text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background;
 }
 
 .confirmModalContent {
-    @apply text-light-text dark:bg-[#2e2d2d] dark:text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background;
 }
 
 .confirmModalFooter {
-    @apply text-light-text dark:bg-[#2e2d2d]! dark:text-white;
+    @apply text-main-text dark:text-white dark:bg-dark-secondary-background! ;
 }
