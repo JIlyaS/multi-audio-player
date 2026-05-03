@@ -17,10 +17,13 @@
   --color-btn-icon-disabled: #BDBDBD;
   --color-btn-icon-active: #000000;
 
+  --color-volume-range: #FFC283;
+
   --color-dark-main-background: #4C4848;
   --color-dark-secondary-background: #2E2D2D;
   --color-dark-btn-icon-disabled: #808080;
   --color-dark-btn-icon-active: #FFFFFF;
   --color-dark-main-border: #DEE2E6;
   --color-dark-btn-element-active: #565e64;
+  --color-dark-volume-range: #FF5500;
 }

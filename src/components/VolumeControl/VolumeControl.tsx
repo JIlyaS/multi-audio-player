@@ -44,7 +44,8 @@ export const VolumeControl = () => {
         max={100}
         value={volume}
         style={{
-          background: `linear-gradient(to right, #FFC283 ${volume}%, #ccc ${volume}%)`,
+          background: `linear-gradient(to right, #FF5500 ${volume}%, #ccc ${volume}%)`,
+          //#FFC283
         }}
         className="volumn"
         onChange={handleVolumeChange}
