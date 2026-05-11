@@ -1,0 +1,5 @@
+@reference "../../../global.css";
+
+.toggleBtn {
+    @apply text-main-text dark:text-white w-[18px] h-full;
+}

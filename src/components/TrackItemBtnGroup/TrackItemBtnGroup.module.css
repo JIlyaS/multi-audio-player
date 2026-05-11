@@ -1,0 +1,9 @@
+@reference "../../global.css";
+
+.trackItemBtnWrap {
+    @apply flex justify-between gap-3 mr-[8px];
+}
+
+.copyButton {
+    @apply text-main-text dark:text-white;
+}

@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { useEffect, useMemo } from "react";
-import { PlayItem } from "@/components";
+import { PlayItem, TrackItemBtnGroup } from "@/components";
 import { $isTracksLoading, loadTracks } from "@/models/track";
 import { $isPlaylistsLoading, loadPlaylists } from "@/models/playlist";
 import {
@@ -19,7 +19,7 @@ import { Loader } from "@/shared/ui/Loader";
 import { ToggleButton } from "react-bootstrap";
 
 import styles from "./PlayList.module.css";
-import { PlayItemBtnGroup } from "@/components/PlayItemBtnGroup";
+import { PlayItemBtnGroup } from "@/components";
 
 export const PlayList = () => {
   const { searchValue, setDuration } = useAudioPlayerContext();
@@ -116,7 +116,9 @@ export const PlayList = () => {
           id="toggle-check"
           type="checkbox"
           variant="secondary"
-          className={clsx(styles.playListSelectAllBtn, {[styles.playListSelectAllBtnActive]: isSelectAll})}
+          className={clsx(styles.playListSelectAllBtn, {
+            [styles.playListSelectAllBtnActive]: isSelectAll,
+          })}
           size="sm"
           checked={isSelectAll}
           value="1"
@@ -154,6 +156,7 @@ export const PlayList = () => {
             {track.type === "playlist" && (
               <PlayItemBtnGroup trackId={track.id} />
             )}
+            {track.type === "track" && <TrackItemBtnGroup trackId={track.id} />}
           </li>
         ))}
       </ul>
