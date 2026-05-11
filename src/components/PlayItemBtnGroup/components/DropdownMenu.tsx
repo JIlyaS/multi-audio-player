@@ -11,7 +11,6 @@ export const DropdownMenu: FC<IDropdownMenu> = React.forwardRef(
   ({ children, style, className, "aria-labelledby": labeledBy }, ref) => {
     const [value] = useState("");
 
-    console.log("children", children);
     return (
       <div
         ref={ref as Ref<HTMLDivElement> | undefined}
@@ -19,7 +18,7 @@ export const DropdownMenu: FC<IDropdownMenu> = React.forwardRef(
         className={className}
         aria-labelledby={labeledBy}
       >
-        <ul className="list-unstyled">
+        <ul className="list-unstyled p-0! m-0!">
           {React.Children.toArray(children).filter(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (child: any) =>
