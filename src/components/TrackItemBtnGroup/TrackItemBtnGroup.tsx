@@ -9,7 +9,6 @@ interface Props {
   trackId: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
   const [isCopy, setIsCopy] = useState(false);
   const [isCopyError, setIsCopyError] = useState(false);

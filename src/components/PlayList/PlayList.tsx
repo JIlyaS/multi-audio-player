@@ -20,6 +20,7 @@ import { ToggleButton } from "react-bootstrap";
 
 import styles from "./PlayList.module.css";
 import { PlayItemBtnGroup } from "@/components";
+import { isFilterTrackPlaylistParams } from "@/shared/helpers/isFilterTrackPlaylistParams";
 
 export const PlayList = () => {
   const { searchValue, setDuration } = useAudioPlayerContext();
@@ -42,10 +43,12 @@ export const PlayList = () => {
     () =>
       trackPlaylistList.filter(
         (track) =>
-          track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-          track.tags.some((tag) =>
-            tag.toLowerCase().includes(searchValue.toLowerCase()),
-          ),
+          // INFO: Фильтрация на фронте по query params
+          isFilterTrackPlaylistParams(track.id) &&
+          (track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+            track.tags.some((tag) =>
+              tag.toLowerCase().includes(searchValue.toLowerCase()),
+            )),
       ),
     [searchValue, trackPlaylistList],
   );
