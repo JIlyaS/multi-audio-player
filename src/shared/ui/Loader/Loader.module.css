@@ -1,0 +1,5 @@
+@reference "../../../global.css";
+
+.loader {
+  @apply text-main-text dark:text-white;
+}
