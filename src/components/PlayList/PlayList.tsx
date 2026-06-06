@@ -1,67 +1,74 @@
 // INFO: Отобразить список доступных треков
-import Form from "react-bootstrap/Form";
 import { useUnit } from "effector-react";
 import clsx from "clsx";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { useEffect, useMemo } from "react";
-import { PlayItem, TrackItemBtnGroup } from "@/components";
+import { TrackBlock } from "@/components";
 import { $isTracksLoading, loadTracks } from "@/models/track";
 import { $isPlaylistsLoading, loadPlaylists } from "@/models/playlist";
 import {
   $currentTrackPlaylistList,
   $isSelectAll,
-  $trackPlaylistList,
+  $trackPlaylistForFolderList,
+  $allTrackPlaylistList,
   selectCurrentTrackPlaylistList,
   updateCurrentTrackPlaylistList,
 } from "@/models/shared";
 import { Loader } from "@/shared/ui/Loader";
 import { ToggleButton } from "react-bootstrap";
 
+import { loadFolderList } from "@/models/folder";
+import { FolderTrackList } from "@/components/FolderTrackList";
+import { getFilteredTracks, getFilteredTracksForFolders } from "@/components/PlayList/utils";
+
 import styles from "./PlayList.module.css";
-import { PlayItemBtnGroup } from "@/components";
-import { isFilterTrackPlaylistParams } from "@/shared/helpers/isFilterTrackPlaylistParams";
 
 export const PlayList = () => {
-  const { searchValue, setDuration } = useAudioPlayerContext();
+  // TODO: Переписать контекст под Effector или State формат
+  const { searchValue } = useAudioPlayerContext();
 
-  const trackPlaylistList = useUnit($trackPlaylistList);
+  const allTrackPlaylistList = useUnit($allTrackPlaylistList);
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
+  const trackPlaylistForFolderList = useUnit($trackPlaylistForFolderList);
   const isTracksLoading = useUnit($isTracksLoading);
   const isPlaylistsLoading = useUnit($isPlaylistsLoading);
   const isSelectAll = useUnit($isSelectAll);
+  // const globalFolders = useUnit($globalFolders);
 
   // TODO: Скорее всего не здесь должно быть
   const onLoadTracks = useUnit(loadTracks);
   const onLoadPlaylists = useUnit(loadPlaylists);
-  
+  // TODO: Временное решение - два запроса для разных страниц
+  const onLoadFolderList = useUnit(loadFolderList);
+
   const onSelectCurrentTrackPlaylistList = useUnit(
     selectCurrentTrackPlaylistList,
   );
 
   const filteredTracks = useMemo(
-    () =>
-      trackPlaylistList.filter(
-        (track) =>
-          // INFO: Фильтрация на фронте по query params
-          isFilterTrackPlaylistParams(track.id) &&
-          (track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-            track.tags.some((tag) =>
-              tag.toLowerCase().includes(searchValue.toLowerCase()),
-            )),
-      ),
-    [searchValue, trackPlaylistList],
+    () => getFilteredTracks(allTrackPlaylistList, searchValue),
+    [searchValue, allTrackPlaylistList],
+  );
+
+  const filteredTrackPlaylistForFolderList = useMemo(
+    () => getFilteredTracksForFolders(trackPlaylistForFolderList, searchValue),
+    [trackPlaylistForFolderList, searchValue],
   );
 
   useEffect(() => {
     onLoadTracks();
     onLoadPlaylists();
-  }, [onLoadPlaylists, onLoadTracks]);
+    onLoadFolderList({}); // { global: true }
+  }, [onLoadPlaylists, onLoadTracks, onLoadFolderList]);
+
+  // TODO: Переписать контекст под Effector или State формат
+  const { setDuration } = useAudioPlayerContext();
 
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {
     const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
-    const currentSelectedTrack = trackPlaylistList.find(
+    const currentSelectedTrack = allTrackPlaylistList.find(
       (track) => track.id === id,
     );
 
@@ -104,7 +111,7 @@ export const PlayList = () => {
     );
   }
 
-  if (!filteredTracks.length) {
+  if (!filteredTracks.length && !filteredTrackPlaylistForFolderList.length) {
     return (
       <div className={styles.playListEmpty}>
         <p className={styles.playListEmptyContent}>Ничего не найдено</p>
@@ -131,38 +138,18 @@ export const PlayList = () => {
         </ToggleButton>
       </div>
       <ul className={styles.playListList}>
+        {filteredTrackPlaylistForFolderList.map((folder) => (
+          <FolderTrackList key={folder.id} folder={folder} />
+        ))}
         {filteredTracks.map((track) => (
-          <li
+          <TrackBlock
             key={track.id}
-            className={styles.playListItem}
-            tabIndex={0}
-            onKeyDown={(evt) => {
-              if (evt.key === "Enter" || evt.key === " ") {
-                handleSelectAudioChange(track.id);
-              }
-            }}
-            onClick={() => handleSelectAudioChange(track.id)}
-          >
-            <div className={styles.playListCheckboxWrap}>
-              <Form.Check
-                type="checkbox"
-                id={track.id}
-                className={styles.playListCheckbox}
-                checked={currentTrackPlaylistList.some(
-                  (item) => item.id === track.id,
-                )}
-                onClick={(evt) => evt.stopPropagation()}
-                onChange={() => handleSelectAudioChange(track.id)}
-              />
-              <PlayItem {...track} />
-            </div>
-            {track.type === "playlist" && (
-              <PlayItemBtnGroup trackId={track.id} />
-            )}
-            {track.type === "track" && <TrackItemBtnGroup trackId={track.id} />}
-          </li>
+            track={track}
+            currentTracks={currentTrackPlaylistList}
+            onAudioChange={handleSelectAudioChange}
+          />
         ))}
       </ul>
     </>
   );
-};
+};;

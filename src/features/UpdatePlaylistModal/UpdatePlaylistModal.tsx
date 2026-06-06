@@ -4,10 +4,10 @@ import { CustomModal } from "@/components";
 import { useEffect, useState, type FC } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useStoreMap, useUnit } from "effector-react";
-import { $trackPlaylistList } from "@/models/shared";
+import { $allTrackPlaylistList } from "@/models/shared";
 
 import { viewCardPlaylist } from "@/models/view-playlist";
-import { CheckboxField, CheckboxListField, ConfirmModal, InputField, OverlayTooltip } from "@/shared/ui";
+import { CheckboxField, CheckboxListField, ConfirmModal, InputField, OverlayTooltip, SelectField } from "@/shared/ui";
 import { $form, resetForm, type IForm } from "@/models/playlist-form";
 import {
   $isUpdatePlaylistSuccess,
@@ -19,6 +19,7 @@ import {
 } from "@/models/delete-playlist";
 
 import styles from "./UpdatePlaylistModal.module.css";
+import { $folderOptions, $isFoldersLoading, loadFolders } from "@/models/folder";
 
 interface Props {
   trackId: string;
@@ -28,15 +29,19 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
 
-  const trackPlaylistList = useUnit($trackPlaylistList);
+  const trackPlaylistList = useUnit($allTrackPlaylistList);
   const isSuccessUpdatePlaylist = useUnit($isUpdatePlaylistSuccess);
   const isSuccessDeletePlaylist = useUnit($isDeletePlaylistSuccess);
+  const isFoldersLoading = useUnit($isFoldersLoading);
+
+  const onLoadFolders = useUnit(loadFolders);
   const onViewCardPlaylist = useUnit(viewCardPlaylist);
   const onDeletePlaylist = useUnit(deletePlaylist);
 
   const onResetForm = useUnit(resetForm);
 
   const trackList = trackPlaylistList.filter((track) => track.type === "track");
+  const folderOptions = useUnit($folderOptions);
 
   const isPublic = useStoreMap({
     store: $form,
@@ -58,8 +63,9 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   useEffect(() => {
     if (isOpen) {
       onViewCardPlaylist(trackId);
+      onLoadFolders({});
     }
-  }, [isOpen, onViewCardPlaylist, trackId]);
+  }, [isOpen, onViewCardPlaylist, onLoadFolders, trackId]);
 
   const handleDeleteClick = () => {
     onDeletePlaylist(trackId);
@@ -108,10 +114,10 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
             name="title"
             required
           />
-          <CheckboxField 
-            id = "formIsPublic"
-            label = "Сделать общедоступным"
-            name = "isPublic"
+          <CheckboxField
+            id="formIsPublic"
+            label="Сделать общедоступным"
+            name="isPublic"
             disabled
           />
           <InputField
@@ -125,6 +131,14 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
             name="author"
             disabled={!isPublic}
             required={isPublic}
+          />
+          <SelectField
+            id="formFolder"
+            name="folderId"
+            label="Папка"
+            loading={isFoldersLoading}
+            placeholder="Выберите папку"
+            optionList={folderOptions}
           />
           <CheckboxListField
             id="formTrackList"

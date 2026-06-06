@@ -5,15 +5,15 @@
 }
 
 .trackPlaylistList {
-    @apply h-full overflow-y-auto;
+    @apply h-full overflow-y-auto overflow-x-hidden;
 
-    max-height: calc(100% - 360px);
+    max-height: calc(100% - 435px);
 }
 
 .trackListEmpty {
     @apply flex items-center justify-center h-full overflow-y-auto text-center text-main-text dark:text-white;
 
-    max-height: calc(100% - 360px);
+    max-height: calc(100% - 435px);
   }
 
 .checkboxListSearch {

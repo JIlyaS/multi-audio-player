@@ -1,10 +1,9 @@
-import { $form, type IForm } from "@/models/playlist-form";
+import { $form, handleCheckboxChange, type IForm } from "@/models/playlist-form";
 import { useStoreMap } from "effector-react";
 import type { FC } from "react";
 import { Form } from "react-bootstrap";
 
 import styles from "./CheckboxField.module.css";
-import { handleCheckboxChange } from "@/models/create-playlist";
 
 interface Props {
   id: string;

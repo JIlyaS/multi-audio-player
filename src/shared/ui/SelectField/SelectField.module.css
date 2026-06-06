@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.selectFieldGroup {
+    @apply relative mb-3 mt-3 px-[16px];
+}
+
+.selectField {
+    @apply border-gray-500;
+}
+
+.selectFieldLoading {
+  @apply absolute right-[55px] top-[43px];
+}

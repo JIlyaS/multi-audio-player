@@ -9,6 +9,6 @@
 }
 
 .addPlaylistModalBtnGroup {
-    @apply absolute bottom-0 left-[10px] right-0 text-main-text dark:bg-dark-secondary-background border-[#dee2e6] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
+    @apply absolute bottom-0 left-[10px] right-0 text-main-text bg-white dark:bg-dark-secondary-background border-[#dee2e6] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
     margin: 0 -10px;
 }

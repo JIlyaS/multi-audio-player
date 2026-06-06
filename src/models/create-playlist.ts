@@ -1,3 +1,4 @@
+import { loadFolderList } from "@/models/folder";
 import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
 import { $currentTracksForForm, $userId } from "@/models/shared";
@@ -6,15 +7,12 @@ import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import type { Track } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
-interface IFieldCheckboxUpdate {
-  name: string;
-  value: Track[];
-}
 interface ISubmitForm {
   title: string;
   author?: string | undefined;
   // INFO: Это поле на данный момент имеет отношение только к фронту и создаётся и сохраняется только на фронте, в базе это не относится ни к какому пользователю
   userId?: string | null;
+  folderId?: string | null;
   isPublic: boolean;
   trackIds: string[];
 }
@@ -29,11 +27,10 @@ interface ISimpleCreateForm {
 
 const createSubmitForm = createEvent<React.FormEvent<HTMLFormElement>>();
 const createSimplePlaylist = createEvent<ISimpleCreateForm>();
-const fieldUpdate = createEvent();
 const openCreateModalClick = createEvent();
 
 const sendSubmitFormFx = createEffect(
-  async ({ title, author, isPublic, userId, trackIds }: ISubmitForm) => {
+  async ({ title, author, isPublic, userId, folderId, trackIds }: ISubmitForm) => {
     try {
       // TODO: Переделать под библиотеку
       await fetch(getApiUrl("/playlists"), {
@@ -43,7 +40,8 @@ const sendSubmitFormFx = createEffect(
         },
         body: JSON.stringify({ 
           title, 
-          author, 
+          author,
+          folderId,
           isPublic, 
           userId,
           trackIds
@@ -59,38 +57,13 @@ const $isCreatePlaylistSuccess = createStore<boolean>(false).reset(resetForm);
 const $createPlaylistError = createStore<string | null>(null).reset(resetForm);
 const $isCreatePlaylistLoading = sendSubmitFormFx.pending;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-$form.on(fieldUpdate, (form, { key, value }: any) => ({
-  ...form,
-  [key]: value,
-}));
-
-const handleChange = fieldUpdate.prepend(
-  (evt: React.ChangeEvent<HTMLInputElement>) => ({
-    key: evt.target.name,
-    value: evt.target.value,
-  }),
-);
-
-const handleCheckboxChange = fieldUpdate.prepend(
-  (evt: React.ChangeEvent<HTMLInputElement>) => ({
-    key: evt.target.name,
-    value: evt.target.checked,
-  }),
-);
-
-const handleCheckboxListChange = fieldUpdate.prepend(
-  (data: IFieldCheckboxUpdate) => ({
-    key: data.name,
-    value: data.value,
-  }),
-);
-
 createSubmitForm.watch((evt: React.FormEvent<HTMLFormElement>) => {
   evt.preventDefault();
 });
 
 sample({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   clock: openCreateModalClick,
   source: { tracks: $currentTracksForForm, userId: $userId },
   fn: ({ tracks, userId }) => ({
@@ -98,6 +71,7 @@ sample({
     title: "",
     author: "",
     userId,
+    folderId: null,
     isPublic: false,
     tracks: tracks,
   }),
@@ -123,6 +97,7 @@ sample({
     ...data,
     isPublic: false,
     userId: userId,
+    folder: null,
     trackIds: data.tracks.filter((item) => !!item).map((item) => item.id),
   }),
   target: sendSubmitFormFx,
@@ -142,7 +117,7 @@ sample({
 
 sample({
   clock: sendSubmitFormFx.doneData,
-  target: [loadPlaylists, loadTracks],
+  target: [loadPlaylists, loadTracks, loadFolderList],
 });
 
 export {
@@ -153,8 +128,4 @@ export {
   createSubmitForm,
   createSimplePlaylist,
   openCreateModalClick,
-  fieldUpdate,
-  handleChange,
-  handleCheckboxChange,
-  handleCheckboxListChange,
 };

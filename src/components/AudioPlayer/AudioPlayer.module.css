@@ -32,7 +32,7 @@
 }
 
 .audioPlayerTopBtnBlock {
-  @apply flex gap-5 lg:pl-[35px];
+  @apply flex gap-5 lg:pl-[40px];
 }
 
 .audioPlayerTopBtnIcon {

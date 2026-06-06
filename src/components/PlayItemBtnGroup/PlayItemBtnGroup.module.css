@@ -8,8 +8,12 @@
     @apply flex justify-between gap-3 mr-[8px];
 }
 
+.dropdownItemList {
+    @apply bg-main-background dark:bg-dark-main-background;
+}
+
 .dropdownItemWrap {
-    @apply p-0 text-main-text! dark:text-white!;
+    @apply p-0 text-main-text! active:text-white! dark:text-white! dark:hover:bg-dark-secondary-background! dark:focus:bg-dark-secondary-background! dark:active:bg-dark-secondary-background!;
 }
 
 .dropdownItem {

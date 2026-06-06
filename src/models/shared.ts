@@ -1,3 +1,4 @@
+import { $publicFolders } from "@/models/folder";
 import { $playlists } from "@/models/playlist";
 import { $tracks } from "@/models/track";
 import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
@@ -12,13 +13,13 @@ const setUserId = createEvent<string>();
 persist({
   store: $userId,
   key: "userId",
-  def: generateSafeUUID(), 
-  sync: false
+  def: generateSafeUUID(),
+  sync: false,
 });
 
 sample({
   clock: setUserId,
-  target: $userId
+  target: $userId,
 });
 
 const selectCurrentTrackPlaylistList = createEvent<boolean>();
@@ -28,11 +29,48 @@ const $isSelectAll = createStore<boolean>(false);
 
 const $currentTracksForForm = createStore<Track[]>([]);
 
-// TODO: не нравиться примесь!
-const $trackPlaylistList = combine($tracks, $playlists, $userId, (tracks, playlists, userId) => [
-  ...playlists.filter((item) => !item?.userId || item?.userId === userId),
-  ...tracks,
-]);
+// TODO: не нравитcя примесь!
+const $allTrackPlaylistList = combine(
+  $tracks,
+  $playlists,
+  $userId,
+  (tracks, playlists, userId) => {
+    return [
+      ...playlists.filter((item) => !item?.userId || item?.userId === userId),
+      ...tracks,
+    ];
+  },
+);
+
+// const $trackPlaylistList = $allTrackPlaylistList.map((allTrackPlaylistList) => allTrackPlaylistList.filter((item) => !item.folderId))
+
+// TODO: Переделать - новая примесь для формирования списка треков в папках
+const $trackPlaylistForFolderList = combine(
+  $tracks,
+  $playlists,
+  $publicFolders,
+  $userId,
+  (tracks, playlists, publicFolders, userId) => {
+    const trackPlaylistList = [
+      ...playlists.filter((item) => !item?.userId || item?.userId === userId),
+      ...tracks,
+    ];
+
+    const globalFolders = publicFolders.filter((folder) => folder.isGlobal);
+    const defaultFolders = publicFolders.filter((folder) => !folder.isGlobal);
+    const folderMapList = [...globalFolders, ...defaultFolders].map(
+      (folder) => {
+        return {
+          ...folder,
+          trackList: trackPlaylistList.filter(
+            (item) => item.folderId === folder.id,
+          ),
+        };
+      },
+    );
+    return folderMapList;
+  },
+);
 
 const updateCurrentTrackPlaylistList = createEvent<(Track | Playlist)[]>();
 
@@ -43,8 +81,8 @@ sample({
 
 sample({
   clock: selectCurrentTrackPlaylistList,
-  source: $trackPlaylistList,
-  fn: (trackPlaylistList, isSelect) => (isSelect ? trackPlaylistList : []),
+  source: $allTrackPlaylistList,
+  fn: (allTrackPlaylistList, isSelect) => (isSelect ? allTrackPlaylistList : []),
   target: $currentTrackPlaylistList,
 });
 
@@ -63,7 +101,9 @@ sample({
 export {
   $userId,
   $currentTrackPlaylistList,
-  $trackPlaylistList,
+  // $trackPlaylistList,
+  $allTrackPlaylistList,
+  $trackPlaylistForFolderList,
   $isSelectAll,
   $currentTracksForForm,
   setUserId,

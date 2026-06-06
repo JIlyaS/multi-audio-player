@@ -20,7 +20,7 @@ import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 import { useUnit } from "effector-react";
 import {
   $currentTrackPlaylistList,
-  $trackPlaylistList,
+  $allTrackPlaylistList,
   updateCurrentTrackPlaylistList,
 } from "@/models/shared";
 
@@ -37,7 +37,23 @@ export const Controls = () => {
   } = useAudioPlayerContext();
 
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
-  const trackPlaylistList = useUnit($trackPlaylistList);
+  const trackPlaylistList = useUnit($allTrackPlaylistList);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const currentOnlyTracks = [
+    ...currentTrackPlaylistList
+      .filter((item) => item.type === "playlist")
+      .map((item) => item.tracks)
+      .flat(),
+    ...currentTrackPlaylistList.filter((item) => item.type === "track"),
+  ];
+
+  // Проявляем изобретательность с помощью `Set` и `map()` 🕵️‍♀️
+  const unique = Array.from(
+    new Set(currentOnlyTracks.map((item) => JSON.stringify(item))),
+  ).map((item) => JSON.parse(item));
+
+  // console.log("currentOnlyTracks", currentOnlyTracks);
 
   // const [isShuffle] = useState<boolean>(false);
   const [isRepeat] = useState<boolean>(false);
@@ -88,7 +104,7 @@ export const Controls = () => {
   };
 
   const handleStopClick = () => {
-    currentTrackPlaylistList.forEach((_, idx) => {
+    currentOnlyTracks.forEach((_, idx) => {
       audioListRef.current[idx]?.pause();
       setIsPlaying(false);
     });
@@ -120,25 +136,32 @@ export const Controls = () => {
 
   useEffect(() => {
     if (isPlaying) {
+      console.log(
+        "currentTrackPlaylistList",
+        currentTrackPlaylistList,
+        audioListRef.current,
+      );
 
-      currentTrackPlaylistList.forEach((currentTrack, idx) => {
-        if (currentTrack.type === "playlist") {
-          currentTrack.tracks.forEach((_, idx) => {
-            audioListRef.current[idx]?.play();
-          });
-          return;
-        }
+      currentOnlyTracks.forEach((item, idx) => {
+        // if (item.type === "playlist") {
+        //   item.tracks.forEach((_, idx) => {
+        //     audioListRef.current[idx]?.play();
+        //   });
+        //   return;
+        // }
+
+        console.log("idx", idx, item);
         audioListRef.current[idx]?.play();
       });
       startAnimation();
     } else {
-      currentTrackPlaylistList.forEach((currentTrack, idx) => {
-        if (currentTrack.type === "playlist") {
-          currentTrack.tracks.forEach((_, idx) => {
-            audioListRef.current[idx]?.pause();
-          });
-          return;
-        }
+      currentOnlyTracks.forEach((item, idx) => {
+        // if (item.type === "playlist") {
+        //   item.tracks.forEach((_, idx) => {
+        //     audioListRef.current[idx]?.pause();
+        //   });
+        //   return;
+        // }
         audioListRef.current[idx]?.pause();
       });
       if (playAnimationRef.current !== null) {
@@ -160,6 +183,7 @@ export const Controls = () => {
     audioListRef,
     currentTrackPlaylistList,
     playAnimationRef,
+    currentOnlyTracks,
   ]);
 
   useEffect(() => {
@@ -191,21 +215,30 @@ export const Controls = () => {
   }, [isRepeat, handleNext, audioListRef]);
 
   useEffect(() => {
-    if (currentTrackPlaylistList.length) {
+    if (currentOnlyTracks.length) {
       audioListRef.current = audioListRef.current.slice(
         0,
-        currentTrackPlaylistList.length,
+        currentOnlyTracks.length,
       );
+
+      console.log("audioListRef.current", audioListRef.current);
     }
-  }, [audioListRef, currentTrackPlaylistList.length]);
+  }, [audioListRef, currentOnlyTracks.length]);
+
+  console.log(
+    "currentTrackPlaylistList",
+    currentTrackPlaylistList,
+    currentOnlyTracks,
+    unique,
+  );
 
   return (
     <div className="flex gap-4 items-center">
-      {currentTrackPlaylistList
+      {/* {currentTrackPlaylistList
         .filter((currentTrack) => currentTrack.type === "playlist")
-        .map((currentTrack) => (
-          <div key={currentTrack.id} className="absolute">
-            {currentTrack.tracks.map((track, idx) => (
+        .map((currentPlaylist) => (
+          <div key={currentPlaylist.id} className="absolute">
+            {currentPlaylist.tracks.map((track, idx) => (
               <audio
                 key={track.link}
                 src={track.link}
@@ -218,9 +251,9 @@ export const Controls = () => {
               </audio>
             ))}
           </div>
-        ))}
-      {currentTrackPlaylistList
-        .filter((currentTrack) => currentTrack?.type === "track")
+        ))} */}
+      {unique
+        // .filter((currentTrack) => currentTrack?.type === "track")
         .map((currentTrack, idx) => (
           <div key={currentTrack?.id} className="absolute">
             <audio
@@ -311,4 +344,4 @@ export const Controls = () => {
       </button> */}
     </div>
   );
-};
+};;
