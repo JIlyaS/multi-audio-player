@@ -4,7 +4,7 @@ import { CustomModal } from "@/components";
 import { useEffect, useState, type FC } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useStoreMap, useUnit } from "effector-react";
-import { $allTrackPlaylistList } from "@/models/shared";
+import { $trackPlaylistList } from "@/models/shared";
 
 import { viewCardPlaylist } from "@/models/view-playlist";
 import { CheckboxField, CheckboxListField, ConfirmModal, InputField, OverlayTooltip, SelectField } from "@/shared/ui";
@@ -29,7 +29,7 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
 
-  const trackPlaylistList = useUnit($allTrackPlaylistList);
+  const trackPlaylistList = useUnit($trackPlaylistList);
   const isSuccessUpdatePlaylist = useUnit($isUpdatePlaylistSuccess);
   const isSuccessDeletePlaylist = useUnit($isDeletePlaylistSuccess);
   const isFoldersLoading = useUnit($isFoldersLoading);

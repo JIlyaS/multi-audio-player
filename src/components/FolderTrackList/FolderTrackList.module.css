@@ -1,9 +1,8 @@
 @reference "../../global.css";
 
 .playListFolderItem {
-    @apply flex items-center gap-3 p-[0.5rem_10px] pl-[40px] cursor-pointer border-l-[5px] border-solid border-l-main-element dark:border-l-gray-300 justify-between;
+    @apply flex items-center gap-3 p-[0.5rem_10px] pl-[3px] cursor-pointer border-l-[5px] border-solid border-l-main-element dark:border-l-gray-300 justify-between;
 }
-/* pl-[3px] */
 
 .folderItemWrap {
     @apply flex items-center gap-3 w-full;
@@ -13,13 +12,13 @@
     @apply relative left-[3px] p-[5px] text-main-text dark:text-white rounded-[50%] duration-300;
 }
 
-.folderSelectedBtn:hover {
+/* .folderSelectedBtn:hover {
     @apply bg-[#198754] text-white opacity-60;
-}
+} */
 
 .folderSelectedBtn:active,
 .folderSelectedBtnActive {
-    @apply bg-[#198754] text-white opacity-100;
+    @apply bg-[#0d6efd] text-white opacity-100;
 }
 
 .folderItemBtnGroup {

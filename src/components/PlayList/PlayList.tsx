@@ -11,7 +11,7 @@ import {
   $currentTrackPlaylistList,
   $isSelectAll,
   $trackPlaylistForFolderList,
-  $allTrackPlaylistList,
+  $trackPlaylistList,
   selectCurrentTrackPlaylistList,
   updateCurrentTrackPlaylistList,
 } from "@/models/shared";
@@ -28,7 +28,7 @@ export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
   const { searchValue } = useAudioPlayerContext();
 
-  const allTrackPlaylistList = useUnit($allTrackPlaylistList);
+  const trackPlaylistList = useUnit($trackPlaylistList);
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const trackPlaylistForFolderList = useUnit($trackPlaylistForFolderList);
   const isTracksLoading = useUnit($isTracksLoading);
@@ -47,8 +47,8 @@ export const PlayList = () => {
   );
 
   const filteredTracks = useMemo(
-    () => getFilteredTracks(allTrackPlaylistList, searchValue),
-    [searchValue, allTrackPlaylistList],
+    () => getFilteredTracks(trackPlaylistList, searchValue),
+    [searchValue, trackPlaylistList],
   );
 
   const filteredTrackPlaylistForFolderList = useMemo(
@@ -68,7 +68,7 @@ export const PlayList = () => {
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {
     const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
-    const currentSelectedTrack = allTrackPlaylistList.find(
+    const currentSelectedTrack = trackPlaylistList.find(
       (track) => track.id === id,
     );
 

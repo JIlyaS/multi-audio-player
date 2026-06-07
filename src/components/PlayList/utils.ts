@@ -2,12 +2,12 @@ import { isCheckTrackPlaylistParams, isFilterTrackPlaylistParams } from "@/share
 import type { Folder, Playlist, Track } from "@/shared/types";
 
 export const getFilteredTracks = (
-  allTrackPlaylistList: (Track | Playlist)[],
+  trackPlaylistList: (Track | Playlist)[],
   searchValue: string,
 ): (Track | Playlist)[] => {
   const filteredData = isCheckTrackPlaylistParams()
-    ? allTrackPlaylistList
-    : allTrackPlaylistList.filter((item) => !item.folderId);
+    ? trackPlaylistList
+    : trackPlaylistList.filter((item) => !item.folderId);
 
   return filteredData.filter((track) => {
     // INFO: Фильтрация на фронте по query params

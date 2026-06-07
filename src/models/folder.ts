@@ -1,3 +1,5 @@
+// TODO: Не сделан формат приватных папок
+
 import { getApiUrl } from "@/shared/helpers/getApiUrl";
 import type { Folder, FolderOption } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";

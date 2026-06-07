@@ -30,19 +30,42 @@ const $isSelectAll = createStore<boolean>(false);
 const $currentTracksForForm = createStore<Track[]>([]);
 
 // TODO: не нравитcя примесь!
-const $allTrackPlaylistList = combine(
+// TODO: Влияние на порядок для переключения вперёд/назад
+const $trackPlaylistList = combine(
   $tracks,
   $playlists,
+  $publicFolders,
   $userId,
-  (tracks, playlists, userId) => {
-    return [
+  (tracks, playlists, publicFolders, userId) => {
+    // console.log("publicFolders", publicFolders);
+    const allTrackPlaylistList = [
       ...playlists.filter((item) => !item?.userId || item?.userId === userId),
       ...tracks,
     ];
+    const trackPlaylistList: (Track | Playlist)[] = [];
+    const globalFolders = publicFolders.filter((folder) => folder.isGlobal);
+    const defaultFolders = publicFolders.filter((folder) => !folder.isGlobal);
+
+    globalFolders.forEach((globalFolder) => {
+      const tracks = allTrackPlaylistList.filter((item) => item.folderId === globalFolder.id);
+      trackPlaylistList.push(...tracks);
+    });
+
+    defaultFolders.forEach((defaultFolder) => {
+      const tracks = allTrackPlaylistList.filter(
+        (item) => item.folderId === defaultFolder.id,
+      );
+      trackPlaylistList.push(...tracks);
+    });
+
+    trackPlaylistList.push(
+      ...allTrackPlaylistList.filter((item) => !item.folderId),
+    );
+
+
+    return trackPlaylistList;
   },
 );
-
-// const $trackPlaylistList = $allTrackPlaylistList.map((allTrackPlaylistList) => allTrackPlaylistList.filter((item) => !item.folderId))
 
 // TODO: Переделать - новая примесь для формирования списка треков в папках
 const $trackPlaylistForFolderList = combine(
@@ -81,8 +104,8 @@ sample({
 
 sample({
   clock: selectCurrentTrackPlaylistList,
-  source: $allTrackPlaylistList,
-  fn: (allTrackPlaylistList, isSelect) => (isSelect ? allTrackPlaylistList : []),
+  source: $trackPlaylistList,
+  fn: (trackPlaylistList, isSelect) => (isSelect ? trackPlaylistList : []),
   target: $currentTrackPlaylistList,
 });
 
@@ -101,8 +124,7 @@ sample({
 export {
   $userId,
   $currentTrackPlaylistList,
-  // $trackPlaylistList,
-  $allTrackPlaylistList,
+  $trackPlaylistList,
   $trackPlaylistForFolderList,
   $isSelectAll,
   $currentTracksForForm,

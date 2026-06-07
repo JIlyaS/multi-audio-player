@@ -4,12 +4,12 @@ import clsx from "clsx";
 
 import styles from "./FolderTrackList.module.css";
 import { FolderItem } from "@/components/FolderItem";
-import { BsChevronDown } from "react-icons/bs";
+import { BsCheck2Square, BsChevronDown } from "react-icons/bs";
 import { TrackBlock } from "@/components/TrackBlock";
 import type { Playlist, Track } from "@/shared/types";
 import { useUnit } from "effector-react";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
-import { $currentTrackPlaylistList, $allTrackPlaylistList, updateCurrentTrackPlaylistList } from "@/models/shared";
+import { $currentTrackPlaylistList, updateCurrentTrackPlaylistList, $trackPlaylistList } from "@/models/shared";
 // import { OverlayTooltip } from "@/shared/ui";
 
 interface Props {
@@ -28,7 +28,7 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
   // TODO: Переписать контекст под Effector или State формат
   const { setDuration } = useAudioPlayerContext();
 
-//   const [isFolderSelected, setIsFolderSelected] = useState(false);
+  const [isFolderSelected, setIsFolderSelected] = useState(false);
   
   // TODO: Переделать localStorage под корректный формат
   const [isOpenFolder, setIsOpenFolder] = useState(() => {
@@ -72,12 +72,12 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
   };
 
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
-  const allTrackPlaylistList = useUnit($allTrackPlaylistList);
+  const trackPlaylistList = useUnit($trackPlaylistList);
 
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {
     const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
-    const currentSelectedTrack = allTrackPlaylistList.find(
+    const currentSelectedTrack = trackPlaylistList.find(
       (track) => track.id === id,
     );
 
@@ -103,38 +103,38 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
     }
   };
 
-  // TODO: Доработать на следующей итерации
-//   const handleSelectAllFolderClick = (evt) => {
-//     evt.stopPropagation();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSelectAllFolderClick = (evt: any) => {
+    evt.stopPropagation();
 
-//     setIsFolderSelected((prevValue) => {
-//         if (prevValue) {
-//           updateCurrentTrackPlaylistList([
-//             ...currentTrackPlaylistList.filter(
-//               (item) => item.folderId !== folder.id,
-//             ),
-//           ]);
-//           // TODO: Переделать логику в будущем
-//           if (
-//             currentTrackPlaylistList.filter(
-//                 (item) => item.folderId !== folder.id,
-//               ).length === 0
-//                    ) {
-//                      setDuration(0);
-//                    }
-//           return false;
-//         }
+    setIsFolderSelected((prevValue) => {
+        if (prevValue) {
+          updateCurrentTrackPlaylistList([
+            ...currentTrackPlaylistList.filter(
+              (item) => item.folderId !== folder.id,
+            ),
+          ]);
+          // TODO: Переделать логику в будущем
+          if (
+            currentTrackPlaylistList.filter(
+                (item) => item.folderId !== folder.id,
+              ).length === 0
+                   ) {
+                     setDuration(0);
+                   }
+          return false;
+        }
 
-//         updateCurrentTrackPlaylistList([
-//           ...currentTrackPlaylistList.filter(
-//             (item) => item.folderId !== folder.id,
-//           ),
-//           ...allTrackPlaylistList.filter((item) => item.folderId === folder.id),
-//         ]);
+        updateCurrentTrackPlaylistList([
+          ...currentTrackPlaylistList.filter(
+            (item) => item.folderId !== folder.id,
+          ),
+          ...trackPlaylistList.filter((item) => item.folderId === folder.id),
+        ]);
 
-//         return true;
-//     });
-//   } 
+        return true;
+    });
+  } 
 
   if (!folder.trackList.length && !folder.isGlobal) {
     return null;
@@ -154,14 +154,14 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         onClick={() => handleToggleFolderChange(folder.id)}
       >
         <div className={styles.folderItemWrap}>
-            {/* <button
+            <button
               className={clsx(styles.folderSelectedBtn, {
                 [styles.folderSelectedBtnActive]: isFolderSelected,
               })}
               onClick={handleSelectAllFolderClick}
             >
               <BsCheck2Square />
-            </button> */}
+            </button>
           <FolderItem {...folder} />
         </div>
         <div
