@@ -19,3 +19,14 @@ export const isFilterTrackPlaylistParams = (id: string): boolean => {
 
   return false;
 };
+
+export const isCheckTrackPlaylistParams = (): boolean => {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+
+  if (urlParams.has("trackId") || urlParams.has("playlistId")) {
+    return true;
+  }
+
+  return false;
+}

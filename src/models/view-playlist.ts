@@ -30,6 +30,8 @@ const $viewPlaylistError = createStore<string | null>(null);
 const $isViewPlaylistLoading = viewCardPlaylistFx.pending;
 
 sample({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   clock: viewCardPlaylistFx.doneData,
   fn: (data: Playlist) => ({
     id: data.id,
@@ -37,6 +39,8 @@ sample({
     isPublic: data.isPublic,
     author: data.author,
     tags: data.tags,
+    folder: data.folder,
+    folderId: data.folder?.id,
     tracks: data.tracks,
   }),
   target: $form,

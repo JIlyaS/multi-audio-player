@@ -23,6 +23,8 @@ import {
   $trackPlaylistList,
   updateCurrentTrackPlaylistList,
 } from "@/models/shared";
+import { getUniqueObjectData } from "@/shared/helpers/getUniqueObjectData";
+import type { Track } from "@/shared/types";
 
 // INFO: Обеспечивает управление воспроизведением
 export const Controls = () => {
@@ -39,13 +41,35 @@ export const Controls = () => {
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const trackPlaylistList = useUnit($trackPlaylistList);
 
+  const currentOnlyTracks = getUniqueObjectData<Track>([
+    ...currentTrackPlaylistList
+      .filter((item) => item.type === "playlist")
+      .map((item) => item.tracks)
+      .flat(),
+    ...currentTrackPlaylistList.filter((item) => item.type === "track"),
+  ]);
+
   // const [isShuffle] = useState<boolean>(false);
   const [isRepeat] = useState<boolean>(false);
 
   const isDisabledButtons =
     currentTrackPlaylistList.length > 1 || !currentTrackPlaylistList.length;
 
-  const onLoadedMetadata = () => {
+  const isDisabledPrevButton =
+    isDisabledButtons ||
+    (currentTrackPlaylistList.length === 1 &&
+      trackPlaylistList.findIndex(
+        (item) => item.id === currentTrackPlaylistList[0].id,
+      )) === 0;
+
+  const isDisabledNextButton =
+    isDisabledButtons ||
+    (currentTrackPlaylistList.length === 1 &&
+      trackPlaylistList.findIndex(
+        (item) => item.id === currentTrackPlaylistList[0].id,
+      )) === trackPlaylistList.length - 1;
+
+  const onLoadedMetadata = useCallback(() => {
     const durationList = audioListRef.current
       .map((item) => item?.duration)
       .flat()
@@ -63,7 +87,9 @@ export const Controls = () => {
         progressBarRef.current.max = maxValueSeconds.toString();
       }
     }
-  };
+    // TODO: Некорректное поведение и обновление данных при зависимости - currentTrackPlaylistList.length
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioListRef, progressBarRef, setDuration, currentTrackPlaylistList.length]);
 
   const skipForward = () => {
     if (audioListRef.current) {
@@ -88,16 +114,15 @@ export const Controls = () => {
   };
 
   const handleStopClick = () => {
-    currentTrackPlaylistList.forEach((_, idx) => {
+    currentOnlyTracks.forEach((_, idx) => {
       audioListRef.current[idx]?.pause();
       setIsPlaying(false);
     });
   };
 
   const handlePrevious = useCallback(() => {
-    const currentTrackId = trackPlaylistList.findIndex(
-      (item) => item.id === currentTrackPlaylistList[0]?.id,
-    );
+    const currentTrackId = trackPlaylistList
+      .findIndex((item) => item.id === currentTrackPlaylistList[0]?.id);
 
     if (trackPlaylistList[currentTrackId - 1]) {
       updateCurrentTrackPlaylistList([trackPlaylistList[currentTrackId - 1]]);
@@ -120,25 +145,12 @@ export const Controls = () => {
 
   useEffect(() => {
     if (isPlaying) {
-
-      currentTrackPlaylistList.forEach((currentTrack, idx) => {
-        if (currentTrack.type === "playlist") {
-          currentTrack.tracks.forEach((_, idx) => {
-            audioListRef.current[idx]?.play();
-          });
-          return;
-        }
+      currentOnlyTracks.forEach((_, idx) => {
         audioListRef.current[idx]?.play();
       });
       startAnimation();
     } else {
-      currentTrackPlaylistList.forEach((currentTrack, idx) => {
-        if (currentTrack.type === "playlist") {
-          currentTrack.tracks.forEach((_, idx) => {
-            audioListRef.current[idx]?.pause();
-          });
-          return;
-        }
+      currentOnlyTracks.forEach((_, idx) => {
         audioListRef.current[idx]?.pause();
       });
       if (playAnimationRef.current !== null) {
@@ -160,6 +172,7 @@ export const Controls = () => {
     audioListRef,
     currentTrackPlaylistList,
     playAnimationRef,
+    currentOnlyTracks,
   ]);
 
   useEffect(() => {
@@ -191,54 +204,34 @@ export const Controls = () => {
   }, [isRepeat, handleNext, audioListRef]);
 
   useEffect(() => {
-    if (currentTrackPlaylistList.length) {
+    if (currentOnlyTracks.length) {
       audioListRef.current = audioListRef.current.slice(
         0,
-        currentTrackPlaylistList.length,
+        currentOnlyTracks.length,
       );
     }
-  }, [audioListRef, currentTrackPlaylistList.length]);
+  }, [audioListRef, currentOnlyTracks.length]);
 
   return (
     <div className="flex gap-4 items-center">
-      {currentTrackPlaylistList
-        .filter((currentTrack) => currentTrack.type === "playlist")
-        .map((currentTrack) => (
-          <div key={currentTrack.id} className="absolute">
-            {currentTrack.tracks.map((track, idx) => (
-              <audio
-                key={track.link}
-                src={track.link}
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                ref={(el) => (audioListRef.current[idx] = el)}
-                onLoadedMetadata={onLoadedMetadata}
-              >
-                <p>Ваш браузер не поддерживает встроенное аудио.</p>
-              </audio>
-            ))}
-          </div>
-        ))}
-      {currentTrackPlaylistList
-        .filter((currentTrack) => currentTrack?.type === "track")
-        .map((currentTrack, idx) => (
-          <div key={currentTrack?.id} className="absolute">
-            <audio
-              src={currentTrack?.link}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              ref={(el) => (audioListRef.current[idx] = el)}
-              onLoadedMetadata={onLoadedMetadata}
-            >
-              <p>Ваш браузер не поддерживает встроенное аудио.</p>
-            </audio>
-          </div>
-        ))}
-      <button onClick={handlePrevious} disabled={isDisabledButtons}>
+      {currentOnlyTracks.map((currentTrack, idx) => (
+        <div key={`${currentTrack?.id}-${idx}`} className="absolute">
+          <audio
+            src={currentTrack?.link}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            ref={(el) => (audioListRef.current[idx] = el)}
+            onLoadedMetadata={onLoadedMetadata}
+          >
+            <p>Ваш браузер не поддерживает встроенное аудио.</p>
+          </audio>
+        </div>
+      ))}
+      <button onClick={handlePrevious} disabled={isDisabledPrevButton}>
         <BsSkipStartFill
           size={20}
           className={clsx(styles.controlsIcon, {
-            [styles.controlsIconDisabled]: isDisabledButtons,
+            [styles.controlsIconDisabled]: isDisabledPrevButton,
           })}
         />
       </button>
@@ -289,11 +282,11 @@ export const Controls = () => {
           })}
         />
       </button>
-      <button onClick={handleNext} disabled={isDisabledButtons}>
+      <button onClick={handleNext} disabled={isDisabledNextButton}>
         <BsSkipEndFill
           size={20}
           className={clsx(styles.controlsIcon, {
-            [styles.controlsIconDisabled]: isDisabledButtons,
+            [styles.controlsIconDisabled]: isDisabledNextButton,
           })}
         />
       </button>
@@ -311,4 +304,4 @@ export const Controls = () => {
       </button> */}
     </div>
   );
-};
+};;

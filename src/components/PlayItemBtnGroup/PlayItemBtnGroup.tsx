@@ -66,13 +66,17 @@ export const PlayItemBtnGroup: FC<Props> = ({ trackId }) => {
           </OverlayTooltip>
         </Dropdown.Toggle>
 
-        <Dropdown.Menu as={DropdownMenu} show={false}>
+        <Dropdown.Menu
+          as={DropdownMenu}
+          show={false}
+          className={styles.dropdownItemList}
+        >
           <Dropdown.Item eventKey="copy" className={styles.dropdownItemWrap}>
             <button
               className={styles.dropdownItem}
               ref={tooltipTarget}
               onClick={() => {
-                copyTextToClipboard(generateCopyUrl(trackId, 'playlist'));
+                copyTextToClipboard(generateCopyUrl(trackId, "playlist"));
               }}
             >
               <BsCopy /> <span>Копировать</span>

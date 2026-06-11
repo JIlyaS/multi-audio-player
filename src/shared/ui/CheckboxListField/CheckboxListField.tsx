@@ -4,11 +4,12 @@ import { Form } from "react-bootstrap";
 import styles from "./CheckboxListField.module.css";
 import type { Track } from "@/shared/types";
 import { useMemo, type FC } from "react";
-import { $form, handleCheckboxListChange } from "@/models/create-playlist";
+import { $form } from "@/models/create-playlist";
 import { useStoreMap, useUnit } from "effector-react";
 import {
   $searchValue,
   changeSearchValue,
+  handleCheckboxListChange,
   type IForm,
 } from "@/models/playlist-form";
 import { SearchInput } from "@/components/SearchInput";

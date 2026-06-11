@@ -29,15 +29,5 @@
 }
 
 .playListItem {
-  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer  justify-between;
-}
-
-.playListCheckboxWrap {
-  @apply flex items-center gap-3;
-
-  max-width: calc(100% - 4rem - 56px);
-}
-
-.playListCheckbox input {
-  @apply w-[18px] h-[18px] border-gray-500 cursor-pointer;
+  @apply flex items-center gap-3 p-[0.5rem_10px] cursor-pointer justify-between;
 }

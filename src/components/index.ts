@@ -8,3 +8,4 @@ export * from "./PlayItem";
 export * from "./CustomModal";
 export * from "./PlayItemBtnGroup";
 export * from "./TrackItemBtnGroup";
+export * from "./TrackBlock";

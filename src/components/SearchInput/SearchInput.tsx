@@ -23,7 +23,6 @@ export const SearchInput: FC<Props> = ({searchValue, className, classNameElement
 
   // TODO: Смысла нет делать debounce для поиска на фронте
   // const onSearch = (value: string) => {
-  //   // console.log(value);
   //   setSearchTracks();
   // };
 
@@ -46,7 +45,6 @@ export const SearchInput: FC<Props> = ({searchValue, className, classNameElement
       <Form.Control
         name="search"
         id="search"
-        // placeholder="Поиск..."
         className={clsx(styles.searchInputControl, classNameElement)}
         value={searchValue}
         onChange={handleSearchChange}

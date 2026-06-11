@@ -10,18 +10,28 @@ import {
   openCreateModalClick,
 } from "@/models/create-playlist";
 
-import { CheckboxField, CheckboxListField, InputField, OverlayTooltip } from "@/shared/ui";
+import {
+  CheckboxField,
+  CheckboxListField,
+  InputField,
+  OverlayTooltip,
+  SelectField,
+} from "@/shared/ui";
 import { $form, resetForm, type IForm } from "@/models/playlist-form";
 import { $tracks } from "@/models/track";
 
 import styles from "./AddPlaylistModal.module.css";
+import { $folderOptions, $isFoldersLoading, loadFolders } from "@/models/folder";
 
 export const AddPlaylistModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const trackList = useUnit($tracks);
+  const folderOptions = useUnit($folderOptions);
   const isSuccess = useUnit($isCreatePlaylistSuccess);
+  const isFoldersLoading = useUnit($isFoldersLoading);
   const onResetForm = useUnit(resetForm);
+  const onLoadFolders = useUnit(loadFolders);
 
   const onOpenCreateModalClick = useUnit(openCreateModalClick);
   const onCreateSubmitForm = useUnit(createSubmitForm);
@@ -31,6 +41,12 @@ export const AddPlaylistModal = () => {
     keys: ["isPublic"],
     fn: (values: IForm) => values["isPublic"] ?? "",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      onLoadFolders({});
+    }
+  }, [isOpen, onLoadFolders]);
 
   // TODO: Переделать
   useEffect(() => {
@@ -92,6 +108,14 @@ export const AddPlaylistModal = () => {
             type="text"
             disabled={!isPublic}
             required={isPublic}
+          />
+          <SelectField
+            id="formFolder"
+            name="folderId"
+            label="Папка"
+            loading={isFoldersLoading}
+            placeholder="Выберите папку"
+            optionList={folderOptions}
           />
           <CheckboxListField
             id="formTrackList"

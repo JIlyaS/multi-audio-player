@@ -1,0 +1,23 @@
+@reference "../../global.css";
+
+.folderItem {
+  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden;
+}
+
+.folderItemIconWrap {
+  @apply flex items-center justify-center w-full h-full bg-main-element dark:bg-gray-300 rounded-md;
+}
+
+.folderItemIcon {
+  @apply text-xl text-white dark:text-gray-600;
+}
+
+.folderItemContent {
+  @apply flex flex-col content-start text-left;
+
+  max-width: calc(100% - 80px);
+}
+
+.folderItemTitle {
+    @apply text-base whitespace-nowrap text-ellipsis overflow-hidden text-main-text dark:text-white;
+}

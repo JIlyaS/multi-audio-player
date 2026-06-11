@@ -1,3 +1,4 @@
+import { $publicFolders } from "@/models/folder";
 import { $playlists } from "@/models/playlist";
 import { $tracks } from "@/models/track";
 import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
@@ -12,13 +13,13 @@ const setUserId = createEvent<string>();
 persist({
   store: $userId,
   key: "userId",
-  def: generateSafeUUID(), 
-  sync: false
+  def: generateSafeUUID(),
+  sync: false,
 });
 
 sample({
   clock: setUserId,
-  target: $userId
+  target: $userId,
 });
 
 const selectCurrentTrackPlaylistList = createEvent<boolean>();
@@ -28,11 +29,71 @@ const $isSelectAll = createStore<boolean>(false);
 
 const $currentTracksForForm = createStore<Track[]>([]);
 
-// TODO: не нравиться примесь!
-const $trackPlaylistList = combine($tracks, $playlists, $userId, (tracks, playlists, userId) => [
-  ...playlists.filter((item) => !item?.userId || item?.userId === userId),
-  ...tracks,
-]);
+// TODO: не нравитcя примесь!
+// TODO: Влияние на порядок для переключения вперёд/назад
+const $trackPlaylistList = combine(
+  $tracks,
+  $playlists,
+  $publicFolders,
+  $userId,
+  (tracks, playlists, publicFolders, userId) => {
+    // console.log("publicFolders", publicFolders);
+    const allTrackPlaylistList = [
+      ...playlists.filter((item) => !item?.userId || item?.userId === userId),
+      ...tracks,
+    ];
+    const trackPlaylistList: (Track | Playlist)[] = [];
+    const globalFolders = publicFolders.filter((folder) => folder.isGlobal);
+    const defaultFolders = publicFolders.filter((folder) => !folder.isGlobal);
+
+    globalFolders.forEach((globalFolder) => {
+      const tracks = allTrackPlaylistList.filter((item) => item.folderId === globalFolder.id);
+      trackPlaylistList.push(...tracks);
+    });
+
+    defaultFolders.forEach((defaultFolder) => {
+      const tracks = allTrackPlaylistList.filter(
+        (item) => item.folderId === defaultFolder.id,
+      );
+      trackPlaylistList.push(...tracks);
+    });
+
+    trackPlaylistList.push(
+      ...allTrackPlaylistList.filter((item) => !item.folderId),
+    );
+
+
+    return trackPlaylistList;
+  },
+);
+
+// TODO: Переделать - новая примесь для формирования списка треков в папках
+const $trackPlaylistForFolderList = combine(
+  $tracks,
+  $playlists,
+  $publicFolders,
+  $userId,
+  (tracks, playlists, publicFolders, userId) => {
+    const trackPlaylistList = [
+      ...playlists.filter((item) => !item?.userId || item?.userId === userId),
+      ...tracks,
+    ];
+
+    const globalFolders = publicFolders.filter((folder) => folder.isGlobal);
+    const defaultFolders = publicFolders.filter((folder) => !folder.isGlobal);
+    const folderMapList = [...globalFolders, ...defaultFolders].map(
+      (folder) => {
+        return {
+          ...folder,
+          trackList: trackPlaylistList.filter(
+            (item) => item.folderId === folder.id,
+          ),
+        };
+      },
+    );
+    return folderMapList;
+  },
+);
 
 const updateCurrentTrackPlaylistList = createEvent<(Track | Playlist)[]>();
 
@@ -64,6 +125,7 @@ export {
   $userId,
   $currentTrackPlaylistList,
   $trackPlaylistList,
+  $trackPlaylistForFolderList,
   $isSelectAll,
   $currentTracksForForm,
   setUserId,
