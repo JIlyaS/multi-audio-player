@@ -15,6 +15,7 @@ export const mockTracks: (Track | Playlist)[] = [
     link: audio1,
     author: "Владимир",
     tags: [],
+    folderId: "",
     // thumbnail: audioSingle,
   },
   {
@@ -24,6 +25,7 @@ export const mockTracks: (Track | Playlist)[] = [
     link: audio2,
     author: "Владислав",
     tags: [],
+    folderId: "",
     // thumbnail: audioSingle,
   },
   {
@@ -34,6 +36,7 @@ export const mockTracks: (Track | Playlist)[] = [
     tracks: [],
     author: "Илья",
     tags: [],
+    folderId: "",
     // thumbnail: audioMultiple,
   },
 ];
