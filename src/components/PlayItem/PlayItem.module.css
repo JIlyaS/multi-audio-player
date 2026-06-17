@@ -5,7 +5,15 @@
 }
 
 .playItemIconWrap {
-  @apply flex items-center justify-center w-full h-full bg-main-element dark:bg-gray-300 rounded-md;
+  @apply flex items-center justify-center w-full h-full dark:bg-gray-300 rounded-md;
+}
+
+.playTrackItemIconWrap {
+  @apply bg-track-element;
+}
+
+.playPlaylistItemIconWrap {
+  @apply bg-playlist-element;
 }
 
 .playItemIcon {
@@ -13,9 +21,7 @@
 }
 
 .playItemContent {
-  @apply flex flex-col content-start text-left;
-
-  max-width: calc(100% - 80px);
+  @apply flex flex-col content-start text-left max-w-[calc(100%-60px)] md:max-w-[calc(100%-70px)] lg:max-w-[calc(100%-90px)];
 }
 
 .playItemTitle {

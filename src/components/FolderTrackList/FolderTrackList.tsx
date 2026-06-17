@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 import clsx from "clsx";
 
@@ -9,7 +9,7 @@ import { TrackBlock } from "@/components/TrackBlock";
 import type { Playlist, Track } from "@/shared/types";
 import { useUnit } from "effector-react";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
-import { $currentTrackPlaylistList, updateCurrentTrackPlaylistList, $trackPlaylistList } from "@/models/shared";
+import { $currentTrackPlaylistList, updateCurrentTrackPlaylistList, $trackPlaylistList, $isSelectAll } from "@/models/shared";
 // import { OverlayTooltip } from "@/shared/ui";
 
 interface Props {
@@ -27,8 +27,20 @@ interface Props {
 export const FolderTrackList: FC<Props> = ({ folder }) => {
   // TODO: Переписать контекст под Effector или State формат
   const { setDuration } = useAudioPlayerContext();
+  const isSelectAll = useUnit($isSelectAll);
+  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
+  const trackPlaylistList = useUnit($trackPlaylistList);
 
   const [isFolderSelected, setIsFolderSelected] = useState(false);
+
+  const currentFolderTrackList = currentTrackPlaylistList.filter((item) => item.folderId === folder.id);
+
+  const isSelectAllFolder = isSelectAll || currentFolderTrackList.length === folder.trackList.length;
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsFolderSelected(isSelectAllFolder ? true : false);
+  }, [isSelectAllFolder]);
   
   // TODO: Переделать localStorage под корректный формат
   const [isOpenFolder, setIsOpenFolder] = useState(() => {
@@ -70,9 +82,6 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         return true;
     });
   };
-
-  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
-  const trackPlaylistList = useUnit($trackPlaylistList);
 
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {

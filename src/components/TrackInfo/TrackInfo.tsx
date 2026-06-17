@@ -5,6 +5,7 @@ import { useUnit } from "effector-react";
 import styles from "./TrackInfo.module.css";
 import { TrackInfoIcon } from "./TrackInfoIcon";
 import { getTrackInfoAuthor, getTrackInfoTitle } from "./utils";
+import clsx from "clsx";
 
 export const TrackInfo = () => {
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
@@ -30,12 +31,23 @@ export const TrackInfo = () => {
     return false;
   });
 
-  const isPlaylist = currentTrackPlaylistList.some((item) => item.type === "playlist");
+  const isTrack =
+    !isFolder && currentTrackPlaylistList.length &&
+    currentTrackPlaylistList.every((item) => item.type === "track");
+  const isPlaylist = !isFolder && currentTrackPlaylistList.some(
+    (item) => item.type === "playlist",
+  );
 
   return (
     <div className={styles.trackInfo}>
       <div className={styles.trackInfoWrap}>
-        <div className={styles.trackInfoIconBlock}>
+        <div
+          className={clsx(styles.trackInfoIconBlock, {
+            [styles.trackInfoIconFolderBlock]: isFolder,
+            [styles.trackInfoIconTrackBlock]: isTrack,
+            [styles.trackInfoIconPlaylistBlock]: isPlaylist,
+          })}
+        >
           <span className={styles.trackInfoIcon}>
             <TrackInfoIcon isFolder={isFolder} isPlaylist={isPlaylist} />
           </span>

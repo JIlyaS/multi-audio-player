@@ -11,6 +11,14 @@
   --color-main-element: #156ED2;
   --color-secondary-element: #6C757D;
 
+  --color-folder-element: #117191;
+  --color-track-element: #11918f;
+  --color-playlist-element: #91113a;
+
+  /* --color-folder-element: #156ED2;
+  --color-track-element: #156ED2;
+  --color-playlist-element: #156ED2; */
+
   --color-btn-element-active: #284EA1;
   --color-btn-element-border-active: #284EA1;
 
