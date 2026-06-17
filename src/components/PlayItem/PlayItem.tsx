@@ -3,6 +3,7 @@ import { BsMusicNoteBeamed, BsMusicNoteList } from "react-icons/bs";
 
 import styles from "./PlayItem.module.css";
 import { Badge } from "react-bootstrap";
+import clsx from "clsx";
 
 interface PlayItemProps {
   title: string;
@@ -16,7 +17,12 @@ export const PlayItem: FC<PlayItemProps> = ({ title, author, type, tags }) => {
   return (
     <>
       <div className={styles.playItem}>
-        <div className={styles.playItemIconWrap}>
+        <div
+          className={clsx(styles.playItemIconWrap, {
+            [styles.playTrackItemIconWrap]: type === "track",
+            [styles.playPlaylistItemIconWrap]: type === "playlist",
+          })}
+        >
           <span className={styles.playItemIcon}>
             {type === "playlist" ? <BsMusicNoteList /> : <BsMusicNoteBeamed />}
           </span>
@@ -28,7 +34,9 @@ export const PlayItem: FC<PlayItemProps> = ({ title, author, type, tags }) => {
         {tags.length ? (
           <p className={styles.playItemTagList}>
             {tags.map((tag) => (
-              <Badge bg="success" key={tag}>{tag}</Badge>
+              <Badge bg="success" key={tag}>
+                {tag}
+              </Badge>
             ))}
           </p>
         ) : null}

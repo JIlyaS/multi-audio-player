@@ -5,7 +5,7 @@
 }
 
 .folderItemIconWrap {
-  @apply flex items-center justify-center w-full h-full bg-main-element dark:bg-gray-300 rounded-md;
+  @apply flex items-center justify-center w-full h-full bg-folder-element dark:bg-gray-300 rounded-md;
 }
 
 .folderItemIcon {

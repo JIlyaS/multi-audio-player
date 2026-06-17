@@ -25,7 +25,7 @@
 }
 
 .playListList {
-  @apply bg-main-background dark:bg-dark-main-background text-white h-[400px] overflow-y-auto m-0! p-0! rounded-b-xl;
+  @apply bg-main-background dark:bg-dark-main-background text-white h-[400px] overflow-y-auto overflow-x-hidden m-0! p-0! rounded-b-xl;
 }
 
 .playListItem {

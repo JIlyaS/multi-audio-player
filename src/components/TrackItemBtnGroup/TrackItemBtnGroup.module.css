@@ -1,7 +1,7 @@
 @reference "../../global.css";
 
 .trackItemBtnWrap {
-    @apply flex justify-between gap-3 mr-[8px];
+    @apply flex justify-between gap-3 mr-[10px];
 }
 
 .copyButton {
