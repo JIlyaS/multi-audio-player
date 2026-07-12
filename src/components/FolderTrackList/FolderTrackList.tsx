@@ -35,7 +35,10 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
 
   const currentFolderTrackList = currentTrackPlaylistList.filter((item) => item.folderId === folder.id);
 
-  const isSelectAllFolder = isSelectAll || currentFolderTrackList.length === folder.trackList.length;
+  const isSelectAllFolder =
+    isSelectAll ||
+    currentFolderTrackList.length && folder.trackList.length &&  currentFolderTrackList.length ===
+      folder.trackList.length;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

@@ -8,6 +8,10 @@
     @apply flex justify-between gap-3 mr-[8px];
 }
 
+.dropdownWrap { 
+    @apply flex items-center w-[18px];
+}
+
 .dropdownItemList {
     @apply bg-main-background dark:bg-dark-main-background;
 }

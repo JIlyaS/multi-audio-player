@@ -7,6 +7,7 @@ import clsx from "clsx";
 import styles from "./TrackBlock.module.css";
 import { Form } from "react-bootstrap";
 import type { Playlist, Track } from "@/shared/types";
+import { getTrackName } from "@/shared/helpers/getTrackName";
 
 interface Props {
   track: Track | Playlist;
@@ -44,8 +45,19 @@ export const TrackBlock: FC<Props> = ({
         />
         <PlayItem {...track} />
       </div>
-      {track.type === "playlist" && <PlayItemBtnGroup trackId={track.id} />}
-      {track.type === "track" && <TrackItemBtnGroup trackId={track.id} />}
+
+      {track.type === "playlist" && (
+        <PlayItemBtnGroup
+          playlistId={track.id}
+          playlistName="playlist"
+        />
+      )}
+      {track.type === "track" && (
+        <TrackItemBtnGroup
+          trackId={track.id}
+          trackName={getTrackName(track.link)}
+        />
+      )}
     </li>
   );
 };;

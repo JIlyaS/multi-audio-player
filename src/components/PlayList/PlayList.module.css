@@ -17,7 +17,7 @@
 }
 
 .playListSelectAllBtn {
-  @apply w-[140px] bg-main-element! border-main-element! dark:bg-secondary-element! dark:border-secondary-element! text-white!;
+  @apply w-[140px] bg-default-element! border-default-element! dark:bg-secondary-element! dark:border-secondary-element! text-white!;
 }
 
 .playListSelectAllBtnActive {
