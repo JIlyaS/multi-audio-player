@@ -9,7 +9,7 @@
 }
 
 .trackInfoIconBlock {
-  @apply flex items-center justify-center w-full h-full dark:bg-gray-300 bg-main-element rounded-md min-w-24;
+  @apply flex items-center justify-center w-full h-full dark:bg-gray-300 bg-default-element rounded-md min-w-24;
 }
 
 .trackInfoIconFolderBlock {

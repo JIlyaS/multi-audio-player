@@ -4,6 +4,18 @@
     @apply flex justify-between gap-3 mr-[10px];
 }
 
+.dropdownItemList {
+    @apply bg-main-background dark:bg-dark-main-background;
+}
+
+.dropdownItemWrap {
+    @apply p-0 text-main-text! active:text-white! dark:text-white! dark:hover:bg-dark-secondary-background! dark:focus:bg-dark-secondary-background! dark:active:bg-dark-secondary-background!;
+}
+
+.dropdownItem {
+    @apply flex items-center gap-[6px] w-full h-[36px] px-[1rem] py-[0.5rem];
+}
+
 .copyButton {
     @apply text-main-text dark:text-white;
 }

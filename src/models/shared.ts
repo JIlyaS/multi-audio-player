@@ -85,9 +85,11 @@ const $trackPlaylistForFolderList = combine(
       (folder) => {
         return {
           ...folder,
-          trackList: trackPlaylistList.filter(
-            (item) => item.folderId === folder.id,
-          ),
+          trackList: trackPlaylistList
+            .filter((item) => item.folderId === folder.id)
+            .sort((prevItem, nextItem) =>
+              prevItem.title.localeCompare(nextItem.title, "ru", { sensitivity: "base" }),
+            ),
         };
       },
     );
