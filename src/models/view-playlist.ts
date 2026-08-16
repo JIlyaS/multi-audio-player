@@ -1,5 +1,5 @@
 import { $form, resetForm } from "@/models/playlist-form";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { getViewCardPlaylist } from "@/shared/api";
 import type { Playlist } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
@@ -8,30 +8,15 @@ const viewCardPlaylist = createEvent<string>();
 const $currentPlaylist = createStore<Playlist | null>(null).reset(resetForm);
 
 const viewCardPlaylistFx = createEffect(async (id: string) => {
-  try {
-    const response = await fetch(getApiUrl(`/playlists/${id}`), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  const response = await getViewCardPlaylist(id);
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch tracks");
-    }
-
-    return await response.json();
-  } catch {
-    throw new Error("Failed to get data playlist");
-  }
+  return response;
 });
 
 const $viewPlaylistError = createStore<string | null>(null);
 const $isViewPlaylistLoading = viewCardPlaylistFx.pending;
 
 sample({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   clock: viewCardPlaylistFx.doneData,
   fn: (data: Playlist) => ({
     id: data.id,
@@ -44,6 +29,11 @@ sample({
     tracks: data.tracks,
   }),
   target: $form,
+});
+
+sample({
+  clock: viewCardPlaylistFx.doneData,
+  target: $currentPlaylist,
 });
 
 sample({

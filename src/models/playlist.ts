@@ -1,4 +1,4 @@
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchPlaylists } from "@/shared/api";
 import type { Playlist } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
@@ -6,13 +6,11 @@ const loadPlaylists = createEvent();
 
 const $playlists = createStore<Playlist[]>([]);
 
+// TODO: Переделать запрос под библиотеку
 const fetchPlaylistsFx = createEffect(async () => {
-  // TODO: Переделать запрос под библиотеку
-  const response = await fetch(getApiUrl("/playlists"));
-  if (!response.ok) {
-    throw new Error("Failed to fetch tracks");
-  }
-  return await response.json();
+  const response = await fetchPlaylists();
+  
+  return response;
 });
 
 const $isPlaylistsLoading = fetchPlaylistsFx.pending;

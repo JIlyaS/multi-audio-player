@@ -24,11 +24,11 @@ export default defineConfig(({ mode }) => {
       alias: [
         {
           find: "@",
-          replacement: path.resolve(__dirname, "src"),
+          replacement: path.resolve(import.meta.dirname, "src"),
         },
         {
           find: "@components",
-          replacement: path.resolve(__dirname, "src/components"),
+          replacement: path.resolve(import.meta.dirname, "src/components"),
         },
       ],
     },

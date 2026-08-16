@@ -38,6 +38,13 @@ export const TrackInfo = () => {
     (item) => item.type === "playlist",
   );
 
+  const title = getTrackInfoTitle(
+    isFolder ? firstTrackFolder : firstTrack,
+    isFolder,
+  );
+
+  const author = getTrackInfoAuthor(firstTrack, isFolder);
+
   return (
     <div className={styles.trackInfo}>
       <div className={styles.trackInfoWrap}>
@@ -54,14 +61,11 @@ export const TrackInfo = () => {
         </div>
       </div>
       <div className={styles.trackInfoContent}>
-        <p className={styles.trackInfoTitle}>
-          {getTrackInfoTitle(
-            isFolder ? firstTrackFolder : firstTrack,
-            isFolder,
-          )}
+        <p className={styles.trackInfoTitle} title={title}>
+          {title}
         </p>
-        <p className={styles.trackInfoAuthor}>
-          {getTrackInfoAuthor(firstTrack, isFolder)}
+        <p className={styles.trackInfoAuthor} title={author || "Неизвестно"}>
+          {author}
         </p>
       </div>
     </div>

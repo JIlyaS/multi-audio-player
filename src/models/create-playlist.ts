@@ -3,19 +3,9 @@ import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
 import { $currentTracksForForm, $userId } from "@/models/shared";
 import { loadTracks } from "@/models/track";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
-import type { Track } from "@/shared/types";
+import { createPlaylist } from "@/shared/api";
+import type { ICreatePlaylistData, Track } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
-
-interface ISubmitForm {
-  title: string;
-  author?: string | undefined;
-  // INFO: Это поле на данный момент имеет отношение только к фронту и создаётся и сохраняется только на фронте, в базе это не относится ни к какому пользователю
-  userId?: string | null;
-  folderId?: string | null;
-  isPublic: boolean;
-  trackIds: string[];
-}
 
 interface ISimpleCreateForm {
   title: string;
@@ -30,26 +20,8 @@ const createSimplePlaylist = createEvent<ISimpleCreateForm>();
 const openCreateModalClick = createEvent();
 
 const sendSubmitFormFx = createEffect(
-  async ({ title, author, isPublic, userId, folderId, trackIds }: ISubmitForm) => {
-    try {
-      // TODO: Переделать под библиотеку
-      await fetch(getApiUrl("/playlists"), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          title, 
-          author,
-          folderId,
-          isPublic, 
-          userId,
-          trackIds
-        }),
-      });
-    } catch {
-      throw new Error("Failed to send form");
-    }
+  async (data: ICreatePlaylistData) => {
+    await createPlaylist(data);
   },
 );
 

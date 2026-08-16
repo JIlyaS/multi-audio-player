@@ -13,21 +13,25 @@ import {
   type IForm,
 } from "@/models/playlist-form";
 import { SearchInput } from "@/components/SearchInput";
+import { $currentPlaylist } from "@/models/view-playlist";
+import { $currentTracksForForm } from "@/models/shared";
 
 interface Props {
   id?: string;
   trackList: Track[];
   label: string;
   name: "tracks";
+  isEdit?: boolean;
 }
 
-export const CheckboxListField: FC<Props> = ({
-  trackList,
-  label,
-  name,
-}) => {
+// TODO: Перезаписать компонент для выборки списка
+export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit }) => {
   const searchValue = useUnit($searchValue);
   const onChangeSearchValue = useUnit(changeSearchValue);
+
+  const currentPlaylist = useUnit($currentPlaylist);
+  const currentTracksForForm = useUnit($currentTracksForForm);
+  const currentTracksForFormIds = currentTracksForForm.map((item) => item.id);
 
   const trackFormList = useStoreMap({
     store: $form,
@@ -36,18 +40,45 @@ export const CheckboxListField: FC<Props> = ({
       values[name] && name === "tracks" ? values[name] : [],
   });
 
+  // TODO: Для редактирования
+  const currentPlaylistTrackIds = (currentPlaylist?.tracks || []).map((item) => item.id);
+
+  const sortedTrackList = useMemo(() => {
+    if (isEdit) {
+      return [
+        ...trackList.filter((item) =>
+          currentPlaylistTrackIds.includes(item.id),
+        ),
+        ...trackList.filter(
+          (item) => !currentPlaylistTrackIds.includes(item.id),
+        ),
+      ];
+    } else {
+      return [
+        ...trackList.filter((item) =>
+          currentTracksForFormIds.includes(item.id),
+        ),
+        ...trackList.filter(
+          (item) => !currentTracksForFormIds.includes(item.id),
+        ),
+      ];
+    }
+  }, [trackList, currentPlaylistTrackIds, currentTracksForFormIds, isEdit]);
+
+
   // TODO: Подумать как переделать в будущем
   const filteredTrackList = useMemo(
     () =>
-      trackList
+      sortedTrackList
         .filter((item) => item.type === "track")
-        .filter((track) =>
-          track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-        track.tags.some((tag) =>
-          tag.toLowerCase().includes(searchValue.toLowerCase()),
+        .filter(
+          (track) =>
+            track.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+            track.tags.some((tag) =>
+              tag.toLowerCase().includes(searchValue.toLowerCase()),
+            ),
         ),
-        ),
-    [searchValue, trackList],
+    [searchValue, sortedTrackList],
   );
 
   const handleSelectAudioChange = (id: string) => {

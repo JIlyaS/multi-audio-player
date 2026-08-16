@@ -38,3 +38,22 @@ export interface FolderOption {
   label: string;
   value?: string;
 }
+
+
+export interface ICreatePlaylistData {
+  title: string;
+  author?: string | undefined;
+  // INFO: Это поле на данный момент имеет отношение только к фронту и создаётся и сохраняется только на фронте, в базе это не относится ни к какому пользователю
+  userId?: string | null;
+  folderId?: string | null;
+  isPublic: boolean;
+  trackIds: string[];
+}
+
+export interface IUpdatePlaylistData {
+  id?: string;
+  title: string;
+  folderId?: string | null;
+  author?: string | undefined;
+  trackIds: string[];
+}

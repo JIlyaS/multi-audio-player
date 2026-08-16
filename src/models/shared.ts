@@ -37,7 +37,6 @@ const $trackPlaylistList = combine(
   $publicFolders,
   $userId,
   (tracks, playlists, publicFolders, userId) => {
-    // console.log("publicFolders", publicFolders);
     const allTrackPlaylistList = [
       ...playlists.filter((item) => !item?.userId || item?.userId === userId),
       ...tracks,

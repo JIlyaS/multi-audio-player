@@ -1,9 +1,10 @@
 // INFO: Отобразить список доступных треков
 import { useUnit } from "effector-react";
 import clsx from "clsx";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { TrackBlock } from "@/components";
 import { $isTracksLoading, loadTracks } from "@/models/track";
 import { $isPlaylistsLoading, loadPlaylists } from "@/models/playlist";
@@ -28,13 +29,14 @@ export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
   const { searchValue } = useAudioPlayerContext();
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
   const trackPlaylistList = useUnit($trackPlaylistList);
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const trackPlaylistForFolderList = useUnit($trackPlaylistForFolderList);
   const isTracksLoading = useUnit($isTracksLoading);
   const isPlaylistsLoading = useUnit($isPlaylistsLoading);
   const isSelectAll = useUnit($isSelectAll);
-  // const globalFolders = useUnit($globalFolders);
 
   // TODO: Скорее всего не здесь должно быть
   const onLoadTracks = useUnit(loadTracks);
@@ -55,6 +57,18 @@ export const PlayList = () => {
     () => getFilteredTracksForFolders(trackPlaylistForFolderList, searchValue),
     [trackPlaylistForFolderList, searchValue],
   );
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: filteredTrackPlaylistForFolderList.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 80,
+    // useFlushSync: false,
+    // directDomUpdates: true,
+    // overscan: 5,
+  });
+
+  const virtualItems = virtualizer.getVirtualItems();
 
   useEffect(() => {
     onLoadTracks();
@@ -137,19 +151,58 @@ export const PlayList = () => {
           {isSelectAll ? "Снять выбранное" : "Выбрать все"}
         </ToggleButton>
       </div>
-      <ul className={styles.playListList}>
-        {filteredTrackPlaylistForFolderList.map((folder) => (
-          <FolderTrackList key={folder.id} folder={folder} />
-        ))}
-        {filteredTracks.map((track) => (
-          <TrackBlock
-            key={track.id}
-            track={track}
-            currentTracks={currentTrackPlaylistList}
-            onAudioChange={handleSelectAudioChange}
-          />
-        ))}
-      </ul>
+      <div className={styles.playListList} ref={parentRef}>
+        <ul
+          className={styles.playListListWrapper}
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+          }}
+        >
+          {virtualItems.map((virtualItem) => {
+            const folder =
+              filteredTrackPlaylistForFolderList[virtualItem.index];
+
+            return (
+              <li
+                key={virtualItem.key}
+                data-index={virtualItem.index}
+                ref={virtualizer.measureElement}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  transform: `translateY(${virtualItem.start}px)`,
+                }}
+              >
+                <FolderTrackList key={folder.id} folder={folder} />
+              </li>
+            );
+          })}
+        </ul>
+        <ul className={styles.playListListWrapper}>
+          {filteredTracks.map((track) => (
+            <TrackBlock
+              key={track.id}
+              track={track}
+              currentTracks={currentTrackPlaylistList}
+              onAudioChange={handleSelectAudioChange}
+            />
+          ))}
+        </ul>
+        {/* TODO: старое отображение списков без оптимизации - удалить после тестирования */}
+        {/* {filteredTrackPlaylistForFolderList.map((folder) => (
+            <FolderTrackList key={folder.id} folder={folder} />
+          ))}
+          {filteredTracks.map((track) => (
+            <TrackBlock
+              key={track.id}
+              track={track}
+              currentTracks={currentTrackPlaylistList}
+              onAudioChange={handleSelectAudioChange}
+            />
+          ))} */}
+      </div>
     </>
   );
 };;

@@ -2,39 +2,18 @@ import { loadFolderList } from "@/models/folder";
 import { loadPlaylists } from "@/models/playlist";
 import { $form, resetForm } from "@/models/playlist-form";
 import { loadTracks } from "@/models/track";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { updatePlaylist } from "@/shared/api";
+import type { IUpdatePlaylistData } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 const updateSubmitForm = createEvent<React.FormEvent<HTMLFormElement>>();
 const fieldUpdate = createEvent();
 
-const sendSubmitFormFx = createEffect(
-  async ({
-    id,
-    title,
-    folderId,
-    author,
-    trackIds,
-  }: {
-    id?: string;
-    title: string;
-    folderId?: string | null;
-    author?: string | undefined;
-    trackIds: string[];
-  }) => {
-    try {
-      await fetch(getApiUrl("/playlists"), {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, title, folderId, author, trackIds }),
-      });
-    } catch {
-      throw new Error("Failed to send form");
-    }
-  },
-);
+const sendSubmitFormFx = createEffect(async (data: IUpdatePlaylistData) => {
+  const response = await updatePlaylist(data);
+
+  return response;
+});
 
 const $isUpdatePlaylistSuccess = createStore<boolean>(false).reset(resetForm);
 const $updatePlaylistError = createStore<string | null>(null).reset(resetForm);

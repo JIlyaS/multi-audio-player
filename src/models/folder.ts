@@ -1,6 +1,5 @@
 // TODO: Не сделан формат приватных папок
-
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchFolders } from "@/shared/api";
 import type { Folder, FolderOption } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
@@ -10,40 +9,22 @@ const loadFolderList = createEvent<{ global?: boolean }>({});
 const $folders = createStore<Folder[]>([]);
 const $folderList = createStore<Folder[]>([]);
 
+// TODO: Неоптимально, нужно переделать под новую либу
 const fetchFoldersFx = createEffect(
   async ({ global }: { global?: boolean }) => {
-    // TODO: Неоптимально, нужно переделать под новую либу
-    let folderUri = "/folders";
+    const response = fetchFolders({ global });
 
-    if (global) {
-      folderUri = "/folders?global=true";
-    }
-
-    // TODO: Переделать запрос под библиотеку
-    const response = await fetch(getApiUrl(folderUri));
-    if (!response.ok) {
-      throw new Error("Failed to fetch folders");
-    }
-    return await response.json();
+    return response;
   },
 );
 
 // TODO: Временное решение с разными запросами - запрос для списка  треков и плейлистов на странице плеера
+// TODO: Неоптимально, нужно переделать под новую либу
 const fetchFolderListFx = createEffect(
   async ({ global }: { global?: boolean }) => {
-    // TODO: Неоптимально, нужно переделать под новую либу
-    let folderUri = "/folders";
+    const response = fetchFolders({ global });
 
-    if (global) {
-      folderUri = "/folders?global=true";
-    }
-
-    // TODO: Переделать запрос под библиотеку
-    const response = await fetch(getApiUrl(folderUri));
-    if (!response.ok) {
-      throw new Error("Failed to fetch folders");
-    }
-    return await response.json();
+    return response;
   },
 );
 

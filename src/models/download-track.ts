@@ -1,5 +1,4 @@
-import { downloadFileFromLink } from "@/shared/helpers/downloadFileFromLink";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchDownloadTrack } from "@/shared/api";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 const downloadTrack = createEvent<{ trackId: string; trackName: string }>();
@@ -8,13 +7,7 @@ const $currentDownloadTrackId = createStore<string | null>(null);
 
 const downloadTrackFx = createEffect(
   async ({ trackId, trackName }: { trackId: string; trackName: string }) => {
-    const response = await fetch(getApiUrl(`/tracks/download?id=${trackId}`));
-    if (!response.ok) {
-      throw new Error("Failed to fetch tracks");
-    }
-    const downloadedTrack = await response.blob();
-
-    downloadFileFromLink(downloadedTrack, trackName);
+    await fetchDownloadTrack(trackId, trackName);
   },
 );
 

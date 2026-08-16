@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   BsFillFastForwardFill,
   BsFillPauseFill,
@@ -30,9 +30,13 @@ import type { Track } from "@/shared/types";
 export const Controls = () => {
   const { playAnimationRef, startAnimation, updateProgress } = useAnimation();
   const {
+    timeProgress,
+    duration,
     isPlaying,
     setDuration,
     setIsPlaying,
+    isRepeatPlaying,
+    isInfinityPlaying,
 
     progressBarRef,
     audioListRef,
@@ -48,9 +52,6 @@ export const Controls = () => {
       .flat(),
     ...currentTrackPlaylistList.filter((item) => item.type === "track"),
   ]);
-
-  // const [isShuffle] = useState<boolean>(false);
-  const [isRepeat] = useState<boolean>(false);
 
   const isDisabledButtons =
     currentTrackPlaylistList.length > 1 || !currentTrackPlaylistList.length;
@@ -165,15 +166,7 @@ export const Controls = () => {
         cancelAnimationFrame(playAnimationRef.current);
       }
     };
-  }, [
-    isPlaying,
-    startAnimation,
-    updateProgress,
-    audioListRef,
-    currentTrackPlaylistList,
-    playAnimationRef,
-    currentOnlyTracks,
-  ]);
+  }, [isPlaying, startAnimation, updateProgress, audioListRef, currentTrackPlaylistList, playAnimationRef, currentOnlyTracks, isInfinityPlaying, duration, timeProgress]);
 
   useEffect(() => {
     const currentAudioListRef = audioListRef.current;
@@ -182,10 +175,22 @@ export const Controls = () => {
       currentAudioListRef.forEach((currentAudioItemRef) => {
         if (currentAudioItemRef) {
           currentAudioItemRef.onended = () => {
-            if (isRepeat) {
+            if (isRepeatPlaying) {
               currentAudioItemRef.play();
             } else {
-              handleNext();
+              if (isInfinityPlaying) {
+                handleNext();
+              } else {
+                currentOnlyTracks.forEach((_, idx) => {
+                  audioListRef.current[idx]?.pause();
+                });
+                if (playAnimationRef.current !== null) {
+                  cancelAnimationFrame(playAnimationRef.current);
+                  playAnimationRef.current = null;
+                }
+                updateProgress();
+                setIsPlaying(false);
+              }
             }
           };
         }
@@ -201,7 +206,16 @@ export const Controls = () => {
         });
       }
     };
-  }, [isRepeat, handleNext, audioListRef]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isRepeatPlaying,
+    handleNext,
+    audioListRef,
+    isInfinityPlaying,
+    currentOnlyTracks,
+    playAnimationRef,
+    updateProgress,
+  ]);
 
   useEffect(() => {
     if (currentOnlyTracks.length) {
