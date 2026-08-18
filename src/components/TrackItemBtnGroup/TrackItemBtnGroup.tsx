@@ -2,8 +2,7 @@ import { useRef, useState, type FC } from "react";
 
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BsCopy, BsThreeDotsVertical, BsDownload } from "react-icons/bs";
+import { BsCopy, BsThreeDotsVertical} from "react-icons/bs";
 import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { Dropdown, Spinner } from "react-bootstrap";
 import { DropdownMenu } from "@/components/DropdownMenu";
@@ -37,10 +36,9 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDownloadTrackClick = () => {
-    onDownloadTrack({trackId, trackName});
-  };
+  // const handleDownloadTrackClick = () => {
+  //   onDownloadTrack({trackId, trackName});
+  // };
 
   return (
     <div
