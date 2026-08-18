@@ -145,22 +145,29 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
             trackList={trackList}
             label="Список композиций"
             name="tracks"
+            isEdit
           />
           <div className={styles.updatePlaylistModalBtnGroup}>
             <Button variant="secondary" onClick={handleCloseClick}>
               Закрыть
             </Button>
-            <ConfirmModal
-              title="Подтверждение удаления"
-              description="Вы уверены что хотите удалить плейлист?"
-              show={isConfirmModal}
-              onConfirm={handleDeleteClick}
-              onClose={() => setIsConfirmModal(false)}
-            >
-              <Button variant="danger" onClick={() => setIsConfirmModal(true)}>
-                <BsTrash />
-              </Button>
-            </ConfirmModal>
+            {/* TODO: Сделать доступ только для пользователя создавшего плейлист + администратора */}
+            {!isPublic && (
+              <ConfirmModal
+                title="Подтверждение удаления"
+                description="Вы уверены что хотите удалить плейлист?"
+                show={isConfirmModal}
+                onConfirm={handleDeleteClick}
+                onClose={() => setIsConfirmModal(false)}
+              >
+                <Button
+                  variant="danger"
+                  onClick={() => setIsConfirmModal(true)}
+                >
+                  <BsTrash />
+                </Button>
+              </ConfirmModal>
+            )}
             <Button variant="primary" type="submit">
               Сохранить
             </Button>

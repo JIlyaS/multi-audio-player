@@ -45,11 +45,12 @@ export const TrackBlock: FC<Props> = ({
         />
         <PlayItem {...track} />
       </div>
-
+      {/* TODO: Вернутся к разблокированию удаления для публичных плейлистов когда будет возможность удаления плейлистов либо тому кто создал, либо администратору */}
       {track.type === "playlist" && (
         <PlayItemBtnGroup
           playlistId={track.id}
           playlistName="playlist"
+          isPublic={track.isPublic}
         />
       )}
       {track.type === "track" && (
@@ -60,5 +61,4 @@ export const TrackBlock: FC<Props> = ({
       )}
     </li>
   );
-};;
-
+};

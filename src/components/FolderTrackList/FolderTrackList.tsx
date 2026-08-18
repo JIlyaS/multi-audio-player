@@ -1,5 +1,4 @@
 import { useEffect, useState, type FC } from "react";
-
 import clsx from "clsx";
 
 import styles from "./FolderTrackList.module.css";
@@ -10,7 +9,6 @@ import type { Playlist, Track } from "@/shared/types";
 import { useUnit } from "effector-react";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 import { $currentTrackPlaylistList, updateCurrentTrackPlaylistList, $trackPlaylistList, $isSelectAll } from "@/models/shared";
-// import { OverlayTooltip } from "@/shared/ui";
 
 interface Props {
   folder: {
@@ -154,7 +152,7 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
 
   return (
     <>
-      <li
+      <div
         key={folder.id}
         className={styles.playListFolderItem}
         tabIndex={0}
@@ -166,14 +164,14 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         onClick={() => handleToggleFolderChange(folder.id)}
       >
         <div className={styles.folderItemWrap}>
-            <button
-              className={clsx(styles.folderSelectedBtn, {
-                [styles.folderSelectedBtnActive]: isFolderSelected,
-              })}
-              onClick={handleSelectAllFolderClick}
-            >
-              <BsCheck2Square />
-            </button>
+          <button
+            className={clsx(styles.folderSelectedBtn, {
+              [styles.folderSelectedBtnActive]: isFolderSelected,
+            })}
+            onClick={handleSelectAllFolderClick}
+          >
+            <BsCheck2Square />
+          </button>
           <FolderItem {...folder} />
         </div>
         <div
@@ -183,9 +181,10 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         >
           <BsChevronDown size="18px" />
         </div>
-      </li>
+      </div>
+
       {folder.trackList.length ? (
-        <li>
+        <div>
           <ul
             className={clsx(styles.folderTrackList, {
               [styles.folderTrackListActive]: isOpenFolder,
@@ -201,8 +200,8 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
               />
             ))}
           </ul>
-        </li>
+        </div>
       ) : null}
     </>
   );
-};;;
+};

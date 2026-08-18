@@ -18,10 +18,15 @@ import { $currentDownloadPlaylistId, $isDownloadPlaylistLoading, downloadPlaylis
 interface Props {
   playlistId: string;
   playlistName: string;
+  isPublic: boolean;
 }
 
 
-export const PlayItemBtnGroup: FC<Props> = ({ playlistId, playlistName }) => {
+export const PlayItemBtnGroup: FC<Props> = ({
+  playlistId,
+  playlistName,
+  isPublic,
+}) => {
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [isCopy, setIsCopy] = useState(false);
   const [isCopyError, setIsCopyError] = useState(false);
@@ -125,28 +130,31 @@ export const PlayItemBtnGroup: FC<Props> = ({ playlistId, playlistName }) => {
                   <BsDownload /> <span>Скачать</span>
                 </button>
               </Dropdown.Item>
-              <Dropdown.Item
-                eventKey="delete"
-                className={styles.dropdownItemWrap}
-              >
-                <ConfirmModal
-                  title="Подтверждение удаления"
-                  description="Вы уверены что хотите удалить плейлист?"
-                  show={isConfirmModal}
-                  onConfirm={() => handleDeleteClick(playlistId)}
-                  onClose={() => setIsConfirmModal(false)}
+              {!isPublic && (
+                <Dropdown.Item
+                  eventKey="delete"
+                  className={styles.dropdownItemWrap}
+                  disabled={isPublic}
                 >
-                  <button
-                    className={styles.dropdownItem}
-                    onClick={(evt) => {
-                      evt.stopPropagation();
-                      setIsConfirmModal(true);
-                    }}
+                  <ConfirmModal
+                    title="Подтверждение удаления"
+                    description="Вы уверены что хотите удалить плейлист?"
+                    show={isConfirmModal}
+                    onConfirm={() => handleDeleteClick(playlistId)}
+                    onClose={() => setIsConfirmModal(false)}
                   >
-                    <BsTrash size="18px" /> <span>Удалить</span>
-                  </button>
-                </ConfirmModal>
-              </Dropdown.Item>
+                    <button
+                      className={styles.dropdownItem}
+                      onClick={(evt) => {
+                        evt.stopPropagation();
+                        setIsConfirmModal(true);
+                      }}
+                    >
+                      <BsTrash size="18px" /> <span>Удалить</span>
+                    </button>
+                  </ConfirmModal>
+                </Dropdown.Item>
+              )}
             </Dropdown.Menu>
           </Dropdown>
         )}

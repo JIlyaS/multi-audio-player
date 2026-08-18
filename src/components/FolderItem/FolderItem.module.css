@@ -1,11 +1,15 @@
 @reference "../../global.css";
 
 .folderItem {
-  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden;
+  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm;
 }
 
 .folderItemIconWrap {
-  @apply flex items-center justify-center w-full h-full bg-folder-element dark:bg-gray-300 rounded-md;
+  @apply relative flex items-center justify-center w-full h-full bg-folder-element dark:bg-gray-300 rounded-md;
+}
+
+.folderItemPinIcon {
+  @apply absolute top-[-5px] right-[-5px] flex items-center justify-center bg-default-element rounded-full w-[24px] h-[24px] border-[1px] border-solid border-white;
 }
 
 .folderItemIcon {

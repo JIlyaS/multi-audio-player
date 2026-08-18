@@ -1,5 +1,4 @@
-import { downloadFileFromLink } from "@/shared/helpers/downloadFileFromLink";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchDownloadPlaylist } from "@/shared/api";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 const downloadPlaylist = createEvent<{
@@ -11,13 +10,7 @@ const $currentDownloadPlaylistId = createStore<string | null>(null);
 
 const downloadPlaylistFx = createEffect(
   async ({ playlistId, playlistName }: { playlistId: string; playlistName: string }) => {
-    const response = await fetch(getApiUrl(`/playlists/download?id=${playlistId}`));
-    if (!response.ok) {
-      throw new Error("Failed to fetch playlists");
-    }
-    const downloadedFile = await response.blob();
-
-    downloadFileFromLink(downloadedFile, playlistName);
+    await fetchDownloadPlaylist(playlistId, playlistName);
   },
 );
 

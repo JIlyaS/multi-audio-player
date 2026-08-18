@@ -1,23 +1,16 @@
 import { loadPlaylists } from "@/models/playlist";
 import { $form } from "@/models/playlist-form";
 import { loadTracks } from "@/models/track";
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchDeletePlaylist } from "@/shared/api";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
 const deletePlaylist = createEvent<string>();
 
+// TODO: Переделать под библиотеку
 const deletePlaylistFx = createEffect(async (id: string) => {
-  try {
-    // TODO: Переделать под библиотеку
-    await fetch(getApiUrl(`/playlists/${id}`), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch {
-    throw new Error("Failed to delete playlist");
-  }
+  const response = await fetchDeletePlaylist(id);
+
+  return response;
 });
 
 const $isDeletePlaylistSuccess = createStore<boolean>(false);

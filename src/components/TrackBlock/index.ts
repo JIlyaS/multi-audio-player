@@ -1,1 +1,1 @@
-export { TrackBlock } from './TrackBlock'; 
+export { TrackBlock } from './TrackBlock';

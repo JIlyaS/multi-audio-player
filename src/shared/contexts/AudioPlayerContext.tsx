@@ -23,6 +23,10 @@ interface AudioPlayerContextType {
   setDuration: Dispatch<SetStateAction<number>>;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
+  isInfinityPlaying: boolean;
+  setIsInfinityPlaying: Dispatch<SetStateAction<boolean>>;
+  isRepeatPlaying: boolean;
+  setIsRepeatPlaying: Dispatch<SetStateAction<boolean>>;
 
   audioRef: RefObject<HTMLAudioElement | null>;
   progressBarRef: RefObject<HTMLInputElement | null>;
@@ -45,6 +49,8 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
   const [timeProgress, setTimeProgress] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isInfinityPlaying, setIsInfinityPlaying] = useState<boolean>(false);
+  const [isRepeatPlaying, setIsRepeatPlaying] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLInputElement>(null);
@@ -61,6 +67,10 @@ export const AudioPlayerProvider: FC<PropsWithChildren> = ({ children }) => {
     setDuration,
     isPlaying,
     setIsPlaying,
+    isInfinityPlaying,
+    setIsInfinityPlaying,
+    isRepeatPlaying,
+    setIsRepeatPlaying,
 
     searchTracks,
     setSearchTracks,

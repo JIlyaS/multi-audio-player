@@ -1,11 +1,11 @@
 @reference "../../global.css";
 
 .trackInfo {
-  @apply flex items-center gap-4 md:flex-col lg:max-w-[315px] lg:flex-row w-full;
+  @apply flex items-center gap-4 md:flex-col lg:max-w-[320px] lg:flex-row w-full;
 }
 
 .trackInfoWrap {
-  @apply w-24 h-24 min-w-24 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;
+  @apply w-26 h-26 min-w-26 flex items-center justify-center bg-gray-200 rounded-md overflow-hidden;
 }
 
 .trackInfoIconBlock {
@@ -30,13 +30,13 @@
 }
 
 .trackInfoContent {
-  @apply max-w-[200px] md:max-w-[350px] lg:max-w-[200px] w-full;
+  @apply max-w-[200px] md:max-w-[350px] lg:max-w-[200px] w-full truncate;
 }
 
 .trackInfoTitle {
-  @apply font-bold truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start text-main-text dark:text-white;
+  @apply font-bold truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start text-main-text dark:text-white cursor-default;
 }
 
 .trackInfoAuthor {
-  @apply text-sm text-gray-400 truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start;
+  @apply text-sm text-gray-400 truncate md:max-w-[350px] md:text-center lg:max-w-64 lg:text-start cursor-default;
 }

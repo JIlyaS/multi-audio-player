@@ -1,4 +1,4 @@
-import { getApiUrl } from "@/shared/helpers/getApiUrl";
+import { fetchTracks } from "@/shared/api";
 import type { Track } from "@/shared/types";
 import { createEffect, createEvent, createStore, sample } from "effector";
 
@@ -7,11 +7,9 @@ const $tracks = createStore<Track[]>([]);
 const loadTracks = createEvent();
 
 const fetchTracksFx = createEffect(async () => {
-  const response = await fetch(getApiUrl("/tracks"));
-  if (!response.ok) {
-    throw new Error("Failed to fetch tracks");
-  }
-  return await response.json();
+  const response = await fetchTracks();
+
+  return response;
 });
 
 const $isTracksLoading = fetchTracksFx.pending;

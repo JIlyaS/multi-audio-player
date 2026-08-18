@@ -2,6 +2,7 @@ import { useRef, useState, type FC } from "react";
 
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BsCopy, BsThreeDotsVertical, BsDownload } from "react-icons/bs";
 import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { Dropdown, Spinner } from "react-bootstrap";
@@ -36,6 +37,7 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDownloadTrackClick = () => {
     onDownloadTrack({trackId, trackName});
   };
@@ -94,7 +96,8 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
                   <BsCopy /> <span>Копировать</span>
                 </button>
               </Dropdown.Item>
-              <Dropdown.Item
+              {/* TODO: Блокировка скачивания треков */}
+              {/* <Dropdown.Item
                 eventKey="download"
                 className={styles.dropdownItemWrap}
               >
@@ -104,7 +107,7 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
                 >
                   <BsDownload /> <span>Скачать</span>
                 </button>
-              </Dropdown.Item>
+              </Dropdown.Item> */}
             </Dropdown.Menu>
           </Dropdown>
         )}
