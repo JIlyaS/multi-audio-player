@@ -36,7 +36,6 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const handleDownloadTrackClick = () => {
   //   onDownloadTrack({trackId, trackName});
   // };
