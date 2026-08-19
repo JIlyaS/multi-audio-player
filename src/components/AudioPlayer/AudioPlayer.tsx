@@ -15,7 +15,7 @@ import { createSimplePlaylist } from "@/models/create-playlist";
 import { OverlayTooltip } from "@/shared/ui";
 import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
 import { getFormatDate } from "@/shared/helpers/getFormatDate";
-import logo from "@/shared/assets/logo.png";
+// import logo from "@/shared/assets/logo.png";
 
 import styles from "./AudioPlayer.module.css";
 
@@ -79,9 +79,10 @@ export const AudioPlayer = () => {
           [styles.audioPlayerTopBlockVisible]: openDrawer,
         })}
       >
-        <div className={styles.audioPlayerLogo}>
+        {/* TODO: Найти выход с подключением лого в следующей итерации */}
+        {/* <div className={styles.audioPlayerLogo}>
           <img src={logo} width={40} height={40} alt="Логотип" />
-        </div>
+        </div> */}
         <TrackInfo />
         <div className={styles.audioPlayerTopControlBlock}>
           <Controls />

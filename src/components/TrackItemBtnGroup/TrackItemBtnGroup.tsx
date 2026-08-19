@@ -2,7 +2,7 @@ import { useRef, useState, type FC } from "react";
 
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
-import { BsCopy, BsThreeDotsVertical} from "react-icons/bs";
+import { BsCopy, BsThreeDotsVertical } from "react-icons/bs";
 import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { Dropdown, Spinner } from "react-bootstrap";
 import { DropdownMenu } from "@/components/DropdownMenu";
