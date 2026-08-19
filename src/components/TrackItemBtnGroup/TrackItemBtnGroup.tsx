@@ -2,12 +2,11 @@ import { useRef, useState, type FC } from "react";
 
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BsCopy, BsThreeDotsVertical, BsDownload } from "react-icons/bs";
+import { BsCopy, BsThreeDotsVertical } from "react-icons/bs";
 import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { Dropdown, Spinner } from "react-bootstrap";
 import { DropdownMenu } from "@/components/DropdownMenu";
-import { $currentDownloadTrackId, $isDownloadTrackLoading, downloadTrack } from "@/models/download-track";
+import { $currentDownloadTrackId, $isDownloadTrackLoading } from "@/models/download-track";
 import { useUnit } from "effector-react";
 
 interface Props {
@@ -15,8 +14,8 @@ interface Props {
   trackName: string;
 }
 
-export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
-  const onDownloadTrack = useUnit(downloadTrack);
+export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
+  // const onDownloadTrack = useUnit(downloadTrack);
   const isDownloadTrackLoading = useUnit($isDownloadTrackLoading);
   const currentDownloadTrackId = useUnit($currentDownloadTrackId);
 
@@ -38,9 +37,9 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId, trackName }) => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDownloadTrackClick = () => {
-    onDownloadTrack({trackId, trackName});
-  };
+  // const handleDownloadTrackClick = () => {
+  //   onDownloadTrack({trackId, trackName});
+  // };
 
   return (
     <div
