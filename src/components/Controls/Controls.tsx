@@ -116,6 +116,7 @@ export const Controls = () => {
 
   const handleStopClick = () => {
     currentOnlyTracks.forEach((_, idx) => {
+      console.log('_',_);
       audioListRef.current[idx]?.pause();
       setIsPlaying(false);
     });
@@ -147,12 +148,17 @@ export const Controls = () => {
   useEffect(() => {
     if (isPlaying) {
       currentOnlyTracks.forEach((_, idx) => {
-        audioListRef.current[idx]?.play();
+        if (!audioListRef.current[idx]?.ended) {
+          audioListRef.current[idx]?.play();
+        }
       });
       startAnimation();
     } else {
       currentOnlyTracks.forEach((_, idx) => {
-        audioListRef.current[idx]?.pause();
+        const currentTrackDuration = audioListRef.current[idx]?.duration || 0;
+        if (currentTrackDuration <= timeProgress || !isPlaying) {
+          audioListRef.current[idx]?.pause();
+        }
       });
       if (playAnimationRef.current !== null) {
         cancelAnimationFrame(playAnimationRef.current);
@@ -182,14 +188,26 @@ export const Controls = () => {
                 handleNext();
               } else {
                 currentOnlyTracks.forEach((_, idx) => {
-                  audioListRef.current[idx]?.pause();
+                  // INFO: Проверка на то, что у каждого трека  в плейлисте закончилось время
+                  const currentTrackDuration =
+                    audioListRef.current[idx]?.duration || 0;
+                  if (currentTrackDuration <= timeProgress) {
+                    audioListRef.current[idx]?.pause();
+                  }
                 });
-                if (playAnimationRef.current !== null) {
-                  cancelAnimationFrame(playAnimationRef.current);
-                  playAnimationRef.current = null;
+                const isEveryTimeEnd = currentOnlyTracks.every(
+                  (_, idx) =>
+                    audioListRef.current[idx]?.ended
+                );
+
+                if (isEveryTimeEnd) {
+                  if (playAnimationRef.current !== null) {
+                    cancelAnimationFrame(playAnimationRef.current);
+                    playAnimationRef.current = null;
+                  }
+                  updateProgress();
+                  setIsPlaying(false);
                 }
-                updateProgress();
-                setIsPlaying(false);
               }
             }
           };

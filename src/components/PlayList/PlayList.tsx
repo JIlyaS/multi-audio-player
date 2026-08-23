@@ -1,7 +1,6 @@
 // INFO: Отобразить список доступных треков
 import { useUnit } from "effector-react";
 import clsx from "clsx";
-import { useVirtualizer } from "@tanstack/react-virtual";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { useEffect, useMemo, useRef } from "react";
@@ -24,6 +23,7 @@ import { FolderTrackList } from "@/components/FolderTrackList";
 import { getFilteredTracks, getFilteredTracksForFolders } from "@/components/PlayList/utils";
 
 import styles from "./PlayList.module.css";
+import { useListVirtualizer } from "@/shared/hooks/useListVirtualizer";
 
 export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
@@ -58,17 +58,10 @@ export const PlayList = () => {
     [trackPlaylistForFolderList, searchValue],
   );
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const virtualizer = useVirtualizer({
-    count: filteredTrackPlaylistForFolderList.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 80,
-    // useFlushSync: false,
-    // directDomUpdates: true,
-    // overscan: 5,
+  const { virtualizer, virtualItems } = useListVirtualizer({
+    parentRef,
+    list: filteredTrackPlaylistForFolderList,
   });
-
-  const virtualItems = virtualizer.getVirtualItems();
 
   useEffect(() => {
     onLoadTracks();

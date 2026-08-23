@@ -1,5 +1,6 @@
 import { loadPlaylists } from "@/models/playlist";
 import { $form } from "@/models/playlist-form";
+import { $currentTrackPlaylistList } from "@/models/shared";
 import { loadTracks } from "@/models/track";
 import { fetchDeletePlaylist } from "@/shared/api";
 import { createEffect, createEvent, createStore, sample } from "effector";
@@ -32,6 +33,15 @@ sample({
   clock: deletePlaylistFx.doneData,
   fn: () => true,
   target: $isDeletePlaylistSuccess,
+});
+
+sample({
+  clock: deletePlaylistFx.doneData,
+  source: [$currentTrackPlaylistList],
+  fn: ([currentTrackPlaylistList], {id}) => {
+    return currentTrackPlaylistList.filter((item) => item.id !== id);
+  },
+  target: $currentTrackPlaylistList,
 });
 
 sample({
