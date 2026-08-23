@@ -14,6 +14,8 @@ import { deletePlaylist } from "@/models/delete-playlist";
 import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { DropdownMenu } from "@/components/DropdownMenu";
 import { $currentDownloadPlaylistId, $isDownloadPlaylistLoading, downloadPlaylist } from "@/models/download-playlist";
+import { $currentTrackPlaylistList } from "@/models/shared";
+import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 
 interface Props {
   playlistId: string;
@@ -32,8 +34,12 @@ export const PlayItemBtnGroup: FC<Props> = ({
   const [isCopyError, setIsCopyError] = useState(false);
   const tooltipTarget = useRef<HTMLButtonElement | null>(null);
 
+  // TODO: Переписать контекст под Effector или State формат
+  const { setDuration } = useAudioPlayerContext();
+
   const isDownloadPlaylistLoading = useUnit($isDownloadPlaylistLoading);
   const currentDownloadPlaylistId = useUnit($currentDownloadPlaylistId);
+  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const onDeletePlaylist = useUnit(deletePlaylist);
   const onDownloadPlaylist = useUnit(downloadPlaylist);
 
@@ -58,7 +64,15 @@ export const PlayItemBtnGroup: FC<Props> = ({
     onDeletePlaylist(trackId);
     // TODO: Закрывать модальное окно только после успешного удаления
     setIsConfirmModal(false);
-  };
+    // TODO: Переделать логику в будущем - очищать продолжительность трека только после успешного удаления
+    if (
+      currentTrackPlaylistList.filter((item) => item.id !== trackId).length ===
+      0
+    ) {
+      setDuration(0);
+    }
+    return;
+  };;
 
   return (
     <div

@@ -53,34 +53,37 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
   });
 
   const handleToggleFolderChange = (folderId: string) => {
+    if (!folder.trackList.length) {
+      return;
+    }
+
     const storedOpenFolder = localStorage.getItem("storedOpenFolder") || null;
 
-    let parsedOpenFolder: string[] =
-      storedOpenFolder ? JSON.parse(storedOpenFolder) : [];
+    let parsedOpenFolder: string[] = storedOpenFolder
+      ? JSON.parse(storedOpenFolder)
+      : [];
 
     setIsOpenFolder((prevState) => {
+      if (prevState) {
+        parsedOpenFolder = parsedOpenFolder.includes(folderId)
+          ? parsedOpenFolder.filter((item) => item !== folderId)
+          : parsedOpenFolder;
+        localStorage.setItem(
+          "storedOpenFolder",
+          JSON.stringify(parsedOpenFolder),
+        );
+        return false;
+      }
 
-        if (prevState) {
-            parsedOpenFolder = parsedOpenFolder.includes(folderId)
-              ? parsedOpenFolder.filter((item) => item !== folderId)
-              : parsedOpenFolder;
-            localStorage.setItem(
-              "storedOpenFolder",
-              JSON.stringify(parsedOpenFolder),
-            );
-            return false;
-        }
+      if (!parsedOpenFolder.includes(folderId)) {
+        parsedOpenFolder.push(folderId);
+        localStorage.setItem(
+          "storedOpenFolder",
+          JSON.stringify(parsedOpenFolder),
+        );
+      }
 
-        if (!parsedOpenFolder.includes(folderId)) {
-            parsedOpenFolder.push(folderId)
-            localStorage.setItem(
-              "storedOpenFolder",
-              JSON.stringify(parsedOpenFolder),
-            );
-        }
-
-
-        return true;
+      return true;
     });
   };
 
@@ -154,7 +157,9 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
     <>
       <div
         key={folder.id}
-        className={styles.playListFolderItem}
+        className={clsx(styles.playListFolderItem, {
+          [styles.playListFolderItemDisabled]: !folder.trackList.length,
+        })}
         tabIndex={0}
         onKeyDown={(evt) => {
           if (evt.key === "Enter" || evt.key === " ") {
@@ -177,6 +182,7 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         <div
           className={clsx(styles.folderItemBtnGroup, {
             ["rotate-180"]: isOpenFolder,
+            [styles.folderItemBtnGroupDisabled]: !folder.trackList.length,
           })}
         >
           <BsChevronDown size="18px" />
