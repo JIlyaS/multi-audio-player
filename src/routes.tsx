@@ -28,6 +28,13 @@ const routes: AnyRoute[] = [
       return <AudioPlayer />;
     },
   }),
+  createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/player",
+    component: function Index() {
+      return <AudioPlayer />;
+    },
+  }),
 ];
 
 if (stand !== 'production') {
