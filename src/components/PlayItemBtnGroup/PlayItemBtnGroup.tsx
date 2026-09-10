@@ -11,7 +11,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useUnit } from "effector-react";
 import { deletePlaylist } from "@/models/delete-playlist";
 
-import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
+import { generateCopyIncognitoUrl, generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { DropdownMenu } from "@/components/DropdownMenu";
 import { $currentDownloadPlaylistId, $isDownloadPlaylistLoading, downloadPlaylist } from "@/models/download-playlist";
 import { $currentTrackPlaylistList } from "@/models/shared";
@@ -35,7 +35,7 @@ export const PlayItemBtnGroup: FC<Props> = ({
   const tooltipTarget = useRef<HTMLButtonElement | null>(null);
 
   // TODO: Переписать контекст под Effector или State формат
-  const { setDuration } = useAudioPlayerContext();
+  const { setTimeProgress, setDuration } = useAudioPlayerContext();
 
   const isDownloadPlaylistLoading = useUnit($isDownloadPlaylistLoading);
   const currentDownloadPlaylistId = useUnit($currentDownloadPlaylistId);
@@ -69,15 +69,17 @@ export const PlayItemBtnGroup: FC<Props> = ({
       currentTrackPlaylistList.filter((item) => item.id !== trackId).length ===
       0
     ) {
+      setTimeProgress(0);
       setDuration(0);
     }
     return;
-  };;
+  };
 
   return (
     <div
       className={styles.playItemBtnWrap}
       onClick={(evt) => evt.stopPropagation()}
+      onDoubleClick={(evt) => evt.stopPropagation()}
     >
       <UpdatePlaylistModal trackId={playlistId} />
 
@@ -113,8 +115,10 @@ export const PlayItemBtnGroup: FC<Props> = ({
             </Dropdown.Toggle>
 
             <Dropdown.Menu
+              id={playlistId}
               as={DropdownMenu}
               show={false}
+              rootCloseEvent="mousedown"
               className={styles.dropdownItemList}
             >
               <Dropdown.Item
@@ -131,6 +135,22 @@ export const PlayItemBtnGroup: FC<Props> = ({
                   }}
                 >
                   <BsCopy /> <span>Копировать</span>
+                </button>
+              </Dropdown.Item>
+              <Dropdown.Item
+                eventKey="copy-incognito"
+                className={styles.dropdownItemWrap}
+              >
+                <button
+                  className={styles.dropdownItem}
+                  ref={tooltipTarget}
+                  onClick={() => {
+                    copyTextToClipboard(
+                      generateCopyIncognitoUrl(playlistId, "playlist"),
+                    );
+                  }}
+                >
+                  <BsCopy /> <span>Копировать инкогнито</span>
                 </button>
               </Dropdown.Item>
               <Dropdown.Item

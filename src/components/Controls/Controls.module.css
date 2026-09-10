@@ -1,8 +1,11 @@
 @reference "../../global.css";
 
-button {
-  border: none;
-  background: none;
+.controlBtn {
+  @apply border-none bg-none;
+}
+
+.controlBtn:disabled {
+  @apply cursor-default;
 }
 
 .controlsIcon {

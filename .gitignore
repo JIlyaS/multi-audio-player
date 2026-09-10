@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 .vscode
-.env
+.env.development
+.env.staging
 .env.production

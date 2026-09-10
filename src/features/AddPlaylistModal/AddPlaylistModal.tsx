@@ -67,7 +67,7 @@ export const AddPlaylistModal = () => {
             onOpenCreateModalClick();
           }}
         >
-          <BsFolderPlus size="20px" />
+          <BsFolderPlus size="20px" className={styles.audioPlayerTopBtnIcon} />
         </button>
       </OverlayTooltip>
       <CustomModal

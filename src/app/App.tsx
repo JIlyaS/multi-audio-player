@@ -1,11 +1,14 @@
-import { AudioPlayer } from "../components/AudioPlayer/AudioPlayer";
+import { RouterProvider } from "@tanstack/react-router";
 import "./App.css";
 import { Providers } from "./Providers";
+import { getRouter } from "@/routes";
+
+const router = getRouter();
 
 function App() {
   return (
     <Providers>
-      <AudioPlayer />
+      <RouterProvider router={router} />
     </Providers>
   );
 }

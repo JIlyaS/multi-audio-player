@@ -8,6 +8,25 @@
   @apply text-main-text dark:text-white;
 }
 
+.audioPlayerTopBtnIcon {
+  @apply text-main-text dark:text-white transition-transform duration-300 ease-out transform;
+  /* hover:[animation-iteration-count:1] transition-transform duration-300; */
+}
+
+.audioPlayerTopBtnIcon:hover {
+  @apply hover:scale-110;
+  /* animation: wiggle-once 0.4s ease-in-out forwards; */
+}
+
+.addButton:disabled {
+  @apply cursor-default;
+}
+
+.addButton:disabled .audioPlayerTopBtnIcon {
+  @apply scale-100! transition-none!;
+}
+
+
 .addPlaylistModalBtnGroup {
     @apply absolute bottom-0 left-[10px] right-0 text-main-text bg-white dark:bg-dark-secondary-background border-[#dee2e6] flex w-full justify-end gap-[8px] border-t-1 p-[12px];
     margin: 0 -10px;

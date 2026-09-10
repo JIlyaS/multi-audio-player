@@ -1,4 +1,5 @@
 import apiClient from "@/shared/api/axiosInstance";
+import { toast } from "react-toastify";
 
 interface IFetchFoldersParams {
     global?: boolean;
@@ -21,6 +22,9 @@ export async function fetchFolders({ global }: IFetchFoldersParams) {
 
       return response.data;
     } catch (err) {
-        console.error("Ошибка:", err);
+      console.error("Ошибка [fetchFolders]: ", err);
+      toast.error(
+        "Произошла ошибка при загрузке папок. Повторите попытку или обратитесь к администратору",
+      );
     }
 }

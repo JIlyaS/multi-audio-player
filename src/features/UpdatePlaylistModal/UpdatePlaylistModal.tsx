@@ -6,7 +6,7 @@ import { Button, Form } from "react-bootstrap";
 import { useStoreMap, useUnit } from "effector-react";
 import { $trackPlaylistList } from "@/models/shared";
 
-import { viewCardPlaylist } from "@/models/view-playlist";
+import { $currentPlaylist, viewCardPlaylist } from "@/models/view-playlist";
 import { CheckboxField, CheckboxListField, ConfirmModal, InputField, OverlayTooltip, SelectField } from "@/shared/ui";
 import { $form, resetForm, type IForm } from "@/models/playlist-form";
 import {
@@ -33,6 +33,8 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const isSuccessUpdatePlaylist = useUnit($isUpdatePlaylistSuccess);
   const isSuccessDeletePlaylist = useUnit($isDeletePlaylistSuccess);
   const isFoldersLoading = useUnit($isFoldersLoading);
+  const currentPlaylist = useUnit($currentPlaylist);
+  const folderOptions = useUnit($folderOptions);
 
   const onLoadFolders = useUnit(loadFolders);
   const onViewCardPlaylist = useUnit(viewCardPlaylist);
@@ -41,7 +43,6 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
   const onResetForm = useUnit(resetForm);
 
   const trackList = trackPlaylistList.filter((track) => track.type === "track");
-  const folderOptions = useUnit($folderOptions);
 
   const isPublic = useStoreMap({
     store: $form,
@@ -118,7 +119,6 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
             id="formIsPublic"
             label="Сделать общедоступным"
             name="isPublic"
-            disabled
           />
           <InputField
             id="formAuthor"
@@ -152,7 +152,7 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
               Закрыть
             </Button>
             {/* TODO: Сделать доступ только для пользователя создавшего плейлист + администратора */}
-            {!isPublic && (
+            {!currentPlaylist?.isPublic && (
               <ConfirmModal
                 title="Подтверждение удаления"
                 description="Вы уверены что хотите удалить плейлист?"

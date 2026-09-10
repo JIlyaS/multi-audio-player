@@ -3,7 +3,7 @@ import { useRef, useState, type FC } from "react";
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
 import { BsCopy, BsThreeDotsVertical } from "react-icons/bs";
-import { generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
+import { generateCopyIncognitoUrl, generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
 import { Dropdown, Spinner } from "react-bootstrap";
 import { DropdownMenu } from "@/components/DropdownMenu";
 import { $currentDownloadTrackId, $isDownloadTrackLoading } from "@/models/download-track";
@@ -76,8 +76,10 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu
+              id={trackId}
               as={DropdownMenu}
               show={false}
+              rootCloseEvent="mousedown"
               className={styles.dropdownItemList}
             >
               <Dropdown.Item
@@ -92,6 +94,20 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
                   }}
                 >
                   <BsCopy /> <span>Копировать</span>
+                </button>
+              </Dropdown.Item>
+              <Dropdown.Item
+                eventKey="copy-incognito"
+                className={styles.dropdownItemWrap}
+              >
+                <button
+                  className={styles.dropdownItem}
+                  ref={tooltipTarget}
+                  onClick={() => {
+                    copyTextToClipboard(generateCopyIncognitoUrl(trackId, "playlist"));
+                  }}
+                >
+                  <BsCopy /> <span>Копировать инкогнито</span>
                 </button>
               </Dropdown.Item>
               {/* TODO: Блокировка скачивания треков */}

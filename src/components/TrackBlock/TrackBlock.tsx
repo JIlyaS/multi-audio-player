@@ -8,19 +8,22 @@ import styles from "./TrackBlock.module.css";
 import { Form } from "react-bootstrap";
 import type { Playlist, Track } from "@/shared/types";
 import { getTrackName } from "@/shared/helpers/getTrackName";
+import { transliterateToLatin } from "@/shared/helpers/transliterateToLatin";
 
 interface Props {
   track: Track | Playlist;
   currentTracks: (Track | Playlist)[];
   containerClassName?: string;
-  onAudioChange: (id: string) => void;
+  onAudioTrackPlay: (id: string) => void;
+  onAudioTrackSelect: (id: string) => void;
 }
 
 export const TrackBlock: FC<Props> = ({
   track,
   currentTracks,
   containerClassName,
-  onAudioChange,
+  onAudioTrackPlay,
+  onAudioTrackSelect,
 }) => {
   return (
     <li
@@ -29,10 +32,11 @@ export const TrackBlock: FC<Props> = ({
       tabIndex={0}
       onKeyDown={(evt) => {
         if (evt.key === "Enter" || evt.key === " ") {
-          onAudioChange(track.id);
+          onAudioTrackSelect(track.id);
         }
       }}
-      onClick={() => onAudioChange(track.id)}
+      onClick={() => onAudioTrackSelect(track.id)}
+      onDoubleClick={() => onAudioTrackPlay(track.id)}
     >
       <div className={styles.playListCheckboxWrap}>
         <Form.Check
@@ -41,7 +45,7 @@ export const TrackBlock: FC<Props> = ({
           className={styles.playListCheckbox}
           checked={currentTracks.some((item) => item.id === track.id)}
           onClick={(evt) => evt.stopPropagation()}
-          onChange={() => onAudioChange(track.id)}
+          onChange={() => onAudioTrackSelect(track.id)}
         />
         <PlayItem {...track} />
       </div>
@@ -49,7 +53,7 @@ export const TrackBlock: FC<Props> = ({
       {track.type === "playlist" && (
         <PlayItemBtnGroup
           playlistId={track.id}
-          playlistName="playlist"
+          playlistName={transliterateToLatin(track.title) || "playlist"}
           isPublic={track.isPublic}
         />
       )}

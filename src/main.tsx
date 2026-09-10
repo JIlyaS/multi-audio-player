@@ -4,8 +4,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import App from "./app/App.tsx";
 
-createRoot(document.getElementById("multi-audio-player")!).render(
+const rootElement = document.getElementById("multi-audio-player")!;
+
+createRoot(rootElement).render(
   <StrictMode>
     <App />
-  </StrictMode>
+  </StrictMode>,
 );

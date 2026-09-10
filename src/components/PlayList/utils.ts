@@ -1,4 +1,4 @@
-import { isCheckTrackPlaylistParams, isFilterTrackPlaylistParams } from "@/shared/helpers/isFilterTrackPlaylistParams";
+import { isCheckTrackPlaylistParams, isFilterTrackPlaylistParams, isOnlyParamsTrackData } from "@/shared/helpers/isFilterTrackPlaylistParams";
 import type { Folder, Playlist, Track } from "@/shared/types";
 
 export const getFilteredTracks = (
@@ -27,6 +27,10 @@ export const getFilteredTracksForFolders = (
 ): (Folder & { trackList: (Track | Playlist)[] })[] => {
     if (isCheckTrackPlaylistParams()) {
        return [];
+    }
+
+    if (isOnlyParamsTrackData()) {
+      return [];
     }
 
   return trackPlaylistForFolderList

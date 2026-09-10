@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import clsx from "clsx";
 
 import styles from "./FolderTrackList.module.css";
@@ -24,33 +24,47 @@ interface Props {
 
 export const FolderTrackList: FC<Props> = ({ folder }) => {
   // TODO: Переписать контекст под Effector или State формат
-  const { setDuration } = useAudioPlayerContext();
+  const { setTimeProgress, setDuration, setIsPlaying } = useAudioPlayerContext();
   const isSelectAll = useUnit($isSelectAll);
   const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const trackPlaylistList = useUnit($trackPlaylistList);
 
   const [isFolderSelected, setIsFolderSelected] = useState(false);
+  const [height, setHeight] = useState<number>(0);
+  const contentRef = useRef<HTMLUListElement | null>(null);
 
-  const currentFolderTrackList = currentTrackPlaylistList.filter((item) => item.folderId === folder.id);
+  const currentFolderTrackList = currentTrackPlaylistList.filter(
+    (item) => item.folderId === folder.id,
+  );
 
   const isSelectAllFolder =
     isSelectAll ||
-    currentFolderTrackList.length && folder.trackList.length &&  currentFolderTrackList.length ===
-      folder.trackList.length;
+    (currentFolderTrackList.length &&
+      folder.trackList.length &&
+      currentFolderTrackList.length === folder.trackList.length);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsFolderSelected(isSelectAllFolder ? true : false);
   }, [isSelectAllFolder]);
-  
+
   // TODO: Переделать localStorage под корректный формат
   const [isOpenFolder, setIsOpenFolder] = useState(() => {
     const storedOpenFolder = localStorage.getItem("storedOpenFolder") || null;
 
-    const parsedOpenFolder: string[] =
-      storedOpenFolder ? JSON.parse(storedOpenFolder) : [];
+    const parsedOpenFolder: string[] = storedOpenFolder
+      ? JSON.parse(storedOpenFolder)
+      : [];
     return parsedOpenFolder.includes(folder.id);
   });
+
+  useEffect(() => {
+    if (isOpenFolder && contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    } else {
+      setHeight(0);
+    }
+  }, [isOpenFolder]);
 
   const handleToggleFolderChange = (folderId: string) => {
     if (!folder.trackList.length) {
@@ -104,6 +118,7 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
         if (
           currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
         ) {
+          setTimeProgress(0);
           setDuration(0);
         }
         return;
@@ -116,38 +131,72 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
     }
   };
 
+  // TODO: Переделать под подходящий паттерн проектирование
+  const handleStartAudioDblClick = (id: string) => {
+    const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
+    const currentSelectedTrack = trackPlaylistList.find(
+      (track) => track.id === id,
+    );
+
+    if (currentSelectedTrack) {
+      if (isSelected) {
+        updateCurrentTrackPlaylistList(
+          currentTrackPlaylistList.filter((item) => item.id !== id),
+        );
+
+        // TODO: Переделать логику в будущем
+        if (
+          currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
+        ) {
+          setTimeProgress(0);
+          setDuration(0);
+        }
+
+        setIsPlaying(false);
+        return;
+      }
+
+      updateCurrentTrackPlaylistList([
+        ...currentTrackPlaylistList,
+        currentSelectedTrack,
+      ]);
+
+      setIsPlaying(true);
+    }
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectAllFolderClick = (evt: any) => {
     evt.stopPropagation();
 
     setIsFolderSelected((prevValue) => {
-        if (prevValue) {
-          updateCurrentTrackPlaylistList([
-            ...currentTrackPlaylistList.filter(
-              (item) => item.folderId !== folder.id,
-            ),
-          ]);
-          // TODO: Переделать логику в будущем
-          if (
-            currentTrackPlaylistList.filter(
-                (item) => item.folderId !== folder.id,
-              ).length === 0
-                   ) {
-                     setDuration(0);
-                   }
-          return false;
-        }
-
+      if (prevValue) {
         updateCurrentTrackPlaylistList([
           ...currentTrackPlaylistList.filter(
             (item) => item.folderId !== folder.id,
           ),
-          ...trackPlaylistList.filter((item) => item.folderId === folder.id),
         ]);
+        // TODO: Переделать логику в будущем
+        if (
+          currentTrackPlaylistList.filter((item) => item.folderId !== folder.id)
+            .length === 0
+        ) {
+          setTimeProgress(0);
+          setDuration(0);
+        }
+        return false;
+      }
 
-        return true;
+      updateCurrentTrackPlaylistList([
+        ...currentTrackPlaylistList.filter(
+          (item) => item.folderId !== folder.id,
+        ),
+        ...trackPlaylistList.filter((item) => item.folderId === folder.id),
+      ]);
+
+      return true;
     });
-  } 
+  };
 
   if (!folder.trackList.length && !folder.isGlobal) {
     return null;
@@ -157,10 +206,9 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
     <>
       <div
         key={folder.id}
-        className={clsx(styles.playListFolderItem, {
-          [styles.playListFolderItemDisabled]: !folder.trackList.length,
-        })}
+        className={clsx(styles.playListFolderItem)}
         tabIndex={0}
+        aria-expanded={isOpenFolder}
         onKeyDown={(evt) => {
           if (evt.key === "Enter" || evt.key === " ") {
             handleToggleFolderChange(folder.id);
@@ -192,9 +240,17 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
       {folder.trackList.length ? (
         <div>
           <ul
+            ref={contentRef}
             className={clsx(styles.folderTrackList, {
               [styles.folderTrackListActive]: isOpenFolder,
+              ["pointer-events-none"]: !isOpenFolder,
             })}
+            // eslint-disable-next-line react-hooks/refs
+            style={{
+              // eslint-disable-next-line react-hooks/refs
+              maxHeight: height,
+              transition: "max-height 0.3s ease-out, opacity 0.3s ease-out",
+            } as React.CSSProperties}
           >
             {folder.trackList.map((track) => (
               <TrackBlock
@@ -202,7 +258,8 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
                 track={track}
                 containerClassName={styles.folderTrackBlock}
                 currentTracks={currentTrackPlaylistList}
-                onAudioChange={handleSelectAudioChange}
+                onAudioTrackPlay={handleStartAudioDblClick}
+                onAudioTrackSelect={handleSelectAudioChange}
               />
             ))}
           </ul>
@@ -210,4 +267,4 @@ export const FolderTrackList: FC<Props> = ({ folder }) => {
       ) : null}
     </>
   );
-};
+};;
