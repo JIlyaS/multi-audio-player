@@ -41,7 +41,13 @@ export const AudioPlayer = () => {
 
   const isDisabledForEmptyTracks = currentTrackPlaylistList.length === 0;
 
-  const [openDrawer, setOpenDrawer] = useState(() => localStorage.getItem("storedOpenPlayer") === "true" ? true : false);
+  const [openDrawer, setOpenDrawer] = useState(() => {
+    if (localStorage.getItem("storedOpenPlayer") === null) {
+      return true;
+    }
+    
+    return localStorage.getItem("storedOpenPlayer") === "true" ? true : false;
+  });
 
   // TODO: Костыль, подумать как сделать более лаконичное решение
   useEffect(() => {
