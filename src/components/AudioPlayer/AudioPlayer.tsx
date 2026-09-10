@@ -17,7 +17,6 @@ import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
 import { getFormatDate } from "@/shared/helpers/getFormatDate";
 
 import styles from "./AudioPlayer.module.css";
-import "@/shared/configs/hawkConfig";
 import { getLogoPathName } from "@/shared/helpers/getLogoPathName";
 
 export const AudioPlayer = () => {
