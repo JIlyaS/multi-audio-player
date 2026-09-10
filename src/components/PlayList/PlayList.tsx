@@ -27,7 +27,7 @@ import { useListVirtualizer } from "@/shared/hooks/useListVirtualizer";
 
 export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
-  const { searchValue } = useAudioPlayerContext();
+  const { searchValue, setIsPlaying } = useAudioPlayerContext();
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +70,41 @@ export const PlayList = () => {
   }, [onLoadPlaylists, onLoadTracks, onLoadFolderList]);
 
   // TODO: Переписать контекст под Effector или State формат
-  const { setDuration } = useAudioPlayerContext();
+  const { setDuration, setTimeProgress } = useAudioPlayerContext();
+
+  // TODO: Переделать под подходящий паттерн проектирование
+  const handleStartAudioDblClick = (id: string) => {
+    const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
+    const currentSelectedTrack = trackPlaylistList.find(
+      (track) => track.id === id,
+    );
+
+    if (currentSelectedTrack) {
+      if (isSelected) {
+        updateCurrentTrackPlaylistList(
+          currentTrackPlaylistList.filter((item) => item.id !== id),
+        );
+
+        // TODO: Переделать логику в будущем
+        if (
+          currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
+        ) {
+          setTimeProgress(0);
+          setDuration(0);
+        }
+
+        setIsPlaying(false);
+        return;
+      }
+
+      updateCurrentTrackPlaylistList([
+        ...currentTrackPlaylistList,
+        currentSelectedTrack,
+      ]);
+
+      setIsPlaying(true);
+    }
+  };
 
   // TODO: Переделать под подходящий паттерн проектирование
   const handleSelectAudioChange = (id: string) => {
@@ -89,6 +123,7 @@ export const PlayList = () => {
         if (
           currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
         ) {
+          setTimeProgress(0);
           setDuration(0);
         }
         return;
@@ -179,22 +214,11 @@ export const PlayList = () => {
               key={track.id}
               track={track}
               currentTracks={currentTrackPlaylistList}
-              onAudioChange={handleSelectAudioChange}
+              onAudioTrackPlay={handleStartAudioDblClick}
+              onAudioTrackSelect={handleSelectAudioChange}
             />
           ))}
         </ul>
-        {/* TODO: старое отображение списков без оптимизации - удалить после тестирования */}
-        {/* {filteredTrackPlaylistForFolderList.map((folder) => (
-            <FolderTrackList key={folder.id} folder={folder} />
-          ))}
-          {filteredTracks.map((track) => (
-            <TrackBlock
-              key={track.id}
-              track={track}
-              currentTracks={currentTrackPlaylistList}
-              onAudioChange={handleSelectAudioChange}
-            />
-          ))} */}
       </div>
     </>
   );

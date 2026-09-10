@@ -116,7 +116,6 @@ export const Controls = () => {
 
   const handleStopClick = () => {
     currentOnlyTracks.forEach((_, idx) => {
-      console.log('_',_);
       audioListRef.current[idx]?.pause();
       setIsPlaying(false);
     });
@@ -172,7 +171,18 @@ export const Controls = () => {
         cancelAnimationFrame(playAnimationRef.current);
       }
     };
-  }, [isPlaying, startAnimation, updateProgress, audioListRef, currentTrackPlaylistList, playAnimationRef, currentOnlyTracks, isInfinityPlaying, duration, timeProgress]);
+  }, [
+    isPlaying, 
+    startAnimation, 
+    updateProgress, 
+    audioListRef, 
+    currentTrackPlaylistList, 
+    playAnimationRef, 
+    currentOnlyTracks, 
+    isInfinityPlaying, 
+    duration, 
+    timeProgress
+  ]);
 
   useEffect(() => {
     const currentAudioListRef = audioListRef.current;
@@ -213,6 +223,10 @@ export const Controls = () => {
           };
         }
       });
+    }
+
+    if (!currentAudioListRef.filter((item => item)).length) {
+      setIsPlaying(false);
     }
 
     return () => {
@@ -259,7 +273,11 @@ export const Controls = () => {
           </audio>
         </div>
       ))}
-      <button onClick={handlePrevious} disabled={isDisabledPrevButton}>
+      <button
+        className={styles.controlBtn}
+        onClick={handlePrevious}
+        disabled={isDisabledPrevButton}
+      >
         <BsSkipStartFill
           size={20}
           className={clsx(styles.controlsIcon, {
@@ -267,7 +285,11 @@ export const Controls = () => {
           })}
         />
       </button>
-      <button onClick={skipBackward} disabled={isDisabledButtons}>
+      <button
+        className={styles.controlBtn}
+        onClick={skipBackward}
+        disabled={isDisabledButtons}
+      >
         <BsFillRewindFill
           size={20}
           className={clsx(styles.controlsIcon, {
@@ -276,6 +298,7 @@ export const Controls = () => {
         />
       </button>
       <button
+        className={styles.controlBtn}
         onClick={() => setIsPlaying((prev) => !prev)}
         disabled={!currentTrackPlaylistList.length}
       >
@@ -296,6 +319,7 @@ export const Controls = () => {
         )}
       </button>
       <button
+        className={styles.controlBtn}
         onClick={handleStopClick}
         disabled={!currentTrackPlaylistList.length}
       >
@@ -306,7 +330,11 @@ export const Controls = () => {
           })}
         />
       </button>
-      <button onClick={skipForward} disabled={isDisabledButtons}>
+      <button
+        className={styles.controlBtn}
+        onClick={skipForward}
+        disabled={isDisabledButtons}
+      >
         <BsFillFastForwardFill
           size={20}
           className={clsx(styles.controlsIcon, {
@@ -314,7 +342,11 @@ export const Controls = () => {
           })}
         />
       </button>
-      <button onClick={handleNext} disabled={isDisabledNextButton}>
+      <button
+        className={styles.controlBtn}
+        onClick={handleNext}
+        disabled={isDisabledNextButton}
+      >
         <BsSkipEndFill
           size={20}
           className={clsx(styles.controlsIcon, {

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
 import { formatTime } from "../../shared/helpers/formatTime";
 
@@ -12,6 +13,14 @@ export const ProgressBar = () => {
     duration,
     setTimeProgress,
   } = useAudioPlayerContext();
+
+  // TODO: Костыль - если нет продолжительности обнулять прогерсс бар
+  useEffect(() => {
+    if (!duration && progressBarRef.current) {
+      progressBarRef.current.style.setProperty("--range-progress", "0");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration]);
 
   const handleProgressChange = () => {
     if (audioListRef.current.length && progressBarRef.current) {

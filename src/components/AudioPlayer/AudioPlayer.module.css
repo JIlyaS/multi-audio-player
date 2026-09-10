@@ -1,15 +1,21 @@
 @reference "../../global.css";
 
+@keyframes wiggle-once {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+  75% { transform: rotate(-4deg); }
+  100% { transform: rotate(0deg); }
+}
+
 .audioPlayer {
-    @apply max-w-[380px] md:max-w-[560px] lg:max-w-[1000px] rounded-t-xl;
+    @apply relative max-w-[380px] md:max-w-[560px] lg:max-w-[1000px] rounded-t-xl;
 
     width: calc(100vw - 4rem);
 }
 
 .audioPlayerVisible {
   @apply rounded-xl;
-
-  /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
   box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
@@ -19,12 +25,13 @@
   box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
-.audioPlayerLogo {
-  @apply absolute top-[3px] left-[3px] md:left-[calc(50%_-_35px)] lg:left-[3px] w-[48px] h-[48px] flex items-center justify-center rounded-full border-[1px] border-solid border-white bg-white md:translate-x-[-50%] lg:translate-0;
-}
 
 .audioPlayerTopBlockVisible {
   @apply shadow-none rounded-t-xl rounded-b-none;
+}
+
+.audioPlayerLogo {
+  @apply absolute top-[3px] left-[3px] md:left-[calc(50%_-_35px)] lg:left-[3px] w-[48px] h-[48px] flex items-center justify-center rounded-full border-[1px] border-solid border-white bg-white md:translate-x-[-50%] lg:translate-0;
 }
 
 .audioPlayerTopControlBlock {
@@ -40,7 +47,21 @@
 }
 
 .audioPlayerTopBtnIcon {
-  @apply text-main-text dark:text-white;
+  @apply text-main-text dark:text-white transition-transform duration-300 ease-out transform;
+  /* hover:[animation-iteration-count:1] transition-transform duration-300; */
+}
+
+.audioPlayerTopBtnIcon:hover {
+  @apply hover:scale-110;
+  /* animation: wiggle-once 0.4s ease-in-out forwards; */
+}
+
+.audioTopBtn:disabled {
+  @apply cursor-default;
+}
+
+.audioTopBtn:disabled .audioPlayerTopBtnIcon {
+  @apply scale-100! transition-none!;
 }
 
 .audioPlayerTopBtnIconActive {
@@ -57,7 +78,7 @@
 }
 
 .audioPlayerContentBlock {
-  @apply transition-opacity delay-150 duration-150 ease-in-out overflow-hidden rounded-b-xl;
+  @apply transition-opacity duration-300 ease-out overflow-hidden rounded-b-xl;
 }
 
 .audioPlayerSearchWrapper {

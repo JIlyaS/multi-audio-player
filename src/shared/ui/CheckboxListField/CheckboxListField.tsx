@@ -3,7 +3,7 @@ import { Form } from "react-bootstrap";
 
 import styles from "./CheckboxListField.module.css";
 import type { Track } from "@/shared/types";
-import { useMemo, type FC } from "react";
+import { useMemo, useRef, type FC } from "react";
 import { $form } from "@/models/create-playlist";
 import { useStoreMap, useUnit } from "effector-react";
 import {
@@ -15,6 +15,7 @@ import {
 import { SearchInput } from "@/components/SearchInput";
 import { $currentPlaylist } from "@/models/view-playlist";
 import { $currentTracksForForm } from "@/models/shared";
+import { useListVirtualizer } from "@/shared/hooks/useListVirtualizer";
 
 interface Props {
   id?: string;
@@ -32,6 +33,8 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
   const currentPlaylist = useUnit($currentPlaylist);
   const currentTracksForForm = useUnit($currentTracksForForm);
   const currentTracksForFormIds = currentTracksForForm.map((item) => item.id);
+
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const trackFormList = useStoreMap({
     store: $form,
@@ -81,6 +84,12 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
     [searchValue, sortedTrackList],
   );
 
+  const { virtualizer, virtualItems } = useListVirtualizer({
+    parentRef,
+    list: filteredTrackList,
+    overscan: 10
+  });
+
   const handleSelectAudioChange = (id: string) => {
     const isSelected = trackFormList.some((item: Track) => item.id === id);
     const currentSelectedTrack = trackList.find((track) => track.id === id);
@@ -115,33 +124,59 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
         </div>
       )}
       {Boolean(filteredTrackList.length) && (
-        <ul className={styles.trackPlaylistList} id="checkbox-list">
-          {filteredTrackList.map((track) => (
-            <li
-              key={track.id}
-              className={styles.trackPlaylistListItem}
-              tabIndex={0}
-              onKeyDown={(evt) => {
-                if (evt.key === "Enter" || evt.key === " ") {
-                  handleSelectAudioChange(track.id);
-                }
-              }}
-              onClick={() => handleSelectAudioChange(track.id)}
-            >
-              <Form.Check
-                type="checkbox"
-                id={String(track.id)}
-                className={styles.trackPlaylistListCheck}
-                checked={trackFormList.some(
-                  (item: Track) => item.id === track.id,
-                )}
-                onClick={(evt) => evt.stopPropagation()}
-                onChange={() => handleSelectAudioChange(track.id)}
-              />
-              <PlayItem {...track} />
-            </li>
-          ))}
-        </ul>
+        <div
+          className={styles.trackPlaylistList}
+          ref={parentRef}
+          id="checkbox-list"
+        >
+          <ul
+            className={styles.trackPlaylistListWrapper}
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+            }}
+          >
+            {virtualItems.map((virtualItem) => {
+              const track = filteredTrackList[virtualItem.index];
+              const isChecked = trackFormList.some(
+                (item: Track) => item.id === track.id,
+              );
+
+              return (
+                <li
+                  key={virtualItem.key}
+                  data-index={virtualItem.index}
+                  className={styles.trackPlaylistListItem}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualItem.start}px)`,
+                  }}
+                  ref={virtualizer.measureElement}
+                  tabIndex={0}
+                  onKeyDown={(evt) => {
+                    if (evt.key === "Enter" || evt.key === " ") {
+                      handleSelectAudioChange(track.id);
+                    }
+                  }}
+                  onClick={() => handleSelectAudioChange(track.id)}
+                >
+                  <Form.Check
+                    type="checkbox"
+                    id={String(track.id)}
+                    className={styles.trackPlaylistListCheck}
+                    checked={isChecked}
+                    disabled={!isChecked && trackFormList.length > 50}
+                    onClick={(evt) => evt.stopPropagation()}
+                    onChange={() => handleSelectAudioChange(track.id)}
+                  />
+                  <PlayItem {...track} />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
     </Form.Group>
   );

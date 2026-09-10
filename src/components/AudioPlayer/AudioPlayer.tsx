@@ -15,9 +15,10 @@ import { createSimplePlaylist } from "@/models/create-playlist";
 import { OverlayTooltip } from "@/shared/ui";
 import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
 import { getFormatDate } from "@/shared/helpers/getFormatDate";
-import logo from "../../shared/assets/logo.png";
 
 import styles from "./AudioPlayer.module.css";
+import "@/shared/configs/hawkConfig";
+import { getLogoPathName } from "@/shared/helpers/getLogoPathName";
 
 export const AudioPlayer = () => {
   const {
@@ -40,7 +41,7 @@ export const AudioPlayer = () => {
 
   const isDisabledForEmptyTracks = currentTrackPlaylistList.length === 0;
 
-  const [openDrawer, setOpenDrawer] = useState(true);
+  const [openDrawer, setOpenDrawer] = useState(() => localStorage.getItem("storedOpenPlayer") === "true" ? true : false);
 
   // TODO: Костыль, подумать как сделать более лаконичное решение
   useEffect(() => {
@@ -50,21 +51,31 @@ export const AudioPlayer = () => {
   }, [onSetUserId]);
 
   const handleInfinityTrackPlayingClick = () => {
-    setIsInfinityPlaying((prev) => prev ? false : true);
-  }
+    setIsInfinityPlaying((prev) => (prev ? false : true));
+  };
 
   const handleRepeatTrackPlayingClick = () => {
     setIsRepeatPlaying((prev) => (prev ? false : true));
-  }
+  };
 
   const handleSimplePlaylistCreateClick = () => {
-    const currentTracks = currentTrackPlaylistList.filter((item) => item.type === "track");
+    const currentTracks = currentTrackPlaylistList.filter(
+      (item) => item.type === "track",
+    );
     onCreateSimplePlaylist({
       // TODO: Надо придумать как генерировать title
       title: `Плейлист от ${getFormatDate()}`,
       author: "Неизвестно",
       isPublic: false,
       tracks: currentTracks,
+    });
+  };
+
+  const handleOpenDrawerClick = () => {
+    setOpenDrawer((prev) => {
+      localStorage.setItem("storedOpenPlayer", String(!prev));
+
+      return !prev;
     });
   }
 
@@ -79,9 +90,8 @@ export const AudioPlayer = () => {
           [styles.audioPlayerTopBlockVisible]: openDrawer,
         })}
       >
-        {/* TODO: Найти выход с подключением лого в следующей итерации */}
         <div className={styles.audioPlayerLogo}>
-          <img src={logo} width={40} height={40} alt="Логотип" />
+          <img width={40} height={40} alt="Логотип" src={getLogoPathName()} />
         </div>
         <TrackInfo />
         <div className={styles.audioPlayerTopControlBlock}>
@@ -95,7 +105,10 @@ export const AudioPlayer = () => {
               id="view-player"
               title={openDrawer ? "Скрыть список" : "Открыть список"}
             >
-              <button onClick={() => setOpenDrawer((prev) => !prev)}>
+              <button
+                className={styles.audioTopBtn}
+                onClick={handleOpenDrawerClick}
+              >
                 {openDrawer ? (
                   <RiMenuFold4Line
                     size="20px"
@@ -115,17 +128,22 @@ export const AudioPlayer = () => {
               title="Проигрывание треков без остановки"
             >
               <button
+                className={styles.audioTopBtn}
                 onClick={handleInfinityTrackPlayingClick}
                 disabled={isDisabledForEmptyTracks || isRepeatPlaying}
               >
                 <BsChevronExpand
                   size="20px"
-                  className={clsx(styles.audioPlayerTopBtnIconActive, {
-                    [styles.audioPlayerTopBtnInfinityIconActive]:
-                      isInfinityPlaying,
-                    [styles.audioPlayerTopBtnIconDisabled]:
-                      isDisabledForEmptyTracks || isRepeatPlaying,
-                  })}
+                  className={clsx(
+                    styles.audioPlayerTopBtnIcon,
+                    styles.audioPlayerTopBtnIconActive,
+                    {
+                      [styles.audioPlayerTopBtnInfinityIconActive]:
+                        isInfinityPlaying,
+                      [styles.audioPlayerTopBtnIconDisabled]:
+                        isDisabledForEmptyTracks || isRepeatPlaying,
+                    },
+                  )}
                 />
               </button>
             </OverlayTooltip>
@@ -134,16 +152,22 @@ export const AudioPlayer = () => {
               title="Повтор текущего трека"
             >
               <button
+                className={styles.audioTopBtn}
                 onClick={handleRepeatTrackPlayingClick}
                 disabled={isDisabledForEmptyTracks || isInfinityPlaying}
               >
                 <BsRepeat1
                   size="20px"
-                  className={clsx(styles.audioPlayerTopBtnIconActive, {
-                    [styles.audioPlayerTopBtnRepeatIconActive]: isRepeatPlaying,
-                    [styles.audioPlayerTopBtnIconDisabled]:
-                      isDisabledForEmptyTracks || isInfinityPlaying,
-                  })}
+                  className={clsx(
+                    styles.audioPlayerTopBtnIcon,
+                    styles.audioPlayerTopBtnIconActive,
+                    {
+                      [styles.audioPlayerTopBtnRepeatIconActive]:
+                        isRepeatPlaying,
+                      [styles.audioPlayerTopBtnIconDisabled]:
+                        isDisabledForEmptyTracks || isInfinityPlaying,
+                    },
+                  )}
                 />
               </button>
             </OverlayTooltip>
@@ -152,15 +176,20 @@ export const AudioPlayer = () => {
               title="Быстрое создание плейлиста"
             >
               <button
+                className={styles.audioTopBtn}
                 onClick={handleSimplePlaylistCreateClick}
                 disabled={isDisabledCreateSimplePlaylist}
               >
                 <BsDatabaseAdd
                   size="20px"
-                  className={clsx(styles.audioPlayerTopBtnIconActive, {
-                    [styles.audioPlayerTopBtnIconDisabled]:
-                      isDisabledCreateSimplePlaylist,
-                  })}
+                  className={clsx(
+                    styles.audioPlayerTopBtnIcon,
+                    styles.audioPlayerTopBtnIconActive,
+                    {
+                      [styles.audioPlayerTopBtnIconDisabled]:
+                        isDisabledCreateSimplePlaylist,
+                    },
+                  )}
                 />
               </button>
             </OverlayTooltip>
@@ -170,8 +199,11 @@ export const AudioPlayer = () => {
       <div
         className={clsx(
           styles.audioPlayerContentBlock,
-          openDrawer ? "opacity-100" : "opacity-0 invisible",
+          openDrawer
+            ? "opacity-100 visible"
+            : "opacity-0 invisible pointer-events-none",
         )}
+        style={{ transition: "opacity 0.2s ease-out" }}
       >
         <div className={styles.audioPlayerSearchWrapper}>
           <SearchInput
@@ -186,4 +218,4 @@ export const AudioPlayer = () => {
       </div>
     </div>
   );
-};
+};;;

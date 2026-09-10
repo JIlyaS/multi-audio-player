@@ -10,6 +10,10 @@
     max-height: calc(100% - 435px);
 }
 
+.trackPlaylistListWrapper {
+  @apply relative w-full;
+}
+
 .trackListEmpty {
     @apply flex items-center justify-center h-full overflow-y-auto text-center text-main-text dark:text-white;
 
