@@ -1,9 +1,9 @@
 import HawkCatcher from "@hawk.so/browser";
 
+const token = import.meta.env.VITE_APP_HAWK_TOKEN;
+
 const hawk = new HawkCatcher({
-  // TODO: Вынужденная мера использования токена напрямую
-  token:
-    "eyJpbnRlZ3JhdGlvbklkIjoiYjQxMTg3N2QtMDIyYy00MGVlLWJhMGUtNjgyYTg2MzgzMjMxIiwic2VjcmV0IjoiNDMyMWE5MDUtMTJjOC00ZTY2LWFiZTktMzNhNDdhNDk5MGM2In0=",
+  token,
   consoleTracking: true,
   release: window.HAWK_RELEASE,
 });
