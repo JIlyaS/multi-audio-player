@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
     // Настройки dev-сервера
     server: {
       port: env.VITE_APP_PORT ? Number(env.VITE_APP_PORT) : 5173,
-      open: "/app/private",
+      open: "/private",
     },
 
     // Настройки сборки

@@ -11,48 +11,32 @@ export const isOnlyParamsTrackData = () => {
 }
 
 
-export const isFilterTrackPlaylistParams = (id: string): boolean => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-
+export const isFilterTrackPlaylistParams = (id: string, trackId: string, playlistId: string): boolean => {
   const isOnlyParamsData = isOnlyParamsTrackData();
 
-  if (
-    !urlParams.has("trackId") &&
-    !urlParams.has("playlistId") &&
-    !isOnlyParamsData
-  ) {
+  if (!trackId && !playlistId && !isOnlyParamsData) {
     return true;
   }
 
-  if (
-    urlParams.has("trackId") &&
-    String(urlParams.get("trackId")) === id &&
-    isOnlyParamsData
-  ) {
+  if (trackId && String(trackId) === id && isOnlyParamsData) {
     return true;
   }
 
-  if (
-    urlParams.has("playlistId") &&
-    String(urlParams.get("playlistId")) === id &&
-    isOnlyParamsData
-  ) {
+  if (playlistId && String(playlistId) === id && isOnlyParamsData) {
     return true;
   }
 
   return false;
 };
 
-export const isCheckTrackPlaylistParams = (): boolean => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
+export const isCheckTrackPlaylistParams = (
+  trackId: string,
+  playlistId: string,
+): boolean => {
 
-  if (
-    urlParams.has("trackId") || urlParams.has("playlistId")
-  ) {
+  if (trackId || playlistId) {
     return true;
   }
 
   return false;
-}
+};
