@@ -5,9 +5,14 @@ export const isOnlyParamsTrackData = () => {
   const pathname = window.location.pathname;
 
   console.log("isOnlyParamsTrackData", hostname, pathname, pathname.replaceAll('/', ''), getBasePrefix());
+  console.log(
+    "111",
+    hostname.includes("localhost") || hostname.includes("multiaudioplayer"),
+    pathname.replaceAll("/", "") === `${getBasePrefix()}`,
+  );
 
   return (
-    (hostname === "localhost" || hostname === "multiaudioplayer") &&
+    (hostname.includes("localhost") || hostname.includes("multiaudioplayer")) &&
     pathname.replaceAll('/', '') === `${getBasePrefix()}`
   );
 }
