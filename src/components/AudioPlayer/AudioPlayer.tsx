@@ -51,7 +51,7 @@ export const AudioPlayer = () => {
   // TODO: Костыль, подумать как сделать более лаконичное решение
   useEffect(() => {
     if (!localStorage.getItem("userId")) {
-      onSetUserId(generateSafeUUID());
+      onSetUserId(generateSafeUUID() || "");
     }
   }, [onSetUserId]);
 
