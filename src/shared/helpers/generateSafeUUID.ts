@@ -1,4 +1,4 @@
-export const generateSafeUUID = (): string => {
+export const generateSafeUUID = () => {
   try {
     // Предпочтительный способ
     if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -18,6 +18,5 @@ export const generateSafeUUID = (): string => {
     throw new Error("No secure UUID generation method available");
   } catch (error) {
     console.error("UUID generation failed:", error);
-    throw new Error("Failed to generate unique identifier");
   }
 }

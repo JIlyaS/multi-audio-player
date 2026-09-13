@@ -24,6 +24,7 @@ import { getFilteredTracks, getFilteredTracksForFolders } from "@/components/Pla
 
 import styles from "./PlayList.module.css";
 import { useListVirtualizer } from "@/shared/hooks/useListVirtualizer";
+import { useRouter } from "@tanstack/react-router";
 
 export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
@@ -38,6 +39,11 @@ export const PlayList = () => {
   const isPlaylistsLoading = useUnit($isPlaylistsLoading);
   const isSelectAll = useUnit($isSelectAll);
 
+  const router = useRouter();
+  const playlistId = router?.latestLocation?.search?.playlistId;
+  const trackId = router?.latestLocation?.search?.trackId;
+
+
   // TODO: Скорее всего не здесь должно быть
   const onLoadTracks = useUnit(loadTracks);
   const onLoadPlaylists = useUnit(loadPlaylists);
@@ -49,13 +55,23 @@ export const PlayList = () => {
   );
 
   const filteredTracks = useMemo(
-    () => getFilteredTracks(trackPlaylistList, searchValue),
-    [searchValue, trackPlaylistList],
+    () =>
+      getFilteredTracks(trackPlaylistList, {
+        searchValue,
+        playlistId,
+        trackId,
+      }),
+    [playlistId, searchValue, trackId, trackPlaylistList],
   );
 
   const filteredTrackPlaylistForFolderList = useMemo(
-    () => getFilteredTracksForFolders(trackPlaylistForFolderList, searchValue),
-    [trackPlaylistForFolderList, searchValue],
+    () =>
+      getFilteredTracksForFolders(trackPlaylistForFolderList, {
+        searchValue,
+        playlistId,
+        trackId,
+      }),
+    [trackPlaylistForFolderList, searchValue, playlistId, trackId],
   );
 
   const { virtualizer, virtualItems } = useListVirtualizer({
