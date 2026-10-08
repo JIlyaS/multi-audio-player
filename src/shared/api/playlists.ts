@@ -89,7 +89,7 @@ export async function fetchDownloadPlaylist(id: string, playlistName: string) {
     const toastId = toast.loading("Идёт скачивание плейлиста...");
     const response = await apiClient.get(`/playlists/download?id=${id}`, {
       responseType: "blob",
-      timeout: 60000
+      timeout: 120000
     });
 
     if (response.status >= 400) {

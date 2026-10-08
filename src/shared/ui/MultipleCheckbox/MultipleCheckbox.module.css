@@ -1,0 +1,5 @@
+@reference "../../../global.css";
+
+.multipleCheckbox input {
+    @apply w-[18px] h-[18px] border-gray-500 cursor-pointer;
+}

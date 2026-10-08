@@ -2,12 +2,12 @@ import { useRef, useState, type FC } from "react";
 
 import styles from "./TrackItemBtnGroup.module.css";
 import { OverlayTooltip, ToggleButton } from "@/shared/ui";
-import { BsCopy, BsThreeDotsVertical } from "react-icons/bs";
-import { generateCopyIncognitoUrl, generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { Dropdown, Spinner } from "react-bootstrap";
-import { DropdownMenu } from "@/components/DropdownMenu";
 import { $currentDownloadTrackId, $isDownloadTrackLoading } from "@/models/download-track";
 import { useUnit } from "effector-react";
+
+import { TrackDropdownMenu } from "./TrackDropdownMenu";
 
 interface Props {
   trackId: string;
@@ -57,7 +57,7 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
             <span className="visually-hidden">Загрузка...</span>
           </Spinner>
         ) : (
-          <Dropdown>
+          <Dropdown placement="bottom-start" drop="down">
             <Dropdown.Toggle as={ToggleButton}>
               <OverlayTooltip
                 id="copy-tooltip"
@@ -75,54 +75,11 @@ export const TrackItemBtnGroup: FC<Props> = ({ trackId }) => {
               </OverlayTooltip>
             </Dropdown.Toggle>
 
-            <Dropdown.Menu
-              id={trackId}
-              as={DropdownMenu}
-              show={false}
-              rootCloseEvent="mousedown"
-              className={styles.dropdownItemList}
-            >
-              <Dropdown.Item
-                eventKey="copy"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  ref={tooltipTarget}
-                  onClick={() => {
-                    copyTextToClipboard(generateCopyUrl(trackId, "playlist"));
-                  }}
-                >
-                  <BsCopy /> <span>Копировать</span>
-                </button>
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey="copy-incognito"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  ref={tooltipTarget}
-                  onClick={() => {
-                    copyTextToClipboard(generateCopyIncognitoUrl(trackId, "playlist"));
-                  }}
-                >
-                  <BsCopy /> <span>Копировать инкогнито</span>
-                </button>
-              </Dropdown.Item>
-              {/* TODO: Блокировка скачивания треков */}
-              {/* <Dropdown.Item
-                eventKey="download"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  onClick={handleDownloadTrackClick}
-                >
-                  <BsDownload /> <span>Скачать</span>
-                </button>
-              </Dropdown.Item> */}
-            </Dropdown.Menu>
+            <TrackDropdownMenu
+              trackId={trackId}
+              ref={tooltipTarget}
+              onCopy={copyTextToClipboard}
+            />
           </Dropdown>
         )}
       </div>

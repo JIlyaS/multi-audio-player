@@ -25,5 +25,5 @@
 }
 
 .dropdownItem {
-    @apply flex items-center gap-[6px] w-full h-[36px] px-[1rem] py-[0.5rem];
+    @apply flex items-center gap-[6px] w-full h-[36px] px-[1rem] py-[0.5rem] focus:text-white! active:text-white! focus:bg-dark-secondary-background active:bg-dark-secondary-background;
 }

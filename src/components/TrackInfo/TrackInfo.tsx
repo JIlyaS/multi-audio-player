@@ -55,7 +55,11 @@ export const TrackInfo = () => {
             [styles.trackInfoIconPlaylistBlock]: isPlaylist,
           })}
         >
-          <span className={styles.trackInfoIcon}>
+          <span
+            className={clsx(styles.trackInfoIcon, {
+              [styles.trackInfoIconDefault]: !isFolder && !isTrack && !isPlaylist,
+            })}
+          >
             <TrackInfoIcon isFolder={isFolder} isPlaylist={isPlaylist} />
           </span>
         </div>

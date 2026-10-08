@@ -4,6 +4,7 @@ import { useVirtualizer, type ReactVirtualizer, type VirtualItem } from "@tansta
 interface IListVirtualizer {
   parentRef: React.RefObject<HTMLDivElement | null>;
   list: object[];
+  directDomUpdates?: boolean;
   overscan?: number;
 }
 
@@ -17,11 +18,13 @@ export const useListVirtualizer = ({
   parentRef,
   list,
   overscan = 5,
+  directDomUpdates = false,
 }: IListVirtualizer): ReturnListVirtualizerParams => {
   const virtualizer = useVirtualizer({
     count: list.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 80,
+    directDomUpdates: directDomUpdates,
     overscan,
   });
 

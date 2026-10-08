@@ -6,3 +6,4 @@ export * from "./OverlayTooptip";
 export * from "./ConfirmModal";
 export * from "./CheckboxField";
 export * from "./ToggleButton";
+export * from "./MultipleCheckbox";

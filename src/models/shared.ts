@@ -5,6 +5,7 @@ import { generateSafeUUID } from "@/shared/helpers/generateSafeUUID";
 import type { Playlist, Track } from "@/shared/types";
 import { combine, createEvent, createStore, sample } from "effector";
 import { persist } from "effector-storage/local";
+import { CheckState } from "@/shared/consts"; 
 
 const $userId = createStore<string>("");
 const setUserId = createEvent<string>();
@@ -22,10 +23,10 @@ sample({
   target: $userId,
 });
 
-const selectCurrentTrackPlaylistList = createEvent<boolean>();
+const selectCurrentTrackPlaylistList = createEvent<keyof typeof CheckState>();
 
 const $currentTrackPlaylistList = createStore<(Track | Playlist)[]>([]);
-const $isSelectAll = createStore<boolean>(false);
+const $selectAllState = createStore<keyof typeof CheckState>(CheckState.UNCHECKED);
 
 const $currentTracksForForm = createStore<Track[]>([]);
 
@@ -112,7 +113,7 @@ sample({
 
 sample({
   clock: selectCurrentTrackPlaylistList,
-  target: $isSelectAll,
+  target: $selectAllState,
 });
 
 sample({
@@ -127,7 +128,7 @@ export {
   $currentTrackPlaylistList,
   $trackPlaylistList,
   $trackPlaylistForFolderList,
-  $isSelectAll,
+  $selectAllState,
   $currentTracksForForm,
   setUserId,
   updateCurrentTrackPlaylistList,

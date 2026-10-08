@@ -87,7 +87,7 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
   const { virtualizer, virtualItems } = useListVirtualizer({
     parentRef,
     list: filteredTrackList,
-    overscan: 10
+    overscan: 3,
   });
 
   const handleSelectAudioChange = (id: string) => {
@@ -167,7 +167,7 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
                     id={String(track.id)}
                     className={styles.trackPlaylistListCheck}
                     checked={isChecked}
-                    disabled={!isChecked && trackFormList.length > 50}
+                    disabled={!isChecked}
                     onClick={(evt) => evt.stopPropagation()}
                     onChange={() => handleSelectAudioChange(track.id)}
                   />

@@ -22,6 +22,8 @@ import { $tracks } from "@/models/track";
 
 import styles from "./AddPlaylistModal.module.css";
 import { $folderOptions, $isFoldersLoading, loadFolders } from "@/models/folder";
+import { $currentTrackPlaylistList } from "@/models/shared";
+import { MAX_TRACKS_FOR_PLAYLIST } from "@/shared/consts";
 
 export const AddPlaylistModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,6 +32,7 @@ export const AddPlaylistModal = () => {
   const folderOptions = useUnit($folderOptions);
   const isSuccess = useUnit($isCreatePlaylistSuccess);
   const isFoldersLoading = useUnit($isFoldersLoading);
+  const currentTrackPlaylistList = useUnit($currentTrackPlaylistList);
   const onResetForm = useUnit(resetForm);
   const onLoadFolders = useUnit(loadFolders);
 
@@ -40,6 +43,12 @@ export const AddPlaylistModal = () => {
     store: $form,
     keys: ["isPublic"],
     fn: (values: IForm) => values["isPublic"] ?? "",
+  });
+
+  const trackFormList = useStoreMap({
+    store: $form,
+    keys: ["tracks"],
+    fn: (values: IForm) => (values["tracks"] ? values["tracks"] : []),
   });
 
   useEffect(() => {
@@ -59,9 +68,18 @@ export const AddPlaylistModal = () => {
 
   return (
     <>
-      <OverlayTooltip id="create-tooltip" title="Создать плейлист">
+      <OverlayTooltip
+        id="create-tooltip"
+        showValue={currentTrackPlaylistList.length > MAX_TRACKS_FOR_PLAYLIST}
+        title={
+          currentTrackPlaylistList.length > MAX_TRACKS_FOR_PLAYLIST
+            ? `Нельзя создать плейлист больше ${MAX_TRACKS_FOR_PLAYLIST} треков`
+            : "Создать плейлист"
+        }
+      >
         <button
           className={styles.addButton}
+          disabled={currentTrackPlaylistList.length > MAX_TRACKS_FOR_PLAYLIST}
           onClick={() => {
             setIsOpen(true);
             onOpenCreateModalClick();
@@ -133,9 +151,20 @@ export const AddPlaylistModal = () => {
             >
               Закрыть
             </Button>
-            <Button variant="primary" type="submit">
-              Сохранить
-            </Button>
+            <OverlayTooltip
+              id="create-playlist-tooltip"
+              title={`Нельзя создать плейлист больше ${MAX_TRACKS_FOR_PLAYLIST} треков`}
+              showValue={trackFormList.length > MAX_TRACKS_FOR_PLAYLIST}
+              position="top"
+            >
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={trackFormList.length > MAX_TRACKS_FOR_PLAYLIST}
+              >
+                Сохранить
+              </Button>
+            </OverlayTooltip>
           </div>
         </Form>
       </CustomModal>

@@ -1,0 +1,1 @@
+export const MAX_TRACKS_FOR_PLAYLIST = 50;

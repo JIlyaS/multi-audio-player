@@ -1,7 +1,7 @@
 @reference "../../global.css";
 
 .playItem {
-  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 rounded-sm overflow-hidden;
+  @apply w-16 h-16 min-w-[64px] flex items-center justify-center bg-gray-200 dark:bg-transparent rounded-sm overflow-hidden;
 }
 
 .playItemIconWrap {
@@ -17,7 +17,7 @@
 }
 
 .playItemIcon {
-  @apply text-xl text-white dark:text-gray-600;
+  @apply text-xl text-white dark:text-white;
 }
 
 .playItemContent {
