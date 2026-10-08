@@ -23,14 +23,7 @@ export const MultipleCheckbox: FC<Props> = ({ state, className, label, onChange 
     }
   }, [state]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-
-    // if (evt.currentTarget.checked) {
-    //     onSelectCurrentTrackPlaylistList(CheckState.CHECKED);
-    // } else {
-    //     onSelectCurrentTrackPlaylistList(CheckState.UNCHECKED);
-    // }
+  const handleChange = () => {
     let nextState;
     if (state === CheckState.UNCHECKED) {
       nextState = CheckState.CHECKED;
@@ -48,7 +41,7 @@ export const MultipleCheckbox: FC<Props> = ({ state, className, label, onChange 
       type="checkbox"
       className={clsx(styles.multipleCheckbox, className)}
       label={label}
-      // Важно: checked = true только для состояний CHECKED и INDETERMINATE
+      // INFO: checked = true только для состояний CHECKED и INDETERMINATE
       // Это нужно, чтобы клик по indeterminate-чекбоксу срабатывал корректно
       checked={state !== CheckState.UNCHECKED}
       onChange={handleChange}
