@@ -1,0 +1,1 @@
+export { MultipleCheckbox } from './MultipleCheckbox';

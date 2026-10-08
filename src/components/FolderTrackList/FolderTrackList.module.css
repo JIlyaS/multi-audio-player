@@ -17,6 +17,11 @@
     @apply bg-[#0d6efd] text-white opacity-100;
 }
 
+.folderSelectedBtn:disabled,
+.folderSelectedBtnDisabled {
+    @apply duration-0 cursor-default opacity-35 bg-transparent text-main-text dark:text-white;
+}
+
 .folderItemBtnGroup {
     @apply mr-[15px] text-main-text dark:text-white duration-350;
 }

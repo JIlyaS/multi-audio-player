@@ -24,6 +24,38 @@
   @apply bg-btn-element-active! dark:bg-dark-btn-element-active! border-btn-element-border-active! dark:border-[#51585e]! text-white;
 }
 
+.playListSelectAllCheck {
+  @apply ml-[5px]
+}
+
+.playListRollupFoldersBtn {
+  @apply mt-0.5;
+}
+
+.playListRollupFoldersBtnIcon {
+  @apply text-main-text dark:text-white transition-transform duration-300 ease-out transform;
+}
+
+.playListRollupFoldersBtnIcon:hover {
+  @apply hover:scale-110;
+}
+
+.playListRollupFoldersBtn:disabled {
+  @apply cursor-default;
+}
+
+.playListRollupFoldersBtn:disabled .playListRollupFoldersBtnIcon {
+  @apply scale-100! transition-none!;
+}
+
+.playListRollupFoldersBtnIconActive {
+  @apply text-btn-icon-active dark:text-dark-btn-icon-active
+}
+
+.playListRollupFoldersBtnIconDisabled {
+  @apply text-btn-icon-disabled dark:text-dark-btn-icon-disabled
+}
+
 .playListList {
   @apply bg-main-background dark:bg-dark-main-background text-white h-[400px] overflow-y-auto overflow-x-hidden m-0! p-0! rounded-b-xl;
 }

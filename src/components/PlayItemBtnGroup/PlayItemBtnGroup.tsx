@@ -1,21 +1,18 @@
 import { useRef, useState, type FC} from "react";
 
 import styles from "./PlayItemBtnGroup.module.css";
-import { ConfirmModal, OverlayTooltip, ToggleButton } from "@/shared/ui";
+import { OverlayTooltip, ToggleButton } from "@/shared/ui";
 import { UpdatePlaylistModal } from "@/features";
 import { Dropdown, Spinner } from "react-bootstrap";
-import { BsTrash } from "react-icons/bs";
-import { BsCopy } from "react-icons/bs";
-import { BsDownload } from "react-icons/bs";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useUnit } from "effector-react";
 import { deletePlaylist } from "@/models/delete-playlist";
 
-import { generateCopyIncognitoUrl, generateCopyUrl } from "@/shared/helpers/generateCopyUrl";
-import { DropdownMenu } from "@/components/DropdownMenu";
 import { $currentDownloadPlaylistId, $isDownloadPlaylistLoading, downloadPlaylist } from "@/models/download-playlist";
 import { $currentTrackPlaylistList } from "@/models/shared";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
+
+import { PlaylistDropdownMenu } from './PlaylistDropdownMenu';
 
 interface Props {
   playlistId: string;
@@ -96,7 +93,11 @@ export const PlayItemBtnGroup: FC<Props> = ({
             <span className="visually-hidden">Загрузка...</span>
           </Spinner>
         ) : (
-          <Dropdown style={{ marginTop: "4px" }}>
+          <Dropdown
+            placement="bottom-start"
+            drop="down"
+            style={{ marginTop: "4px" }}
+          >
             <Dropdown.Toggle as={ToggleButton}>
               <OverlayTooltip
                 id="copy-tooltip"
@@ -114,82 +115,15 @@ export const PlayItemBtnGroup: FC<Props> = ({
               </OverlayTooltip>
             </Dropdown.Toggle>
 
-            <Dropdown.Menu
-              id={playlistId}
-              as={DropdownMenu}
-              show={false}
-              rootCloseEvent="mousedown"
-              className={styles.dropdownItemList}
-            >
-              <Dropdown.Item
-                eventKey="copy"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  ref={tooltipTarget}
-                  onClick={() => {
-                    copyTextToClipboard(
-                      generateCopyUrl(playlistId, "playlist"),
-                    );
-                  }}
-                >
-                  <BsCopy /> <span>Копировать</span>
-                </button>
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey="copy-incognito"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  ref={tooltipTarget}
-                  onClick={() => {
-                    copyTextToClipboard(
-                      generateCopyIncognitoUrl(playlistId, "playlist"),
-                    );
-                  }}
-                >
-                  <BsCopy /> <span>Копировать инкогнито</span>
-                </button>
-              </Dropdown.Item>
-              <Dropdown.Item
-                eventKey="download"
-                className={styles.dropdownItemWrap}
-              >
-                <button
-                  className={styles.dropdownItem}
-                  onClick={handlePlaylistDownloadClick}
-                >
-                  <BsDownload /> <span>Скачать</span>
-                </button>
-              </Dropdown.Item>
-              {!isPublic && (
-                <Dropdown.Item
-                  eventKey="delete"
-                  className={styles.dropdownItemWrap}
-                  disabled={isPublic}
-                >
-                  <ConfirmModal
-                    title="Подтверждение удаления"
-                    description="Вы уверены что хотите удалить плейлист?"
-                    show={isConfirmModal}
-                    onConfirm={() => handleDeleteClick(playlistId)}
-                    onClose={() => setIsConfirmModal(false)}
-                  >
-                    <button
-                      className={styles.dropdownItem}
-                      onClick={(evt) => {
-                        evt.stopPropagation();
-                        setIsConfirmModal(true);
-                      }}
-                    >
-                      <BsTrash size="18px" /> <span>Удалить</span>
-                    </button>
-                  </ConfirmModal>
-                </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
+            <PlaylistDropdownMenu
+              playlistId={playlistId}
+              isPublic={isPublic}
+              isConfirmModal={isConfirmModal}
+              setIsConfirmModal={setIsConfirmModal}
+              onCopy={copyTextToClipboard}
+              onDownload={handlePlaylistDownloadClick}
+              onDelete={handleDeleteClick}
+            />
           </Dropdown>
         )}
       </div>

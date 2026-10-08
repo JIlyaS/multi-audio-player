@@ -8,6 +8,10 @@
   @apply text-main-text dark:text-white;
 }
 
+.addButton:disabled .audioPlayerTopBtnIcon {
+  @apply text-btn-icon-disabled dark:text-dark-btn-icon-disabled cursor-default; 
+}
+
 .audioPlayerTopBtnIcon {
   @apply text-main-text dark:text-white transition-transform duration-300 ease-out transform;
   /* hover:[animation-iteration-count:1] transition-transform duration-300; */
@@ -16,10 +20,6 @@
 .audioPlayerTopBtnIcon:hover {
   @apply hover:scale-110;
   /* animation: wiggle-once 0.4s ease-in-out forwards; */
-}
-
-.addButton:disabled {
-  @apply cursor-default;
 }
 
 .addButton:disabled .audioPlayerTopBtnIcon {

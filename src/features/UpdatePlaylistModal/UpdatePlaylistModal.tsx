@@ -20,6 +20,7 @@ import {
 
 import styles from "./UpdatePlaylistModal.module.css";
 import { $folderOptions, $isFoldersLoading, loadFolders } from "@/models/folder";
+import { MAX_TRACKS_FOR_PLAYLIST } from "@/shared/consts";
 
 interface Props {
   trackId: string;
@@ -48,6 +49,12 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
     store: $form,
     keys: ["isPublic"],
     fn: (values: IForm) => values["isPublic"] ?? "",
+  });
+
+  const trackFormList = useStoreMap({
+    store: $form,
+    keys: ["tracks"],
+    fn: (values: IForm) => (values["tracks"] ? values["tracks"] : []),
   });
 
   const onUpdateSubmitForm = useUnit(updateSubmitForm);
@@ -168,9 +175,20 @@ export const UpdatePlaylistModal: FC<Props> = ({ trackId }) => {
                 </Button>
               </ConfirmModal>
             )}
-            <Button variant="primary" type="submit">
-              Сохранить
-            </Button>
+            <OverlayTooltip
+              id="update-playlist-tooltip"
+              title={`Нельзя создать плейлист больше ${MAX_TRACKS_FOR_PLAYLIST} треков`}
+              showValue={trackFormList.length > MAX_TRACKS_FOR_PLAYLIST}
+              position="top"
+            >
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={trackFormList.length > MAX_TRACKS_FOR_PLAYLIST}
+              >
+                Сохранить
+              </Button>
+            </OverlayTooltip>
           </div>
         </Form>
       </CustomModal>

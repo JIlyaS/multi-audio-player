@@ -25,8 +25,11 @@
 }
 
 .trackInfoIcon {
-  @apply text-xl text-white dark:text-gray-600;
-  /* text-[#DADADC] */
+  @apply text-xl text-white dark:text-white;
+}
+
+.trackInfoIconDefault {
+  @apply dark:text-gray-600!;
 }
 
 .trackInfoContent {
