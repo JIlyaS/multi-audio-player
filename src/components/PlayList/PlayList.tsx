@@ -3,8 +3,7 @@ import { useUnit } from "effector-react";
 import clsx from "clsx";
 
 import { useAudioPlayerContext } from "../../shared/contexts/AudioPlayerContext";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { TrackBlock } from "@/components";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { $isTracksLoading, loadTracks } from "@/models/track";
 import { $isPlaylistsLoading, loadPlaylists } from "@/models/playlist";
 import {
@@ -16,11 +15,9 @@ import {
   updateCurrentTrackPlaylistList,
 } from "@/models/shared";
 import { Loader } from "@/shared/ui/Loader";
-// import { ToggleButton } from "react-bootstrap";
 import { BsViewList } from "react-icons/bs";
 
 import { loadFolderList } from "@/models/folder";
-import { FolderTrackList } from "@/components/FolderTrackList";
 import { getFilteredTracks, getFilteredTracksForFolders } from "@/components/PlayList/utils";
 
 import styles from "./PlayList.module.css";
@@ -28,6 +25,8 @@ import { useListVirtualizer } from "@/shared/hooks/useListVirtualizer";
 import { useRouter } from "@tanstack/react-router";
 import { MultipleCheckbox, OverlayTooltip } from "@/shared/ui";
 import { CheckState } from "@/shared/consts";
+import { FolderTrackListMemo } from "@/components/FolderTrackList/FolderTrackList";
+import { TrackBlockMemo } from "@/components/TrackBlock/TrackBlock";
 
 export const PlayList = () => {
   // TODO: Переписать контекст под Effector или State формат
@@ -76,22 +75,34 @@ export const PlayList = () => {
     [trackPlaylistForFolderList, searchValue, playlistId, trackId],
   );
 
-  const [isOpenFolders, setIsOpenFolders] = useState(() => {
+  const [openedFolders, setOpenedFolders] = useState<Set<string>>(() => {
     const storedOpenFolder = localStorage.getItem("storedOpenFolder") || null;
-    const filteredTrackPlaylistForFolderListIds =
-      filteredTrackPlaylistForFolderList.map((item) => item.id);
 
     const parsedOpenFolder: string[] = storedOpenFolder
       ? JSON.parse(storedOpenFolder)
       : [];
 
-    return parsedOpenFolder.some((item) =>
-      filteredTrackPlaylistForFolderListIds.includes(item),
+    return new Set(
+      parsedOpenFolder
     );
   });
 
+  const hasOpenedFolders = openedFolders.size > 0;
+
+  const estimateSize = useCallback(
+    (index: number) => {
+      const folder = filteredTrackPlaylistForFolderList[index];
+      if (!folder) return 80;
+      const isOpen = openedFolders.has(folder.id);
+      return 80 + (isOpen ? folder.trackList.length * 80 : 0);
+    },
+    [filteredTrackPlaylistForFolderList, openedFolders],
+  );
+
+
   const { virtualizer, virtualItems } = useListVirtualizer({
     parentRef,
+    estimateSize,
     list: filteredTrackPlaylistForFolderList,
   });
 
@@ -100,6 +111,15 @@ export const PlayList = () => {
     onLoadPlaylists();
     onLoadFolderList({}); // { global: true }
   }, [onLoadPlaylists, onLoadTracks, onLoadFolderList]);
+
+  useLayoutEffect(() => {
+    virtualizer.measure();
+  }, [openedFolders, virtualizer, filteredTrackPlaylistForFolderList]);
+
+  // useEffect(() => {
+  //   const id = requestAnimationFrame(() => virtualizer.measure());
+  //   return () => cancelAnimationFrame(id);
+  // }, [virtualizer, filteredTrackPlaylistForFolderList]);
 
   // TODO: Переписать контекст под Effector или State формат
   const { setDuration, setTimeProgress } = useAudioPlayerContext();
@@ -201,10 +221,20 @@ export const PlayList = () => {
     }
   };
 
-  const handleRollupFoldersClick = () => {
+  const handleRollupFoldersClick = useCallback(() => {
     localStorage.setItem("storedOpenFolder", JSON.stringify([]));
-    setIsOpenFolders(false);
-  }
+    setOpenedFolders(new Set());
+  }, [])
+
+  const onOpenFolders = useCallback((folderId: string) => {
+    setOpenedFolders((prev) => {
+      const next = new Set(prev);
+      if (next.has(folderId)) next.delete(folderId);
+      else next.add(folderId);
+      localStorage.setItem("storedOpenFolder", JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
 
   if (isTracksLoading || isPlaylistsLoading) {
     return (
@@ -234,7 +264,7 @@ export const PlayList = () => {
           <button
             className={styles.playListRollupFoldersBtn}
             onClick={handleRollupFoldersClick}
-            disabled={!isOpenFolders}
+            disabled={!hasOpenedFolders}
           >
             <BsViewList
               size="20px"
@@ -242,7 +272,8 @@ export const PlayList = () => {
                 styles.playListRollupFoldersBtnIcon,
                 styles.playListRollupFoldersBtnIconActive,
                 {
-                  [styles.playListRollupFoldersBtnIconDisabled]: !isOpenFolders,
+                  [styles.playListRollupFoldersBtnIconDisabled]:
+                    !hasOpenedFolders,
                 },
               )}
             />
@@ -265,7 +296,6 @@ export const PlayList = () => {
                 <li
                   key={virtualItem.key}
                   data-index={virtualItem.index}
-                  ref={virtualizer.measureElement}
                   style={{
                     position: "absolute",
                     top: 0,
@@ -274,11 +304,11 @@ export const PlayList = () => {
                     transform: `translateY(${virtualItem.start}px)`,
                   }}
                 >
-                  <FolderTrackList
+                  <FolderTrackListMemo
                     key={folder.id}
                     folder={folder}
-                    isOpenFolders={isOpenFolders}
-                    onOpenFolders={(value) => setIsOpenFolders(value)}
+                    isOpen={openedFolders.has(folder.id)}
+                    onToggleFolder={onOpenFolders}
                   />
                 </li>
               );
@@ -288,7 +318,7 @@ export const PlayList = () => {
         <div>
           <ul className={styles.playListListWrapper}>
             {filteredTracks.map((track) => (
-              <TrackBlock
+              <TrackBlockMemo
                 key={track.id}
                 track={track}
                 currentTracks={currentTrackPlaylistList}
@@ -301,4 +331,4 @@ export const PlayList = () => {
       </div>
     </>
   );
-};;
+};

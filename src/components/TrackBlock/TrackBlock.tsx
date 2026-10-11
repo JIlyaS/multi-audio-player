@@ -9,6 +9,7 @@ import { Form } from "react-bootstrap";
 import type { Playlist, Track } from "@/shared/types";
 import { getTrackName } from "@/shared/helpers/getTrackName";
 import { transliterateToLatin } from "@/shared/helpers/transliterateToLatin";
+import React from "react";
 
 interface Props {
   track: Track | Playlist;
@@ -66,3 +67,5 @@ export const TrackBlock: FC<Props> = ({
     </li>
   );
 };
+
+export const TrackBlockMemo = React.memo(TrackBlock);

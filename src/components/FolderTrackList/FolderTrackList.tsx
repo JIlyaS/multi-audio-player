@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import clsx from "clsx";
 
 import styles from "./FolderTrackList.module.css";
@@ -10,6 +10,7 @@ import { useUnit } from "effector-react";
 import { useAudioPlayerContext } from "@/shared/contexts/AudioPlayerContext";
 import { $currentTrackPlaylistList, updateCurrentTrackPlaylistList, $trackPlaylistList, $selectAllState, selectCurrentTrackPlaylistList } from "@/models/shared";
 import { CheckState } from "@/shared/consts";
+import React from "react";
 
 interface Props {
   folder: {
@@ -21,15 +22,11 @@ interface Props {
     isGlobal: boolean;
     userId?: string | null;
   };
-  isOpenFolders: boolean;
-  onOpenFolders: (value: boolean) => void; 
+  isOpen: boolean;
+  onToggleFolder: (folderId: string) => void;
 }
 
-export const FolderTrackList: FC<Props> = ({
-  folder,
-  isOpenFolders,
-  onOpenFolders,
-}) => {
+export const FolderTrackList: FC<Props> = ({ folder, isOpen, onToggleFolder }) => {
   // TODO: Переписать контекст под Effector или State формат
   const { setTimeProgress, setDuration, setIsPlaying } =
     useAudioPlayerContext();
@@ -41,238 +38,206 @@ export const FolderTrackList: FC<Props> = ({
   );
 
   const [isFolderSelected, setIsFolderSelected] = useState(false);
-  const [height, setHeight] = useState<number>(0);
-  const contentRef = useRef<HTMLUListElement | null>(null);
 
   const currentFolderTrackList = currentTrackPlaylistList.filter(
     (item) => item.folderId === folder.id,
   );
 
-  const isSelectAllFolder =
-    Boolean(selectAllState === CheckState.CHECKED ||
+  const isSelectAllFolder = Boolean(
+    selectAllState === CheckState.CHECKED ||
     (currentFolderTrackList.length &&
       folder.trackList.length &&
-      currentFolderTrackList.length === folder.trackList.length));
+      currentFolderTrackList.length === folder.trackList.length),
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsFolderSelected(isSelectAllFolder);
   }, [isSelectAllFolder]);
 
-  // TODO: Переделать localStorage под корректный формат
-  const [isOpenFolder, setIsOpenFolder] = useState(() => {
-    const storedOpenFolder = localStorage.getItem("storedOpenFolder") || null;
-
-    const parsedOpenFolder: string[] = storedOpenFolder
-      ? JSON.parse(storedOpenFolder)
-      : [];
-
-      if (parsedOpenFolder.includes(folder.id)) {
-        onOpenFolders(true);
-      }
-
-    return parsedOpenFolder.includes(folder.id);
-  });
-
-  useEffect(() => {
-    if (!isOpenFolders) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsOpenFolder(false);
-    }
-  }, [isOpenFolders]);
-
-  useEffect(() => {
-    if (isOpenFolder && contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
-    } else {
-      setHeight(0);
-    }
-  }, [isOpenFolder]);
-
-  const handleToggleFolderChange = (folderId: string) => {
-    if (!folder.trackList.length) {
-      return;
-    }
-
-    const storedOpenFolder = localStorage.getItem("storedOpenFolder") || null;
-
-    let parsedOpenFolder: string[] = storedOpenFolder
-      ? JSON.parse(storedOpenFolder)
-      : [];
-
-    setIsOpenFolder((prevState) => {
-      if (prevState) {
-        parsedOpenFolder = parsedOpenFolder.includes(folderId)
-          ? parsedOpenFolder.filter((item) => item !== folderId)
-          : parsedOpenFolder;
-        localStorage.setItem(
-          "storedOpenFolder",
-          JSON.stringify(parsedOpenFolder),
-        );
-        return false;
-      }
-
-      if (!parsedOpenFolder.includes(folderId)) {
-        parsedOpenFolder.push(folderId);
-        localStorage.setItem(
-          "storedOpenFolder",
-          JSON.stringify(parsedOpenFolder),
-        );
-      }
-
-      onOpenFolders(true);
-
-      return true;
-    });
-  };
+  const handleToggle = useCallback(() => {
+    if (!folder.trackList.length) return;
+    onToggleFolder(folder.id);
+  }, [folder.id, folder.trackList.length, onToggleFolder]);
 
   // TODO: Переделать под подходящий паттерн проектирование
-  const handleSelectAudioChange = (id: string) => {
-    const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
-    const currentSelectedTrack = trackPlaylistList.find(
-      (track) => track.id === id,
-    );
+  const handleSelectAudioChange = useCallback(
+    (id: string) => {
+      const isSelected = currentTrackPlaylistList.some(
+        (item) => item.id === id,
+      );
+      const currentSelectedTrack = trackPlaylistList.find(
+        (track) => track.id === id,
+      );
 
-    if (currentSelectedTrack) {
-      if (isSelected) {
-        const filteredCurrentTrackPlaylistList =
-          currentTrackPlaylistList.filter((item) => item.id !== id);
+      if (currentSelectedTrack) {
+        if (isSelected) {
+          const filteredCurrentTrackPlaylistList =
+            currentTrackPlaylistList.filter((item) => item.id !== id);
 
-        // INFO: Если выбрали некоторые треки и плейлисты
-        if (filteredCurrentTrackPlaylistList.length) {
-          onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
+          // INFO: Если выбрали некоторые треки и плейлисты
+          if (filteredCurrentTrackPlaylistList.length) {
+            onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
+          }
+
+          // INFO: Если треки и плейлисты пусты
+          if (!filteredCurrentTrackPlaylistList.length) {
+            onSelectCurrentTrackPlaylistList(CheckState.UNCHECKED);
+          }
+
+          updateCurrentTrackPlaylistList(filteredCurrentTrackPlaylistList);
+
+          // TODO: Переделать логику в будущем
+          if (
+            currentTrackPlaylistList.filter((item) => item.id !== id).length ===
+            0
+          ) {
+            setTimeProgress(0);
+            setDuration(0);
+          }
+          return;
         }
 
-        // INFO: Если треки и плейлисты пусты
-        if (!filteredCurrentTrackPlaylistList.length) {
-          onSelectCurrentTrackPlaylistList(CheckState.UNCHECKED);
+        const newCurrentTrackPlaylistList = [
+          ...currentTrackPlaylistList,
+          currentSelectedTrack,
+        ];
+
+        // INFO: Если выбрали все треки и плейлисты
+        if (newCurrentTrackPlaylistList.length === trackPlaylistList.length) {
+          onSelectCurrentTrackPlaylistList(CheckState.CHECKED);
         }
-
-        updateCurrentTrackPlaylistList(filteredCurrentTrackPlaylistList);
-
-        // TODO: Переделать логику в будущем
-        if (
-          currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
-        ) {
-          setTimeProgress(0);
-          setDuration(0);
-        }
-        return;
-      }
-
-      const newCurrentTrackPlaylistList = [
-        ...currentTrackPlaylistList,
-        currentSelectedTrack,
-      ];
-
-      // INFO: Если выбрали все треки и плейлисты
-      if (newCurrentTrackPlaylistList.length === trackPlaylistList.length) {
-        onSelectCurrentTrackPlaylistList(CheckState.CHECKED);
-      }
-
-      // INFO: Если выбрали некоторые треки и плейлисты
-      if (
-        newCurrentTrackPlaylistList.length &&
-        newCurrentTrackPlaylistList.length !== trackPlaylistList.length
-      ) {
-        onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
-      }
-
-      updateCurrentTrackPlaylistList(newCurrentTrackPlaylistList);
-    }
-  };
-
-  // TODO: Переделать под подходящий паттерн проектирование
-  const handleStartAudioDblClick = (id: string) => {
-    const isSelected = currentTrackPlaylistList.some((item) => item.id === id);
-    const currentSelectedTrack = trackPlaylistList.find(
-      (track) => track.id === id,
-    );
-
-    if (currentSelectedTrack) {
-      if (isSelected) {
-        updateCurrentTrackPlaylistList(
-          currentTrackPlaylistList.filter((item) => item.id !== id),
-        );
-
-        // TODO: Переделать логику в будущем
-        if (
-          currentTrackPlaylistList.filter((item) => item.id !== id).length === 0
-        ) {
-          setTimeProgress(0);
-          setDuration(0);
-        }
-
-        setIsPlaying(false);
-        return;
-      }
-
-      updateCurrentTrackPlaylistList([
-        ...currentTrackPlaylistList,
-        currentSelectedTrack,
-      ]);
-
-      setIsPlaying(true);
-    }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSelectAllFolderClick = (evt: any) => {
-    evt.stopPropagation();
-
-    setIsFolderSelected((prevValue) => {
-      if (prevValue) {
-        const filteredCurrentTrackPlaylistList =
-          currentTrackPlaylistList.filter((item) => item.folderId !== folder.id);
 
         // INFO: Если выбрали некоторые треки и плейлисты
         if (
-          filteredCurrentTrackPlaylistList.length
+          newCurrentTrackPlaylistList.length &&
+          newCurrentTrackPlaylistList.length !== trackPlaylistList.length
         ) {
           onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
         }
 
-        // INFO: Если треки и плейлисты пусты
+        updateCurrentTrackPlaylistList(newCurrentTrackPlaylistList);
+      }
+    },
+    [
+      currentTrackPlaylistList,
+      onSelectCurrentTrackPlaylistList,
+      setDuration,
+      setTimeProgress,
+      trackPlaylistList,
+    ],
+  );
+
+  // TODO: Переделать под подходящий паттерн проектирование
+  const handleStartAudioDblClick = useCallback(
+    (id: string) => {
+      const isSelected = currentTrackPlaylistList.some(
+        (item) => item.id === id,
+      );
+      const currentSelectedTrack = trackPlaylistList.find(
+        (track) => track.id === id,
+      );
+
+      if (currentSelectedTrack) {
+        if (isSelected) {
+          updateCurrentTrackPlaylistList(
+            currentTrackPlaylistList.filter((item) => item.id !== id),
+          );
+
+          // TODO: Переделать логику в будущем
+          if (
+            currentTrackPlaylistList.filter((item) => item.id !== id).length ===
+            0
+          ) {
+            setTimeProgress(0);
+            setDuration(0);
+          }
+
+          setIsPlaying(false);
+          return;
+        }
+
+        updateCurrentTrackPlaylistList([
+          ...currentTrackPlaylistList,
+          currentSelectedTrack,
+        ]);
+
+        setIsPlaying(true);
+      }
+    },
+    [
+      currentTrackPlaylistList,
+      setDuration,
+      setIsPlaying,
+      setTimeProgress,
+      trackPlaylistList,
+    ],
+  );
+
+  const handleSelectAllFolderClick = useCallback(
+    (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      evt.stopPropagation();
+
+      setIsFolderSelected((prevValue) => {
+        if (prevValue) {
+          const filteredCurrentTrackPlaylistList =
+            currentTrackPlaylistList.filter(
+              (item) => item.folderId !== folder.id,
+            );
+
+          // INFO: Если выбрали некоторые треки и плейлисты
+          if (filteredCurrentTrackPlaylistList.length) {
+            onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
+          }
+
+          // INFO: Если треки и плейлисты пусты
+          if (!filteredCurrentTrackPlaylistList.length) {
+            onSelectCurrentTrackPlaylistList(CheckState.UNCHECKED);
+          }
+
+          updateCurrentTrackPlaylistList([...filteredCurrentTrackPlaylistList]);
+          // TODO: Переделать логику в будущем
+          if (filteredCurrentTrackPlaylistList.length === 0) {
+            setTimeProgress(0);
+            setDuration(0);
+          }
+          return false;
+        }
+
+        const newCurrentTrackPlaylistList = [
+          ...currentTrackPlaylistList.filter(
+            (item) => item.folderId !== folder.id,
+          ),
+          ...trackPlaylistList.filter((item) => item.folderId === folder.id),
+        ];
+
+        // INFO: Если выбрали все треки и плейлисты
+        if (newCurrentTrackPlaylistList.length === trackPlaylistList.length) {
+          onSelectCurrentTrackPlaylistList(CheckState.CHECKED);
+        }
+
+        // INFO: Если выбрали некоторые треки и плейлисты
         if (
-          !filteredCurrentTrackPlaylistList.length
+          newCurrentTrackPlaylistList.length &&
+          newCurrentTrackPlaylistList.length !== trackPlaylistList.length
         ) {
-          onSelectCurrentTrackPlaylistList(CheckState.UNCHECKED);
+          onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
         }
 
-        updateCurrentTrackPlaylistList([...filteredCurrentTrackPlaylistList]);
-        // TODO: Переделать логику в будущем
-        if (filteredCurrentTrackPlaylistList.length === 0) {
-          setTimeProgress(0);
-          setDuration(0);
-        }
-        return false;
-      }
+        updateCurrentTrackPlaylistList(newCurrentTrackPlaylistList);
 
-      const newCurrentTrackPlaylistList = [
-        ...currentTrackPlaylistList.filter(
-          (item) => item.folderId !== folder.id,
-        ),
-        ...trackPlaylistList.filter((item) => item.folderId === folder.id),
-      ];
-
-      // INFO: Если выбрали все треки и плейлисты
-      if (newCurrentTrackPlaylistList.length === trackPlaylistList.length) {
-        onSelectCurrentTrackPlaylistList(CheckState.CHECKED);
-      }
-
-      // INFO: Если выбрали некоторые треки и плейлисты
-      if (
-        newCurrentTrackPlaylistList.length &&
-        newCurrentTrackPlaylistList.length !== trackPlaylistList.length
-      ) {
-        onSelectCurrentTrackPlaylistList(CheckState.INDETERMINATE);
-      }
-
-      updateCurrentTrackPlaylistList(newCurrentTrackPlaylistList);
-
-      return true;
-    });
-  };
+        return true;
+      });
+    },
+    [
+      currentTrackPlaylistList,
+      folder.id,
+      onSelectCurrentTrackPlaylistList,
+      setDuration,
+      setTimeProgress,
+      trackPlaylistList,
+    ],
+  );
 
   if (!folder.trackList.length && !folder.isGlobal) {
     return null;
@@ -284,13 +249,13 @@ export const FolderTrackList: FC<Props> = ({
         key={folder.id}
         className={clsx(styles.playListFolderItem)}
         tabIndex={0}
-        aria-expanded={isOpenFolder}
+        aria-expanded={isOpen}
         onKeyDown={(evt) => {
           if (evt.key === "Enter" || evt.key === " ") {
-            handleToggleFolderChange(folder.id);
+            handleToggle();
           }
         }}
-        onClick={() => handleToggleFolderChange(folder.id)}
+        onClick={handleToggle}
       >
         <div className={styles.folderItemWrap}>
           <button
@@ -307,7 +272,7 @@ export const FolderTrackList: FC<Props> = ({
         </div>
         <div
           className={clsx(styles.folderItemBtnGroup, {
-            ["rotate-180"]: isOpenFolder,
+            ["rotate-180"]: isOpen,
             [styles.folderItemBtnGroupDisabled]: !folder.trackList.length,
           })}
         >
@@ -315,22 +280,13 @@ export const FolderTrackList: FC<Props> = ({
         </div>
       </div>
 
-      {folder.trackList.length ? (
+      {isOpen && folder.trackList.length ? (
         <div>
           <ul
-            ref={contentRef}
             className={clsx(styles.folderTrackList, {
-              [styles.folderTrackListActive]: isOpenFolder,
-              ["pointer-events-none"]: !isOpenFolder,
+              [styles.folderTrackListActive]: isOpen,
+              ["pointer-events-none"]: !isOpen,
             })}
-            // eslint-disable-next-line react-hooks/refs
-            style={
-              {
-                // eslint-disable-next-line react-hooks/refs
-                maxHeight: height,
-                transition: "max-height 0.3s ease-out, opacity 0.3s ease-out",
-              } as React.CSSProperties
-            }
           >
             {folder.trackList.map((track) => (
               <TrackBlock
@@ -347,4 +303,6 @@ export const FolderTrackList: FC<Props> = ({
       ) : null}
     </>
   );
-};;
+};
+
+export const FolderTrackListMemo = React.memo(FolderTrackList);
