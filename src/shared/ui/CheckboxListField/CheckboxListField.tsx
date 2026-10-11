@@ -87,7 +87,6 @@ export const CheckboxListField: FC<Props> = ({ trackList, label, name, isEdit })
   const { virtualizer, virtualItems } = useListVirtualizer({
     parentRef,
     list: filteredTrackList,
-    overscan: 3,
   });
 
   const handleSelectAudioChange = (id: string) => {
